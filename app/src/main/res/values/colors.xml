@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <!--按钮相关-->
+    <!--正常颜色-->
+    <color name="btn_normal">#FF3A8FEA</color>
+    <!--按下颜色-->
+    <color name="btn_pressed">#FF0662F5</color>
+    <!--不可点颜色-->
+    <color name="btn_disable">#FF7C8288</color>
+</resources>

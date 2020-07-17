@@ -1,0 +1,15 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="login_label_width">70dp</dimen>
+
+    <!--字体大小-->
+    <dimen name="ui_text_size_big">20sp</dimen>
+    <dimen name="ui_text_size_common">17sp</dimen>
+    <dimen name="ui_text_size_small">14sp</dimen>
+
+    <!--按钮圆角标半径-->
+    <dimen name="btn_radius_common">10dp</dimen>
+</resources>
