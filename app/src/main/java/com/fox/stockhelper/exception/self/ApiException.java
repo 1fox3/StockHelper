@@ -14,15 +14,15 @@ public class ApiException extends RuntimeException {
     /**
      * 错误信息
      */
-    private String msg;
+    private String message;
 
     /**
      * 采用位置的错误信息
      * @param code
-     * @param msg
+     * @param message
      */
-    public ApiException(Integer code, String msg) {
+    public ApiException(Integer code, String message) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
     }
 }

@@ -1,16 +1,26 @@
 package com.fox.stockhelper.ui.activity;
 
-import android.content.SharedPreferences;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.fox.stockhelper.R;
+import com.fox.stockhelper.api.login.LoginApi;
 import com.fox.stockhelper.api.login.SendCodeApi;
+import com.fox.stockhelper.config.ActivityResultCodeConfig;
+import com.fox.stockhelper.config.MsgWhatConfig;
+import com.fox.stockhelper.entity.dto.api.login.LoginApiDto;
+import com.fox.stockhelper.exception.self.ApiException;
 import com.fox.stockhelper.ui.base.BaseActivity;
+import com.fox.stockhelper.ui.handler.LoginHandler;
 import com.fox.stockhelper.util.ParamCheckUtil;
 
 import java.util.HashMap;
@@ -65,30 +75,60 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.loginBtn)
     Button loginBtn;
     /**
-     * 验证码倒计时消息处理
-     */
-    Handler handler;
-    /**
-     * 登录相关数据记录
-     */
-    SharedPreferences sharedPreferences;
-    /**
      *  是否记住账号
      */
     boolean accountSave;
+    /**
+     * 上下文
+     */
+    Context context;
+    /**
+     * 消息处理
+     */
+    Handler handler;
+    /**
+     * 启动登录界面的ui
+     */
+    String fromUi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(LoginActivity.this);
-        sharedPreferences = getSharedPreferences(getLocalClassName(), MODE_PRIVATE);
+        context = getApplicationContext();
+        handler = new LoginHandler(this);;
         accountSave = sharedPreferences.getBoolean(ACCOUNT_SAVE, true);
         saveAccountCB.setChecked(accountSave);
         String account = sharedPreferences.getString(ACCOUNT_LOGIN, "");
         if (!account.equals("")) {
             accountET.setText(account);
         }
+        Intent intent = getIntent();
+        Bundle bundle = intent.getBundleExtra("login");
+        Log.e("login", bundle.toString());
+        fromUi = bundle.getString("fromUI");
+    }
+
+    /**
+     * 消息提示
+     * @param message
+     */
+    public void toast(String message) {
+        if(null != message && !message.equals("")) {
+            Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
+            toast.setText(message);
+            toast.show();
+        }
+    }
+
+    /**
+     * 登录完成
+     */
+    public void loginFinish() {
+        Intent intent = new Intent();
+        setResult(ActivityResultCodeConfig.LOGIN_SUCCESS, intent);
+        finish();
     }
 
     @OnClick({R.id.sendCodeBtn, R.id.loginBtn})
@@ -97,39 +137,24 @@ public class LoginActivity extends BaseActivity {
             case R.id.sendCodeBtn:
                 sendCodeBtn.setEnabled(false);
                 sendCodeBtn.setText(String.valueOf(sendCodeDelay));
-                handler = new Handler();
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        int currentDelay = Integer.valueOf(sendCodeBtn.getText().toString());
-                        if (currentDelay > 1) {
-                            sendCodeBtn.setText(String.valueOf(currentDelay - 1));
-                            handler.postDelayed(this, 1000);
-                        } else {
-                            sendCodeBtn.setEnabled(true);
-                            sendCodeBtn.setText("重新获取");
-                        }
-                    }
-                };
-                handler.postDelayed(runnable, 1000);
-                SendCodeApi sendCodeApi = new SendCodeApi();
-                Map<String, Object> sendCodeParams = new HashMap<String, Object>(1);
-                sendCodeParams.put("account", accountET.getText().toString());
-                sendCodeApi.request();
+                //开启发送验证码倒计时
+                this.sendCodeDelay();
+                //发送验证码
+                this.sendCode();
                 break;
             case R.id.loginBtn:
                 //记录账号
-                SharedPreferences.Editor spEditor = sharedPreferences.edit();
-                accountSave = saveAccountCB.isChecked();
-                String account = accountET.getText().toString();
-                spEditor.putBoolean(ACCOUNT_SAVE, accountSave);
-                spEditor.putString(ACCOUNT_LOGIN, accountSave ? account : "");
-                spEditor.commit();
+                this.saveLoginInfo();
                 //登录
+                this.login();
                 break;
         }
     }
 
+    /**
+     * 当用户正在输入账号时
+     * @param text
+     */
     @OnTextChanged(R.id.accountET)
     public void onAccountETTextChanged(CharSequence text) {
         String account = text.toString();
@@ -142,6 +167,10 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 当用户正在输入验证码时
+     * @param text
+     */
     @OnTextChanged(R.id.verifyCodeET)
     public void onVerifyCodeETTextChanged(CharSequence text) {
         String account = accountET.getText().toString();
@@ -152,5 +181,86 @@ public class LoginActivity extends BaseActivity {
         } else {
             loginBtn.setEnabled(false);
         }
+    }
+
+    /**
+     * 开启发送验证码倒计时
+     */
+    private void sendCodeDelay() {
+        Runnable sendCodeDelayRunnable = new Runnable() {
+            @Override
+            public void run() {
+                int currentDelay = Integer.valueOf(sendCodeBtn.getText().toString());
+                if (currentDelay > 1) {
+                    sendCodeBtn.setText(String.valueOf(currentDelay - 1));
+                    handler.postDelayed(this, 1000);
+                } else {
+                    sendCodeBtn.setEnabled(true);
+                    sendCodeBtn.setText("重新获取");
+                }
+            }
+        };
+        handler.postDelayed(sendCodeDelayRunnable, 1000);
+    }
+
+    /**
+     * 发送验证码
+     */
+    private void sendCode() {
+        Runnable sendCodeRunnable = () -> {
+            Message msg = new Message();
+            msg.what = MsgWhatConfig.SEND_CODE;
+            Bundle bundle = new Bundle();
+            try {
+                SendCodeApi sendCodeApi = new SendCodeApi();
+                Map<String, Object> sendCodeParams = new HashMap<String, Object>(1);
+                sendCodeParams.put("account", accountET.getText().toString());
+                sendCodeApi.setParams(sendCodeParams);
+                sendCodeApi.request();
+                bundle.putString("message", "发送验证码成功");
+            } catch (ApiException e) {
+                bundle.putString("message", e.getMessage());
+            }
+            msg.setData(bundle);
+            handler.sendMessage(msg);
+        };
+        new Thread(sendCodeRunnable).start();
+    }
+
+    /**
+     * 记录登录信息
+     */
+    private void saveLoginInfo() {
+        accountSave = saveAccountCB.isChecked();
+        String account = accountET.getText().toString();
+        spEditor.putBoolean(ACCOUNT_SAVE, accountSave);
+        spEditor.putString(ACCOUNT_LOGIN, accountSave ? account : "");
+        spEditor.commit();
+    }
+
+    /**
+     * 登录
+     */
+    private void login() {
+        Runnable loginRunnable = () -> {
+            Message msg = new Message();
+            msg.what = MsgWhatConfig.LOGIN;
+            Bundle bundle = new Bundle();
+            try {
+                LoginApi loginApi = new LoginApi();
+                Map<String, Object> loginParams = new HashMap<String, Object>(2);
+                loginParams.put("account", accountET.getText().toString());
+                loginParams.put("verifyCode", verifyCodeET.getText().toString());
+                loginApi.setParams(loginParams);
+                LoginApiDto loginApiDto = (LoginApiDto) loginApi.request();
+                setLoginSession(loginApiDto.getSessionid(), loginApiDto.getExpireTime());
+                bundle.putString("message", "登录成功");
+            } catch (ApiException e) {
+                bundle.putString("message", e.getMessage());
+            }
+            msg.setData(bundle);
+            handler.sendMessage(msg);
+        };
+        new Thread(loginRunnable).start();
     }
 }

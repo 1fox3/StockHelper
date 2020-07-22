@@ -3,6 +3,7 @@ package com.fox.stockhelper.util;
 import android.util.Log;
 
 import com.fox.stockhelper.entity.dto.http.HttpResponseDto;
+import com.fox.stockhelper.exception.self.ApiException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -125,7 +126,6 @@ public class HttpUtil {
      * @return
      */
     public String getUrl() {
-        System.out.println(this.url);
         return this.url;
     }
 
@@ -134,12 +134,10 @@ public class HttpUtil {
      * @return
      */
     public String getRequestUrl(String requestBody) {
-        System.out.println(requestBody);
         if (!METHOD_GET.equals(this.getMethod())) {
             return this.getUrl();
         }
         if (null != requestBody && !requestBody.equals("")) {
-            Log.e("lusongsong", this.getUrl() + (this.getUrl().contains("?") ? "" : "?") + requestBody);
             return this.getUrl() + (this.getUrl().contains("?") ? "" : "?") + requestBody;
         }
         return this.getUrl();
@@ -388,40 +386,54 @@ public class HttpUtil {
         if (!this.getParams().isEmpty()) {
             requestBody = this.paramsToUrlParams();
         }
-        Log.e("lusongsong", requestBody.toString());
         this.startTime = System.currentTimeMillis();
-        //初始化
-        URL urlObj = new URL(this.getRequestUrl(requestBody));
-        HttpURLConnection urlCon = (HttpURLConnection) urlObj.openConnection();
-        //设置超时时间
-        urlCon.setReadTimeout(this.readTimeout);
-        urlCon.setConnectTimeout(this.connectTimeout);
-        //设置请求方法
-        urlCon.setRequestMethod(this.getMethod());
-        //添加请求头
-        if (!this.headers.isEmpty()) {
-            for (String key : this.headers.keySet()) {
-                urlCon.setRequestProperty(key, this.headers.get(key));
-            }
-        }
-        if (!this.headers.containsKey(CONTENT_TYPE)) {
-            urlCon.setRequestProperty(CONTENT_TYPE, this.getContentType());
-        }
-        //GET请求无需发送数据
-        if (METHOD_GET.equals(this.getMethod())) {
-            return this.readResponse(urlCon);
-        }
-        //允许输入输出
-        urlCon.setDoOutput(true);
-        urlCon.setDoInput(true);
+        HttpURLConnection urlCon = null;
 
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(urlCon.getOutputStream(), CHARSET_UTF8));
-        if (requestBody != null) {
-            //写入请求内容
-            bw.write(requestBody);
+        try {
+            Log.e("url", this.getRequestUrl(requestBody));
+            //初始化
+            URL urlObj = new URL(this.getRequestUrl(requestBody));
+            urlCon = (HttpURLConnection) urlObj.openConnection();
+            //设置超时时间
+            urlCon.setReadTimeout(this.readTimeout);
+            urlCon.setConnectTimeout(this.connectTimeout);
+            //设置请求方法
+            urlCon.setRequestMethod(this.getMethod());
+            //添加请求头
+            if (!this.headers.isEmpty()) {
+                for (String key : this.headers.keySet()) {
+                    urlCon.setRequestProperty(key, this.headers.get(key));
+                }
+            }
+            if (!this.headers.containsKey(CONTENT_TYPE)) {
+                urlCon.setRequestProperty(CONTENT_TYPE, this.getContentType());
+            }
+            //GET请求无需发送数据
+            if (METHOD_GET.equals(this.getMethod())) {
+                return this.readResponse(urlCon);
+            }
+            //允许输入输出
+            urlCon.setDoOutput(true);
+            urlCon.setDoInput(true);
+
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(urlCon.getOutputStream(), CHARSET_UTF8));
+            if (requestBody != null) {
+                //写入请求内容
+                bw.write(requestBody);
+            }
+            bw.close();
+            return this.readResponse(urlCon);
+//        } catch (MalformedURLException e) {
+//            Log.e("HttpUtilMalformedURLException", e.getMessage());
+//            throw new ApiException(1, e.getMessage());
+//        } catch (IOException e) {
+//            Log.e("HttpUtilIOException", e.getMessage());
+//            throw new ApiException(1, e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+//            Log.e("HttpUtilException", e.getMessage());
+            throw new ApiException(1, e.getMessage());
         }
-        bw.close();
-        return readResponse(urlCon);
     }
 
     /**
@@ -430,7 +442,7 @@ public class HttpUtil {
      * @return
      * @throws IOException
      */
-    private HttpResponseDto readResponse(HttpURLConnection urlCon) throws IOException {
+    private HttpResponseDto readResponse(HttpURLConnection urlCon) {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(urlCon.getInputStream(), this.oriCharset));
             StringBuilder sb = new StringBuilder();
@@ -446,11 +458,23 @@ public class HttpUtil {
                     response = CharsetUtil.convertGBKToUtf8(response);
                 }
             }
+            Log.e("response", response);
+            Log.e("header", urlCon.getHeaderFields().toString());
             return new HttpResponseDto(urlCon.getResponseCode(), urlCon.getResponseMessage(),
                     urlCon.getHeaderFields(), urlCon.getURL().toString(), response);
+//        } catch (NetworkOnMainThreadException e) {
+//            Log.e("sss", e.getClass().toString());
+//            throw new ApiException(1, e.getCause().getMessage());
+//        } catch (UnsupportedEncodingException e) {
+//            Log.e("sss", e.getClass().toString());
+//            throw new ApiException(1, e.getClass().toString());
+//        } catch (IOException e) {
+//            Log.e("sss", e.getClass().toString());
+//            throw new ApiException(1, e.getClass().toString());
         } catch (Exception e) {
-            return new HttpResponseDto(urlCon.getResponseCode(), urlCon.getResponseMessage(),
-                    urlCon.getHeaderFields(), urlCon.getURL().toString(), "");
+            e.printStackTrace();
+//            Log.e("sss", e.getClass().toString());
+            throw new ApiException(1, "q");
         } finally {
             urlCon.disconnect();
             this.endTime = System.currentTimeMillis();

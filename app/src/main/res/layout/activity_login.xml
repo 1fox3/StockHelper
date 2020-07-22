@@ -49,6 +49,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/ui_text_size_common"
             android:hint="验证码"
+            android:inputType="number"
             android:layout_weight="1" />
         <Button
             android:id="@+id/sendCodeBtn"

@@ -9,7 +9,8 @@ import com.fox.stockhelper.api.BaseApi;
 public class SendCodeApi extends BaseApi {
     public SendCodeApi() {
         url = "login/sendCode";
-        method = METHOD_GET;
+        method = METHOD_POST;
         requestParamKeys = new String[]{"account"};
+        dataClass = Boolean.class;
     }
 }

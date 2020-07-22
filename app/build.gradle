@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.0"
+    compileSdkVersion 'android-R'
+    buildToolsVersion '29.0.3'
 
     defaultConfig {
         applicationId "com.fox.stockhelper"
@@ -45,6 +45,7 @@ dependencies {
     implementation 'org.apache.commons:commons-pool2:2.7.0'
     implementation 'org.apache.commons:commons-lang3:3.9'
     compileOnly 'org.projectlombok:lombok:1.18.10'
+    implementation 'com.alibaba:fastjson:1.2.60'
 }
 
 

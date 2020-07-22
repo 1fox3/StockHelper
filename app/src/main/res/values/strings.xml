@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">股票助手</string>
+    <string name="app_name_en">StockHelper</string>
 </resources>

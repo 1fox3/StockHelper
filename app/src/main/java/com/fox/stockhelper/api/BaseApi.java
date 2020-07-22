@@ -1,7 +1,8 @@
 package com.fox.stockhelper.api;
 
-import android.util.Log;
-
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fox.stockhelper.entity.dto.api.ApiDto;
 import com.fox.stockhelper.entity.dto.http.HttpResponseDto;
 import com.fox.stockhelper.exception.self.ApiException;
@@ -13,10 +14,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.Data;
+
 /**
  * 接口请求基类
  * @author lusongsong
  */
+@Data
 public class BaseApi {
     public final static String METHOD_GET = "get";
     public final static String METHOD_POST = "post";
@@ -55,7 +59,7 @@ public class BaseApi {
     /**
      * 响应数据对应的类
      */
-    protected String dataClass;
+    protected Class dataClass;
     /**
      * 请求的参数key
      */
@@ -90,16 +94,17 @@ public class BaseApi {
     /**
      * 接口请求
      */
-    public Object request() {
+    public Object request() throws ApiException {
         HttpUtil httpUtil = new HttpUtil();
         try {
             httpUtil.setMethod(this.method);
             httpUtil.setUrl(this.getUrl());
-            Log.e("lusongsong", this.requestParams.toString());
             httpUtil.setParams(this.requestParams);
             HttpResponseDto httpResponseDto = httpUtil.request();
+            //同步请求起止时间
             this.startTime = httpUtil.startTime;
             this.endTime = httpUtil.endTime;
+            //请求状态码
             this.code = httpResponseDto.getCode();
             this.msg = httpResponseDto.getMsg();
             this.data = httpResponseDto.getContent();
@@ -114,10 +119,13 @@ public class BaseApi {
             if (0 != apiDto.getCode()) {
                 throw new ApiException(apiDto.getCode(), apiDto.getMsg());
             }
-//            return new ObjectMapper().readValue(apiDto.getData(), this.dataClass);
+            return new ObjectMapper().readValue(JSONObject.toJSONString(this.data), this.dataClass);
+        } catch (ApiException e) {
+            throw new ApiException(1, e.getMessage());
         } catch (IOException e) {
             throw new ApiException(1, e.getMessage());
+        } catch (JSONException e) {
+            throw new ApiException(1, e.getMessage());
         }
-        return "";
     }
 }
