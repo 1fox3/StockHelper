@@ -5,10 +5,17 @@
 
     <dimen name="login_label_width">70dp</dimen>
 
+    <!--首页底部高度-->
+    <dimen name="home_bottom_height">55dp</dimen>
+    <dimen name="home_bottom_margin_bottom">5dp</dimen>
+    <dimen name="home_bottom_img_width">20dp</dimen>
+    <dimen name="home_bottom_img_height">20dp</dimen>
+    <dimen name="home_bottom_img_margin_top">7dp</dimen>
+    <dimen name="home_bottom_img_margin_bottom">1dp</dimen>
     <!--字体大小-->
     <dimen name="ui_text_size_big">20sp</dimen>
-    <dimen name="ui_text_size_common">17sp</dimen>
-    <dimen name="ui_text_size_small">14sp</dimen>
+    <dimen name="ui_text_size_common">16sp</dimen>
+    <dimen name="ui_text_size_small">12sp</dimen>
 
     <!--按钮圆角标半径-->
     <dimen name="btn_radius_common">10dp</dimen>

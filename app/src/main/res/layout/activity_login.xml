@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:src="@mipmap/stock_round"
+        android:src="@mipmap/stock_helper_round"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         />
     <LinearLayout

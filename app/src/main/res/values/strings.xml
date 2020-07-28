@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">股票助手</string>
     <string name="app_name_en">StockHelper</string>
+    <string name="trend">行情</string>
+    <string name="follow">自选</string>
+    <string name="message">消息</string>
+    <string name="trade">交易</string>
+    <string name="user">我</string>
 </resources>

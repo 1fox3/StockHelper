@@ -6,9 +6,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/stock"
+        android:icon="@mipmap/stock_helper"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/stock_round"
+        android:roundIcon="@mipmap/stock_helper_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
