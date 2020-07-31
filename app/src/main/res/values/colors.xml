@@ -3,6 +3,8 @@
     <color name="color_primary">#6200EE</color>
     <color name="color_primary_dark">#3700B3</color>
     <color name="color_accent">#03DAC5</color>
+    <!--主色调-->
+    <color name="main">#FFE7281A</color>
     <!--首页底部背景色-->
     <color name="home_bottom_bg">#FF000000</color>
     <color name="home_bottom_selected_bg">#FFE7281A</color>

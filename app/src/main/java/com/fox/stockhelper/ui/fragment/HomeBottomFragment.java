@@ -10,8 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fox.stockhelper.R;
+import com.fox.stockhelper.ui.base.BaseFragment;
 
-import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -21,7 +21,7 @@ import butterknife.OnClick;
  *
  * @author lusongsong
  */
-public class HomeBottomFragment extends Fragment {
+public class HomeBottomFragment extends BaseFragment {
     @BindView(R.id.trendL)
     LinearLayout trendL;
     @BindView(R.id.trendIV)

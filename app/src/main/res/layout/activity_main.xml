@@ -5,17 +5,93 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activity.MainActivity">
-
-    <TextView
-        android:id="@+id/mainTV"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="这里是主页面"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        android:orientation="vertical">
+        <!--顶部搜索框-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/common_margin"
+            android:background="@color/main">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textSize="@dimen/ui_text_size_common"
+                android:textStyle="italic|bold"
+                android:layout_marginLeft="@dimen/common_margin"
+                android:textAlignment="center"
+                android:layout_weight="1"/>
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/home_search_hint"
+                android:textSize="@dimen/ui_text_size_common"
+                android:drawableLeft="@mipmap/search_32"
+                android:layout_marginLeft="@dimen/common_margin"
+                android:background="@null"
+                android:layout_weight="4"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/customer_service_32"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/common_margin"
+                android:layout_marginRight="@dimen/common_margin"
+                android:layout_weight="2"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/sm_hs_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stock_hs"
+                android:textAlignment="center"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/sm_hk_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stock_hk"
+                android:textAlignment="center"
+                android:layout_weight="1"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="2dp">
+            <!--标签选择提示线-->
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <ImageView
+                    android:id="@+id/sm_hs_cursor"
+                    android:layout_width="@dimen/sm_cursor"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <ImageView
+                    android:id="@+id/sm_hk_cursor"
+                    android:layout_width="@dimen/sm_cursor"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+        </LinearLayout>
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/stock_type_vp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </androidx.viewpager.widget.ViewPager>
+    </LinearLayout>
     <fragment
         android:id="@+id/home_bottom"
         android:layout_width="match_parent"

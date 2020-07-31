@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/home_bottom_height"
+    android:background="@color/home_bottom_bg"
+    tools:context="com.fox.stockhelper.ui.fragment.HomeBottomFragment">
+    <LinearLayout
+        android:id="@+id/userL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/home_bottom_margin_bottom"
+        android:layout_weight="1">
+        <ImageView
+            android:id="@+id/userIV"
+            android:layout_width="@dimen/home_bottom_img_width"
+            android:layout_height="@dimen/home_bottom_img_height"
+            android:layout_marginTop="@dimen/home_bottom_img_margin_top"
+            android:layout_marginBottom="@dimen/home_bottom_img_margin_bottom"
+            android:layout_gravity="center"
+            android:src="@mipmap/user" />
+        <TextView
+            android:id="@+id/userTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/home_bottom_text_color"
+            android:textSize="@dimen/ui_text_size_small"
+            android:text="@string/user"/>
+    </LinearLayout>
+</LinearLayout>

@@ -1,10 +1,12 @@
 package com.fox.stockhelper.exception.self;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 接口异常
  */
+@EqualsAndHashCode(callSuper=false)
 @Data
 public class ApiException extends RuntimeException {
     /**

@@ -3,6 +3,7 @@ package com.fox.stockhelper.ui.base;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
 
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.util.DateUtil;
@@ -82,6 +83,10 @@ public class BaseActivity  extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //修改顶部状态栏颜色
+        Window window = getWindow();
+        window.setStatusBarColor(getResources().getColor(R.color.main));
+
         sharedPreferences = getSharedPreferences(getResources().getString(R.string.app_name_en), MODE_PRIVATE);
         spEditor = sharedPreferences.edit();
         sessionId = sharedPreferences.getString(BaseActivity.SP_LOGIN_SESSION, "");

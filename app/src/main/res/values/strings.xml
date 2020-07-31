@@ -6,4 +6,7 @@
     <string name="message">消息</string>
     <string name="trade">交易</string>
     <string name="user">我</string>
+    <string name="home_search_hint">请输入股票代码或名称</string>
+    <string name="stock_hs">A股</string>
+    <string name="stock_hk">港股</string>
 </resources>
