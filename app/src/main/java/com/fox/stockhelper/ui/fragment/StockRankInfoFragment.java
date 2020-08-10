@@ -8,15 +8,21 @@ import android.view.ViewGroup;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.ui.base.BaseFragment;
 
+import butterknife.ButterKnife;
+
 /**
- * 港股首页
+ * 股票排行信息
+ *
  * @author lusongsong
  */
-public class StockMarketHKFragment extends BaseFragment {
+public class StockRankInfoFragment extends BaseFragment {
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_stock_market_hk, null);
+        View view = inflater.inflate(R.layout.fragment_stock_rank_info, null);
+        ButterKnife.bind(this, view);
+
         return view;
     }
 }

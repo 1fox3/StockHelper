@@ -5,8 +5,12 @@
     <color name="color_accent">#03DAC5</color>
     <!--主色调-->
     <color name="main">#FFE7281A</color>
+    <!--涨平跌主色调-->
+    <color name="up">#FFE7281A</color>
+    <color name="flat">#FF2F2C2C</color>
+    <color name="down">#FF36EE36</color>
     <!--首页底部背景色-->
-    <color name="home_bottom_bg">#FF000000</color>
+    <color name="home_bottom_bg">#2F2C2C</color>
     <color name="home_bottom_selected_bg">#FFE7281A</color>
     <color name="home_bottom_text_color">#FFFFFFFF</color>
     <!--按钮相关-->

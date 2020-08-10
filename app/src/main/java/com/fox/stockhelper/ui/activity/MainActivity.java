@@ -3,9 +3,11 @@ package com.fox.stockhelper.ui.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,8 +15,7 @@ import com.fox.stockhelper.R;
 import com.fox.stockhelper.config.ActivityRequestCodeConfig;
 import com.fox.stockhelper.ui.adapter.StockMarketFragmentAdapter;
 import com.fox.stockhelper.ui.base.BaseActivity;
-import com.fox.stockhelper.ui.fragment.StockMarketHKFragment;
-import com.fox.stockhelper.ui.fragment.StockMarketHSFragment;
+import com.fox.stockhelper.ui.fragment.StockMarketFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,11 @@ import butterknife.OnClick;
  * @author lusongsong
  */
 public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
+    /**
+     * 搜索输入框
+     */
+    @BindView(R.id.search)
+    EditText searchET;
     /**
      * 股市数量
      */
@@ -82,6 +88,11 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(MainActivity.this);
+        //将搜索输入框里的图片处理到合适大小
+        Drawable searchDraw = getResources().getDrawable(R.mipmap.search);
+        searchDraw.setBounds(0, 0, 80, 80);
+        searchET.setCompoundDrawables(searchDraw, null, null, null);
+
         //用户未登录，则跳转到登录页面
         if (!this.isLogin()) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -134,8 +145,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         smImageViewList.add(stockMarketHKIV);
         //初始化股市页面列表
         smFragmentList = new ArrayList<>(stockMarketNum);
-        smFragmentList.add(new StockMarketHSFragment());
-        smFragmentList.add(new StockMarketHKFragment());
+        smFragmentList.add(new StockMarketFragment("hs"));
+        smFragmentList.add(new StockMarketFragment("hk"));
 
         //股市页面切换器
         StockMarketFragmentAdapter stockMarketFragmentAdapter =
@@ -154,7 +165,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         if (smNum < 0 || smNum >= smFragmentList.size()) {
             return;
         }
-        Log.e("main", String.valueOf(smNum));
         this.unChooseStockMarket();
         currentStockMarketNum = smNum;
         //切换页面

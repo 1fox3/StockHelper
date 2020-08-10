@@ -12,11 +12,17 @@ import com.fox.stockhelper.ui.base.BaseFragment;
  * A股首页
  * @author lusongsong
  */
-public class StockMarketHSFragment extends BaseFragment {
+public class StockMarketFragment extends BaseFragment {
+    private String stockMarket;
+
+    public StockMarketFragment(String stockMarket) {
+        this.stockMarket = stockMarket;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_stock_market_hs, null);
+        View view = inflater.inflate(R.layout.fragment_stock_market, null);
         return view;
     }
 }

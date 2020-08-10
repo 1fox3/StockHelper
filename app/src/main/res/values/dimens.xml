@@ -6,6 +6,7 @@
     <dimen name="login_label_width">70dp</dimen>
     <!--普通组件间隔距离-->
     <dimen name="common_margin">5dp</dimen>
+    <dimen name="close_margin">2dp</dimen>
 
     <!--首页底部高度-->
     <dimen name="home_bottom_height">55dp</dimen>
