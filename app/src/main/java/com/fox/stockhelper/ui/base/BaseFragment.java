@@ -3,7 +3,11 @@ package com.fox.stockhelper.ui.base;
 import android.content.Context;
 
 import androidx.fragment.app.Fragment;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class BaseFragment extends Fragment {
     /**
      * 上下文
@@ -11,10 +15,19 @@ public class BaseFragment extends Fragment {
     protected Context context;
 
     /**
-     * 设置上下文
+     * 指定上下文构造器
      * @param context
      */
-    protected void setContext(Context context) {
+    public BaseFragment(Context context) {
         this.context = context;
+    }
+
+    /**
+     * 获取颜色
+     * @param colorResId
+     * @return
+     */
+    protected int getColorByResourceId(int colorResId) {
+        return this.context.getResources().getColor(colorResId);
     }
 }

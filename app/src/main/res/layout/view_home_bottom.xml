@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/home_bottom_height"
     android:background="@color/home_bottom_bg"
-    tools:context="com.fox.stockhelper.ui.fragment.HomeBottomFragment">
+    tools:context="com.fox.stockhelper.ui.view.HomeBottomView">
     <LinearLayout
         android:id="@+id/trendL"
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:layout_marginTop="@dimen/home_bottom_img_margin_top"
             android:layout_marginBottom="@dimen/home_bottom_img_margin_bottom"
             android:layout_gravity="center"
-            android:src="@mipmap/trend" />
+            android:src="@drawable/trend" />
         <TextView
             android:id="@+id/trendTV"
             android:layout_width="match_parent"
@@ -43,7 +43,7 @@
             android:layout_marginTop="@dimen/home_bottom_img_margin_top"
             android:layout_marginBottom="@dimen/home_bottom_img_margin_bottom"
             android:layout_gravity="center"
-            android:src="@mipmap/follow" />
+            android:src="@drawable/follow" />
         <TextView
             android:id="@+id/followTV"
             android:layout_width="match_parent"
@@ -67,7 +67,7 @@
             android:layout_marginTop="@dimen/home_bottom_img_margin_top"
             android:layout_marginBottom="@dimen/home_bottom_img_margin_bottom"
             android:layout_gravity="center"
-            android:src="@mipmap/message" />
+            android:src="@drawable/message" />
         <TextView
             android:id="@+id/messageTV"
             android:layout_width="match_parent"
@@ -91,7 +91,7 @@
             android:layout_marginTop="@dimen/home_bottom_img_margin_top"
             android:layout_marginBottom="@dimen/home_bottom_img_margin_bottom"
             android:layout_gravity="center"
-            android:src="@mipmap/trade" />
+            android:src="@drawable/trade" />
         <TextView
             android:id="@+id/tradeTV"
             android:layout_width="match_parent"
@@ -115,7 +115,7 @@
             android:layout_marginTop="@dimen/home_bottom_img_margin_top"
             android:layout_marginBottom="@dimen/home_bottom_img_margin_bottom"
             android:layout_gravity="center"
-            android:src="@mipmap/user" />
+            android:src="@drawable/user" />
         <TextView
             android:id="@+id/userTV"
             android:layout_width="match_parent"

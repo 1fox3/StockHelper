@@ -1,0 +1,17 @@
+<resources>
+    <declare-styleable name="SortTextView">
+        <attr name="text" format="string"></attr>
+    </declare-styleable>
+
+    <declare-styleable name="StockValueTextView">
+        <attr name="value" format="string"></attr>
+        <attr name="type" format="enum">
+            <enum name="number" value="0" />
+            <enum name="rate" value="1" />
+        </attr>
+        <attr name="unit" format="enum">
+            <enum name="number" value="0" />
+            <enum name="hand" value="1" />
+        </attr>
+    </declare-styleable>
+</resources>

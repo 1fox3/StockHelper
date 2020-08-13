@@ -7,8 +7,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fox.stockhelper.R;
@@ -16,6 +18,7 @@ import com.fox.stockhelper.config.ActivityRequestCodeConfig;
 import com.fox.stockhelper.ui.adapter.StockMarketFragmentAdapter;
 import com.fox.stockhelper.ui.base.BaseActivity;
 import com.fox.stockhelper.ui.fragment.StockMarketFragment;
+import com.fox.stockhelper.ui.view.HomeBottomView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +85,12 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
      * 股市页面列表
      */
     List<Fragment> smFragmentList;
+    @BindView(R.id.homeRL)
+    RelativeLayout homeRL;
+    /**
+     * 底部菜单
+     */
+    HomeBottomView homeBottomView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +98,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         setContentView(R.layout.activity_main);
         ButterKnife.bind(MainActivity.this);
         //将搜索输入框里的图片处理到合适大小
-        Drawable searchDraw = getResources().getDrawable(R.mipmap.search);
+        Drawable searchDraw = getResources().getDrawable(R.drawable.search);
         searchDraw.setBounds(0, 0, 80, 80);
         searchET.setCompoundDrawables(searchDraw, null, null, null);
 
@@ -102,8 +111,11 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             startActivityForResult(intent, ActivityRequestCodeConfig.LOGIN);
         }
 
+        //初始化底部菜单按钮
+        this.initHomeBottom();
+
         //股市页面初始化
-        this.stockMarketInit();
+        this.initStockMarket();
     }
 
     @Override
@@ -134,7 +146,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     /**
      * 股市内容初始化
      */
-    private void stockMarketInit() {
+    private void initStockMarket() {
         //初始化股市title列表
         smTextViewList = new ArrayList<>(stockMarketNum);
         smTextViewList.add(stockMarketHSTV);
@@ -145,8 +157,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         smImageViewList.add(stockMarketHKIV);
         //初始化股市页面列表
         smFragmentList = new ArrayList<>(stockMarketNum);
-        smFragmentList.add(new StockMarketFragment("hs"));
-        smFragmentList.add(new StockMarketFragment("hk"));
+        smFragmentList.add(new StockMarketFragment(this, "hs"));
+        smFragmentList.add(new StockMarketFragment(this, "hk"));
 
         //股市页面切换器
         StockMarketFragmentAdapter stockMarketFragmentAdapter =
@@ -195,5 +207,18 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
     @Override
     public void onPageScrollStateChanged(int state) {
+    }
+
+    /**
+     * 初始化迪比菜单
+     */
+    private void initHomeBottom() {
+        homeBottomView = new HomeBottomView(this);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        homeRL.addView(homeBottomView, layoutParams);
     }
 }
