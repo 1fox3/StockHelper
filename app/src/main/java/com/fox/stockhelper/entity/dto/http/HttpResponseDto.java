@@ -20,7 +20,8 @@ public class HttpResponseDto {
     private String requestUrl;
     private String content;
 
-    public HttpResponseDto(int code, String msg, Map<String, List<String>> headers, String requestUrl, String content) {
+    public HttpResponseDto(int code, String msg, Map<String, List<String>> headers,
+                           String requestUrl, String content) {
         this.code = code;
         this.msg = msg;
         this.headers = headers;

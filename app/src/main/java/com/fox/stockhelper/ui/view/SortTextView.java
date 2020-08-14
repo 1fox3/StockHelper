@@ -148,7 +148,7 @@ public class SortTextView extends LinearLayout {
         //文案
         sortTextTV.setText(sortTextStr);
         //图片
-        if(0 != defaultImg){
+        if (0 != defaultImg) {
             this.changeImg(defaultImg);
         }
         return view;
@@ -175,7 +175,7 @@ public class SortTextView extends LinearLayout {
     private void changeImg(int imgId) {
         sortImgIV.setImageResource(imgId);
         //判断图片是否已加载
-        if (false == imgIsShow) {
+        if (!imgIsShow) {
             sortTextLL.addView(sortImgIV);
             imgIsShow = true;
         }
@@ -194,7 +194,7 @@ public class SortTextView extends LinearLayout {
      */
     public void reset() {
         sortImgIV.setImageResource(defaultImg);
-        if (true == imgIsShow) {
+        if (imgIsShow) {
             sortImgIV.setVisibility(View.GONE);
         }
     }
@@ -217,7 +217,7 @@ public class SortTextView extends LinearLayout {
     /**
      * 处理升序
      */
-    private void handleAsc(){
+    private void handleAsc() {
         //修改图片
         this.changeImg(ascImg);
         //处理升序
@@ -229,7 +229,7 @@ public class SortTextView extends LinearLayout {
     /**
      * 处理降序
      */
-    private void handleDesc(){
+    private void handleDesc() {
         //修改图片
         this.changeImg(descImg);
         //处理降序

@@ -22,8 +22,8 @@ import lombok.Data;
  */
 @Data
 public class BaseApi {
-    public final static String METHOD_GET = "get";
-    public final static String METHOD_POST = "post";
+    public static final String METHOD_GET = "get";
+    public static final String METHOD_POST = "post";
     /**
      * 接口域名
      */
@@ -73,7 +73,7 @@ public class BaseApi {
      * 设置请求参数
      */
     public void setParams(Map<String, Object> params) {
-        Set paramKeys =params.keySet();
+        Set paramKeys = params.keySet();
         if (null != requestParamKeys && requestParamKeys.length > 0) {
             for (String paramKey : requestParamKeys) {
                 if (paramKeys.contains(paramKey)) {

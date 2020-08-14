@@ -18,11 +18,11 @@ public class BaseActivity  extends AppCompatActivity {
     /**
      * 登录的session，sp保存key
      */
-    final static String SP_LOGIN_SESSION = "login_session";
+    static final String SP_LOGIN_SESSION = "login_session";
     /**
      * 登录的过期时间，sp保存key
      */
-    final static String SP_LOGIN_EXPIRE_TIME = "login_expire_time";
+    static final String SP_LOGIN_EXPIRE_TIME = "login_expire_time";
     /**
      * 数据记录SharedPreferences
      */

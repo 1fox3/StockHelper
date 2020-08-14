@@ -21,7 +21,7 @@ public class StockIndexBlockView extends RelativeLayout {
     /**
      * 显示名称
      */
-   private String name;
+    private String name;
     /**
      * 当前价
      */
@@ -113,7 +113,7 @@ public class StockIndexBlockView extends RelativeLayout {
             uptickRateTV.setText((uptickRate > 0 ? "+" : "") + getNumberStr(uptickRate * 100) + "%");
             if (0.0 < uptickPrice) {
                 this.setTextColor(RED);
-            }else if(0.0 > uptickPrice) {
+            } else if (0.0 > uptickPrice) {
                 this.setTextColor(GREEN);
             } else {
                 this.setTextColor(GRAY);

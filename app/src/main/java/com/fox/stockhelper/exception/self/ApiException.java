@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 /**
  * 接口异常
  */
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class ApiException extends RuntimeException {
     /**

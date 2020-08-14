@@ -19,9 +19,11 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
     /**
      * 数值计量单位范围
      */
-    private static final Map<Double, String> NUMBER_SCOPE =
-            new HashMap<Double, String>(2)
-            {{ put(10000.0, "万");put(100000000.0, "亿"); }};
+    private static final Map<Double, String> NUMBER_SCOPE = new HashMap<Double, String>(2) {
+        {
+            put(10000.0, "万");put(100000000.0, "亿");
+        }
+    };
     /**
      * 数值
      */
@@ -116,7 +118,7 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
         if (null != value) {
             if (0.0 < value) {
                 this.setTextColor(RED);
-            }else if(0.0 > value) {
+            } else if (0.0 > value) {
                 this.setTextColor(GREEN);
             } else {
                 this.setTextColor(GRAY);

@@ -40,11 +40,11 @@ public class LoginActivity extends BaseActivity {
     /**
      * 是否记住账号key
      */
-    final static String ACCOUNT_SAVE = "account_save";
+    static final String ACCOUNT_SAVE = "account_save";
     /**
      * 账号
      */
-    final static String ACCOUNT_LOGIN = "account_login";
+    static final String ACCOUNT_LOGIN = "account_login";
     /**
      * 发送验证码延时间隔
      */
@@ -115,7 +115,7 @@ public class LoginActivity extends BaseActivity {
      * @param message
      */
     public void toast(String message) {
-        if(null != message && !message.equals("")) {
+        if (null != message && !message.equals("")) {
             Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
             toast.setText(message);
             toast.show();

@@ -226,7 +226,7 @@ public class DateUtil {
         if (null == date) {
             date = new Date();
         }
-        String secondTimestamp = String.valueOf(date.getTime()/1000);
+        String secondTimestamp = String.valueOf(date.getTime() / 1000);
         return Integer.valueOf(secondTimestamp);
     }
 

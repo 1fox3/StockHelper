@@ -35,7 +35,7 @@ public class HttpUtil {
     /**
      * 请求头参数方式KEY
      */
-    private static final String CONTENT_TYPE="Content-Type";
+    private static final String CONTENT_TYPE = "Content-Type";
     /**
      * 请求头参数方式
      */
@@ -57,11 +57,13 @@ public class HttpUtil {
     /**
      * 数据类型
      */
-    private static final Map<String, String> CONTENT_TYPE_MAP = new HashMap<String, String>(){{
-        put(PARAM_TYPE_JSON, CONTENT_TYPE_JSON);
-        put(PARAM_TYPE_PARAM, CONTENT_TYPE_PARAM);
-        put(PARAM_TYPE_FORM, CONTENT_TYPE_FORM);
-    }};
+    private static final Map<String, String> CONTENT_TYPE_MAP = new HashMap<String, String>() {
+        {
+            put(PARAM_TYPE_JSON, CONTENT_TYPE_JSON);
+            put(PARAM_TYPE_PARAM, CONTENT_TYPE_PARAM);
+            put(PARAM_TYPE_FORM, CONTENT_TYPE_FORM);
+        }
+    };
     /**
      * 请求链接
      */
