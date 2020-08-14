@@ -14,4 +14,9 @@
             <enum name="hand" value="1" />
         </attr>
     </declare-styleable>
+    <declare-styleable name="StockIndexBlockView">
+        <attr name="name" format="string"></attr>
+        <attr name="currentPrice" format="float"></attr>
+        <attr name="yesterdayClosePrice" format="float" />
+    </declare-styleable>
 </resources>

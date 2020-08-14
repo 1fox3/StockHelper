@@ -33,10 +33,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <TextView
+                android:id="@+id/smDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2020-07-31"/>
             <TextView
+                android:id="@+id/smWeek"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/common_margin"
@@ -48,138 +50,24 @@
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/activity_horizontal_margin">
             <TableRow>
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <com.fox.stockhelper.ui.view.StockIndexBlockView
+                    android:layout_weight="1"
                     android:gravity="center"
-                    android:layout_weight="1">
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/index_bg"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:paddingTop="@dimen/common_margin"
-                        android:paddingBottom="@dimen/common_margin"
-                        android:paddingLeft="@dimen/common_margin"
-                        android:paddingRight="@dimen/common_margin">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="上证指数"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/up"
-                            android:text="3215.89"/>
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/up"
-                                android:paddingLeft="@dimen/common_margin"
-                                android:paddingRight="@dimen/common_margin"
-                                android:text="25.89"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/up"
-                                android:paddingLeft="@dimen/common_margin"
-                                android:paddingRight="@dimen/common_margin"
-                                android:text="0.25%"/>
-                        </LinearLayout>
-                    </LinearLayout>
-                </RelativeLayout>
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    app:name="深证成指"
+                    app:currentPrice="3568.15"
+                    app:yesterdayClosePrice="3500.1"/>
+                <com.fox.stockhelper.ui.view.StockIndexBlockView
                     android:layout_weight="1"
-                    android:gravity="center">
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/index_bg"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:paddingTop="@dimen/common_margin"
-                        android:paddingBottom="@dimen/common_margin"
-                        android:paddingLeft="@dimen/common_margin"
-                        android:paddingRight="@dimen/common_margin">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="上证指数"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/up"
-                            android:text="3215.89"/>
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/up"
-                                android:paddingLeft="@dimen/common_margin"
-                                android:paddingRight="@dimen/common_margin"
-                                android:text="25.89"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:paddingLeft="@dimen/common_margin"
-                                android:paddingRight="@dimen/common_margin"
-                                android:textColor="@color/up"
-                                android:text="0.25%"/>
-                        </LinearLayout>
-                    </LinearLayout>
-                </RelativeLayout>
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    app:name="深证成指"
+                    app:currentPrice="3568.15"
+                    app:yesterdayClosePrice="3500.1"/>
+                <com.fox.stockhelper.ui.view.StockIndexBlockView
                     android:layout_weight="1"
-                    android:gravity="center">
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/index_bg"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:paddingTop="@dimen/common_margin"
-                        android:paddingBottom="@dimen/common_margin"
-                        android:paddingLeft="@dimen/common_margin"
-                        android:paddingRight="@dimen/common_margin">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="上证指数"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/up"
-                            android:text="3215.89"/>
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/up"
-                                android:paddingLeft="@dimen/common_margin"
-                                android:paddingRight="@dimen/common_margin"
-                                android:text="25.89"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/up"
-                                android:paddingLeft="@dimen/common_margin"
-                                android:paddingRight="@dimen/common_margin"
-                                android:text="0.25%"/>
-                        </LinearLayout>
-                    </LinearLayout>
-                </RelativeLayout>
+                    android:gravity="center"
+                    app:name="深证成指"
+                    app:currentPrice="3568.15"
+                    app:yesterdayClosePrice="3500.1"/>
             </TableRow>
         </TableLayout>
         <!--模块分割线-->

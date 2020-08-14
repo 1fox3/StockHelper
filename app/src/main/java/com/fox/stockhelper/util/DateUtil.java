@@ -27,6 +27,10 @@ public class DateUtil {
      */
     public static final String TIME_FORMAT_1 = "yyyy-MM-dd HH:mm:ss";
     public static final String TIME_FORMAT_2 = "HH:mm:ss";
+    /**
+     * 星期格式
+     */
+    public static final String WEEK_STR = "EEEE";
 
     /**
      * 格式类
@@ -224,5 +228,15 @@ public class DateUtil {
         }
         String secondTimestamp = String.valueOf(date.getTime()/1000);
         return Integer.valueOf(secondTimestamp);
+    }
+
+    /**
+     * 获取星期
+     * @return
+     */
+    public static String getCurrentWeekNum() {
+        simpleDateFormat.applyPattern(WEEK_STR);
+        Date date = new Date();
+        return simpleDateFormat.format(date);
     }
 }
