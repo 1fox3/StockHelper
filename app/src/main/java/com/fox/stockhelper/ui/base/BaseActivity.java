@@ -13,14 +13,15 @@ import androidx.appcompat.app.AppCompatActivity;
 /**
  * Activity基类
  * @author lusongsong
+ * @date 2020-08-19
  */
 public class BaseActivity  extends AppCompatActivity {
     /**
-     * 登录的session，sp保存key
+     * 登录的session,sp保存key
      */
     static final String SP_LOGIN_SESSION = "login_session";
     /**
-     * 登录的过期时间，sp保存key
+     * 登录的过期时间,sp保存key
      */
     static final String SP_LOGIN_EXPIRE_TIME = "login_expire_time";
     /**
@@ -62,12 +63,10 @@ public class BaseActivity  extends AppCompatActivity {
      * @param expireTime
      */
     protected void setLoginSession(String sessionId, int expireTime) {
-        Log.e("setSession", sessionId);
-        Log.e("setSession", String.valueOf(expireTime));
-        this.sessionId = sessionId;
-        this.expireTime = DateUtil.secondTimestamp() + expireTime;
-        spEditor.putString(BaseActivity.SP_LOGIN_SESSION, this.sessionId);
-        spEditor.putInt(BaseActivity.SP_LOGIN_EXPIRE_TIME, this.expireTime);
+        BaseActivity.sessionId = sessionId;
+        BaseActivity.expireTime = DateUtil.secondTimestamp() + expireTime;
+        spEditor.putString(BaseActivity.SP_LOGIN_SESSION, BaseActivity.sessionId);
+        spEditor.putInt(BaseActivity.SP_LOGIN_EXPIRE_TIME, BaseActivity.expireTime);
         spEditor.commit();
     }
 
@@ -76,8 +75,8 @@ public class BaseActivity  extends AppCompatActivity {
      * @return
      */
     protected String getLoginSession() {
-        Log.e("getLoginSession", this.sessionId);
-        return this.sessionId;
+        Log.e("getLoginSession", BaseActivity.sessionId);
+        return BaseActivity.sessionId;
     }
 
     @Override

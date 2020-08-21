@@ -13,4 +13,8 @@ public class MsgWhatConfig {
      * 登录
      */
     public static final int LOGIN = 2;
+    /**
+     * 股市状态
+     */
+    public static final int SM_STATUS = 3;
 }

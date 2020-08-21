@@ -9,7 +9,7 @@ import com.fox.stockhelper.entity.dto.api.login.LoginApiDto;
  */
 public class LoginApi extends BaseApi {
     public LoginApi() {
-        url = "login/login";
+        url = "stockhelper/login/login";
         method = METHOD_POST;
         requestParamKeys = new String[]{"account", "verifyCode"};
         dataClass = LoginApiDto.class;

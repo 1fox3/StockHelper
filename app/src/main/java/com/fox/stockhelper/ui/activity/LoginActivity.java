@@ -20,7 +20,8 @@ import com.fox.stockhelper.config.MsgWhatConfig;
 import com.fox.stockhelper.entity.dto.api.login.LoginApiDto;
 import com.fox.stockhelper.exception.self.ApiException;
 import com.fox.stockhelper.ui.base.BaseActivity;
-import com.fox.stockhelper.ui.handler.LoginHandler;
+import com.fox.stockhelper.ui.handler.CommonHandler;
+import com.fox.stockhelper.ui.listener.CommonHandleListener;
 import com.fox.stockhelper.util.ParamCheckUtil;
 
 import java.util.HashMap;
@@ -36,7 +37,7 @@ import butterknife.OnTextChanged;
  *
  * @author lusongsong
  */
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity implements CommonHandleListener {
     /**
      * 是否记住账号key
      */
@@ -85,7 +86,7 @@ public class LoginActivity extends BaseActivity {
     /**
      * 消息处理
      */
-    Handler handler;
+    Handler handler = new CommonHandler(this);
     /**
      * 启动登录界面的ui
      */
@@ -97,7 +98,6 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(LoginActivity.this);
         context = getApplicationContext();
-        handler = new LoginHandler(this);;
         accountSave = sharedPreferences.getBoolean(ACCOUNT_SAVE, true);
         saveAccountCB.setChecked(accountSave);
         String account = sharedPreferences.getString(ACCOUNT_LOGIN, "");
@@ -262,5 +262,24 @@ public class LoginActivity extends BaseActivity {
             handler.sendMessage(msg);
         };
         new Thread(loginRunnable).start();
+    }
+
+    /**
+     * 消息处理
+     * @param message
+     */
+    @Override
+    public void handleMessage(Message message) {
+        Bundle bundle = message.getData();
+        String msg = bundle.getString("message");
+        switch (message.what) {
+            case MsgWhatConfig.SEND_CODE:
+                this.toast(msg);
+                break;
+            case MsgWhatConfig.LOGIN:
+                this.toast(msg);
+                this.loginFinish();
+                break;
+        }
     }
 }

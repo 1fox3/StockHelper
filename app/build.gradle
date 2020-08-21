@@ -26,19 +26,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    //代码风格检查
-    apply plugin: 'checkstyle'
-    task checkstyle(type: Checkstyle) {
-        source 'src'
-        include '**/*.java'
-        include '**/*.xml'
-        exclude '**/gen/**'
-        exclude '**/test/**'
-        exclude '**/androidTest/**'
-        configFile new File(rootDir, "checkstyle.xml")
-        classpath = files()
-    }
 }
 
 dependencies {

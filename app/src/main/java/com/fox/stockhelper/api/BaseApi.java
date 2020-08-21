@@ -27,7 +27,7 @@ public class BaseApi {
     /**
      * 接口域名
      */
-    protected String host = "http://api.1fox3.com/stockhelper/";
+    protected String host = "http://api.1fox3.com/";
     /**
      * 接口
      */

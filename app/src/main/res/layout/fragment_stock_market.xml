@@ -17,10 +17,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
+                android:id="@+id/smStatusIV"
                 android:layout_width="25dp"
                 android:layout_height="match_parent"
                 android:src="@drawable/sm_status_open"/>
             <TextView
+                android:id="@+id/smStatusTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sm_status_open"
