@@ -25,6 +25,7 @@
     <string name="sm_status_compete">竞价中</string>
     <string name="sm_status_init">未开盘</string>
     <string name="sm_status_noon">午间休息</string>
+    <string name="sm_status_soon">即将开盘</string>
     <!--股票术语-->
     <string name="s_max_up">涨停</string>
     <string name="s_max_down">跌停</string>

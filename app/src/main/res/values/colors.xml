@@ -8,7 +8,7 @@
     <!--涨平跌主色调-->
     <color name="up">#FFE7281A</color>
     <color name="flat">#FF2F2C2C</color>
-    <color name="down">#FF36EE36</color>
+    <color name="down">#35A635</color>
     <!--首页底部背景色-->
     <color name="home_bottom_bg">#2F2C2C</color>
     <color name="home_bottom_selected_bg">#FFE7281A</color>

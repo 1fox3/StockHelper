@@ -11,10 +11,6 @@ import java.util.Map;
 
 import androidx.annotation.Nullable;
 
-import static android.graphics.Color.GRAY;
-import static android.graphics.Color.GREEN;
-import static android.graphics.Color.RED;
-
 public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextView {
     /**
      * 数值计量单位范围
@@ -117,11 +113,11 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
         }
         if (null != value) {
             if (0.0 < value) {
-                this.setTextColor(RED);
+                this.setTextColor(this.getContext().getColor(R.color.up));
             } else if (0.0 > value) {
-                this.setTextColor(GREEN);
+                this.setTextColor(this.getContext().getColor(R.color.down));
             } else {
-                this.setTextColor(GRAY);
+                this.setTextColor(this.getContext().getColor(R.color.flat));
             }
         }
     }

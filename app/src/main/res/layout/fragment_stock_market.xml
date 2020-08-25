@@ -47,31 +47,20 @@
                 android:text="星期五"/>
         </LinearLayout>
         <!--重点指数-->
-        <TableLayout
+        <LinearLayout
+            android:id="@+id/topIndexLL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_horizontal_margin">
-            <TableRow>
-                <com.fox.stockhelper.ui.view.StockIndexBlockView
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    app:name="深证成指"
-                    app:currentPrice="3568.15"
-                    app:yesterdayClosePrice="3500.1"/>
-                <com.fox.stockhelper.ui.view.StockIndexBlockView
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    app:name="深证成指"
-                    app:currentPrice="3568.15"
-                    app:yesterdayClosePrice="3500.1"/>
-                <com.fox.stockhelper.ui.view.StockIndexBlockView
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    app:name="深证成指"
-                    app:currentPrice="3568.15"
-                    app:yesterdayClosePrice="3500.1"/>
-            </TableRow>
-        </TableLayout>
+            android:orientation="horizontal">
+<!--            <com.fox.stockhelper.ui.view.StockIndexBlockView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:gravity="center"-->
+<!--                app:name="深证成指"-->
+<!--                app:currentPrice="3568.15"-->
+<!--                app:yesterdayClosePrice="3500.1"/>-->
+        </LinearLayout>
         <!--模块分割线-->
         <ImageView
                 android:layout_width="match_parent"
@@ -99,6 +88,7 @@
                     android:layout_marginLeft="@dimen/common_margin"
                     android:layout_marginRight="@dimen/common_margin"/>
                 <TextView
+                    android:id="@+id/smUSDownTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="124"
@@ -106,6 +96,7 @@
                     android:layout_marginLeft="@dimen/common_margin"
                     android:layout_marginRight="@dimen/common_margin"/>
                 <ImageView
+                    android:id="@+id/smUSDownIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="200"
@@ -113,6 +104,7 @@
                     android:scaleType="fitXY"
                     android:layout_marginLeft="@dimen/common_margin"/>
                 <ImageView
+                    android:id="@+id/smUSFlatIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1000"
@@ -121,6 +113,7 @@
                     android:layout_marginLeft="@dimen/close_margin"
                     android:layout_marginRight="@dimen/close_margin"/>
                 <ImageView
+                    android:id="@+id/smUSUpIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1000"
@@ -128,6 +121,7 @@
                     android:scaleType="fitXY"
                     android:layout_marginRight="@dimen/common_margin"/>
                 <TextView
+                    android:id="@+id/smUSUpTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="2224"
@@ -166,10 +160,11 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/s_max_up"/>
                             <TextView
+                                android:id="@+id/smUSUpLimitTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/up"
-                                android:text="48"/>
+                                android:text="0"/>
                         </LinearLayout>
                     </RelativeLayout>
                     <RelativeLayout
@@ -192,10 +187,11 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/s_max_down"/>
                             <TextView
+                                android:id="@+id/smUSDownLimitTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/up"
-                                android:text="6"/>
+                                android:text="0"/>
                         </LinearLayout>
                     </RelativeLayout>
                     <RelativeLayout
@@ -218,10 +214,11 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/s_flat"/>
                             <TextView
+                                android:id="@+id/smUSFlatTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/up"
-                                android:text="50"/>
+                                android:text="0"/>
                         </LinearLayout>
                     </RelativeLayout>
                 </TableRow>

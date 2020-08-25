@@ -392,7 +392,6 @@ public class HttpUtil {
         HttpURLConnection urlCon = null;
 
         try {
-            Log.e("url", this.getRequestUrl(requestBody));
             //初始化
             URL urlObj = new URL(this.getRequestUrl(requestBody));
             urlCon = (HttpURLConnection) urlObj.openConnection();
@@ -425,15 +424,8 @@ public class HttpUtil {
             }
             bw.close();
             return this.readResponse(urlCon);
-//        } catch (MalformedURLException e) {
-//            Log.e("HttpUtilMalformedURLException", e.getMessage());
-//            throw new ApiException(1, e.getMessage());
-//        } catch (IOException e) {
-//            Log.e("HttpUtilIOException", e.getMessage());
-//            throw new ApiException(1, e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-//            Log.e("HttpUtilException", e.getMessage());
             throw new ApiException(1, e.getMessage());
         }
     }
@@ -464,18 +456,8 @@ public class HttpUtil {
             Log.e("header", urlCon.getHeaderFields().toString());
             return new HttpResponseDto(urlCon.getResponseCode(), urlCon.getResponseMessage(),
                     urlCon.getHeaderFields(), urlCon.getURL().toString(), response);
-//        } catch (NetworkOnMainThreadException e) {
-//            Log.e("sss", e.getClass().toString());
-//            throw new ApiException(1, e.getCause().getMessage());
-//        } catch (UnsupportedEncodingException e) {
-//            Log.e("sss", e.getClass().toString());
-//            throw new ApiException(1, e.getClass().toString());
-//        } catch (IOException e) {
-//            Log.e("sss", e.getClass().toString());
-//            throw new ApiException(1, e.getClass().toString());
         } catch (Exception e) {
             e.printStackTrace();
-//            Log.e("sss", e.getClass().toString());
             throw new ApiException(1, "q");
         } finally {
             urlCon.disconnect();

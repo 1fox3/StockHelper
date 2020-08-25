@@ -36,6 +36,10 @@ public class StockMarketStatusConst {
      * 中午休息
      */
     public static final int NOON = 6;
+    /**
+     * 即将开盘
+     */
+    public static final int SOON = 7;
 
     /**
      * 状态信息
@@ -48,6 +52,7 @@ public class StockMarketStatusConst {
             {R.drawable.sm_status_compete, R.string.sm_status_compete},
             {R.drawable.sm_status_init, R.string.sm_status_init},
             {R.drawable.sm_status_noon, R.string.sm_status_noon},
+            {R.drawable.sm_status_soon, R.string.sm_status_soon},
     };
 
     /**

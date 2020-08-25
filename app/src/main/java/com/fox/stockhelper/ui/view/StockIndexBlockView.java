@@ -13,10 +13,11 @@ import com.fox.stockhelper.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.graphics.Color.GRAY;
-import static android.graphics.Color.GREEN;
-import static android.graphics.Color.RED;
-
+/**
+ * top指标组件
+ * @author lusongsong
+ * @date 2020-08-24 14:14
+ */
 public class StockIndexBlockView extends RelativeLayout {
     /**
      * 显示名称
@@ -98,27 +99,14 @@ public class StockIndexBlockView extends RelativeLayout {
     /**
      * 初始化view
      */
-    private void initView() {
+    public void initView() {
         View view = LayoutInflater.from(this.getContext()).inflate(
                 R.layout.view_stock_index_block, this, true
         );
         ButterKnife.bind(this, view);
 
-        nameTV.setText(name);
-        if (currentPrice > 0 && yesterdayClosePrice > 0) {
-            float uptickPrice = currentPrice - yesterdayClosePrice;
-            float uptickRate = uptickPrice / yesterdayClosePrice;
-            currentPriceTV.setText(getNumberStr(currentPrice));
-            uptickPriceTV.setText((uptickPrice > 0 ? "+" : "") + getNumberStr(uptickPrice));
-            uptickRateTV.setText((uptickRate > 0 ? "+" : "") + getNumberStr(uptickRate * 100) + "%");
-            if (0.0 < uptickPrice) {
-                this.setTextColor(RED);
-            } else if (0.0 > uptickPrice) {
-                this.setTextColor(GREEN);
-            } else {
-                this.setTextColor(GRAY);
-            }
-        }
+        this.showName();
+        this.showValue();
     }
 
     /**
@@ -138,5 +126,61 @@ public class StockIndexBlockView extends RelativeLayout {
         currentPriceTV.setTextColor(color);
         uptickPriceTV.setTextColor(color);
         uptickRateTV.setTextColor(color);
+    }
+
+    /**
+     * 设置名称
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+        nameTV.setText(name);
+    }
+
+    /**
+     * 设置当前价格
+     * @param currentPrice
+     */
+    public void setCurrentPrice(Float currentPrice) {
+        this.currentPrice = currentPrice;
+        this.showValue();
+    }
+
+    /**
+     * 设置昨日收盘价格
+     * @param yesterdayClosePrice
+     */
+    public void setYesterdayClosePrice(Float yesterdayClosePrice) {
+        this.yesterdayClosePrice = yesterdayClosePrice;
+        this.showValue();
+    }
+
+    /**
+     * 显示名称
+     */
+    public void showName() {
+        nameTV.setText(null == name ? "" : name);
+    }
+
+
+    /**
+     * 显示数值
+     */
+    public void showValue() {
+        if (null != currentPrice && null != yesterdayClosePrice
+                && currentPrice > 0 && yesterdayClosePrice > 0) {
+            float uptickPrice = currentPrice - yesterdayClosePrice;
+            float uptickRate = uptickPrice / yesterdayClosePrice;
+            currentPriceTV.setText(getNumberStr(currentPrice));
+            uptickPriceTV.setText((uptickPrice > 0 ? "+" : "") + getNumberStr(uptickPrice));
+            uptickRateTV.setText((uptickRate > 0 ? "+" : "") + getNumberStr(uptickRate * 100) + "%");
+            if (0.0 < uptickPrice) {
+                this.setTextColor(this.getContext().getColor(R.color.up));
+            } else if (0.0 > uptickPrice) {
+                this.setTextColor(this.getContext().getColor(R.color.down));
+            } else {
+                this.setTextColor(this.getContext().getColor(R.color.flat));
+            }
+        }
     }
 }

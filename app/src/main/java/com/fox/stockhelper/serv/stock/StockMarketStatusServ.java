@@ -34,7 +34,7 @@ public class StockMarketStatusServ {
                 } else if (15 <= minutes && minutes < 25) {
                     return StockMarketStatusConst.COMPETE;
                 } else if (25 <= minutes && minutes < 30) {
-                    return StockMarketStatusConst.UNKNOWN;
+                    return StockMarketStatusConst.SOON;
                 } else {
                     return StockMarketStatusConst.OPEN;
                 }

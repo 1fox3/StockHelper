@@ -2,6 +2,7 @@ package com.fox.stockhelper.api;
 
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fox.stockhelper.entity.dto.api.ApiDto;
 import com.fox.stockhelper.entity.dto.http.HttpResponseDto;
@@ -10,6 +11,7 @@ import com.fox.stockhelper.util.HttpUtil;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -60,6 +62,10 @@ public class BaseApi {
      * 响应数据对应的类
      */
     protected Class dataClass;
+    /**
+     * 返回数据是否为列表
+     */
+    protected boolean isListData = false;
     /**
      * 请求的参数key
      */
@@ -119,7 +125,12 @@ public class BaseApi {
             if (0 != apiDto.getCode()) {
                 throw new ApiException(apiDto.getCode(), apiDto.getMsg());
             }
-            return new ObjectMapper().readValue(JSONObject.toJSONString(this.data), this.dataClass);
+            ObjectMapper objectMapper = new ObjectMapper();
+            if (isListData) {
+                JavaType javaType = objectMapper.getTypeFactory().constructParametricType(ArrayList.class, this.dataClass);
+                return objectMapper.readValue(JSONObject.toJSONString(this.data), javaType);
+            }
+            return objectMapper.readValue(JSONObject.toJSONString(this.data), this.dataClass);
         } catch (ApiException e) {
             throw new ApiException(1, e.getMessage());
         } catch (IOException e) {

@@ -33,6 +33,21 @@ public class DateUtil {
     public static final String WEEK_STR = "EEEE";
 
     /**
+     * 小时格式
+     */
+    public static final String HOUR_FORMAT_1 = "HH";
+
+    /**
+     * 分钟格式
+     */
+    public static final String MINUTE_FORMAT_1 = "mm";
+
+    /**
+     * 秒格式
+     */
+    public static final String SECOND_FORMAT_1 = "ss";
+
+    /**
      * 格式类
      */
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
