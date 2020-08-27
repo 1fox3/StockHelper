@@ -29,4 +29,8 @@ public class UptickRateStatisticsApiDto {
      * 平
      */
     private Integer flat;
+    /**
+     * 停牌
+     */
+    private Integer stop;
 }

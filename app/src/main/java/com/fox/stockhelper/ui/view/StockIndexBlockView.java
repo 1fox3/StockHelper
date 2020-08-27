@@ -138,19 +138,12 @@ public class StockIndexBlockView extends RelativeLayout {
     }
 
     /**
-     * 设置当前价格
+     * 设置价格
      * @param currentPrice
-     */
-    public void setCurrentPrice(Float currentPrice) {
-        this.currentPrice = currentPrice;
-        this.showValue();
-    }
-
-    /**
-     * 设置昨日收盘价格
      * @param yesterdayClosePrice
      */
-    public void setYesterdayClosePrice(Float yesterdayClosePrice) {
+    public void setPrice(Float currentPrice, Float yesterdayClosePrice) {
+        this.currentPrice = currentPrice;
         this.yesterdayClosePrice = yesterdayClosePrice;
         this.showValue();
     }

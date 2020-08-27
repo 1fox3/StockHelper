@@ -27,6 +27,7 @@ import com.fox.stockhelper.serv.stock.StockMarketStatusServ;
 import com.fox.stockhelper.ui.base.BaseFragment;
 import com.fox.stockhelper.ui.handler.CommonHandler;
 import com.fox.stockhelper.ui.listener.CommonHandleListener;
+import com.fox.stockhelper.ui.view.SortTextView;
 import com.fox.stockhelper.ui.view.StockIndexBlockView;
 import com.fox.stockhelper.util.DateUtil;
 
@@ -121,6 +122,37 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
      */
     @BindView(R.id.smUSDownLimitTV)
     TextView smUSDownLimitTV;
+
+    /**
+     * 价格排序
+     */
+    @BindView(R.id.priceSTV)
+    SortTextView priceSTV;
+    /**
+     * 增幅排序
+     */
+    @BindView(R.id.uptickRateSTV)
+    SortTextView uptickRateSTV;
+    /**
+     * 波动排序
+     */
+    @BindView(R.id.surgeRateSTV)
+    SortTextView surgeRateSTV;
+    /**
+     * 成交量排序
+     */
+    @BindView(R.id.dealNumSTV)
+    SortTextView dealNumSTV;
+    /**
+     * 成交金额排序
+     */
+    @BindView(R.id.dealMoneySTV)
+    SortTextView dealMoneySTV;
+
+    /**
+     * 排序可选项
+     */
+    SortTextView[] sortTextViews;
     /**
      * top指标ui
      */
@@ -145,6 +177,13 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_stock_market, null);
         ButterKnife.bind(this, view);
+        sortTextViews = new SortTextView[] {
+                priceSTV,
+                uptickRateSTV,
+                surgeRateSTV,
+                dealNumSTV,
+                dealMoneySTV
+        };
         //显示时间
         this.initDate();
         //股市状态
@@ -153,6 +192,8 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
         this.handleStockMarketTopIndex();
         //涨跌统计
         this.handleStockMarketStatistics();
+        //设置排序监听方法
+        this.setSortClickListener();
         return view;
     }
 
@@ -200,17 +241,21 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                                             ViewGroup.LayoutParams.MATCH_PARENT,
                                             1)
                             );
-                            stockIndexBlockView.setGravity(RelativeLayout.CENTER_IN_PARENT);
+                            //xml中的center数值是0x11，与RelativeLayout.END_OF(17)等价
+                            stockIndexBlockView.setGravity(RelativeLayout.END_OF);
                             stockIndexBlockView.setName(topIndexApiDto.getStockName());
-                            stockIndexBlockView.setCurrentPrice(topIndexApiDto.getCurrentPrice());
-                            stockIndexBlockView.setYesterdayClosePrice(
+                            stockIndexBlockView.setPrice(
+                                    topIndexApiDto.getCurrentPrice(),
                                     topIndexApiDto.getYesterdayClosePrice()
                             );
                             topIndexMap.put(stockId, stockIndexBlockView);
                             topIndexLL.addView(stockIndexBlockView);
                         } else {
                             stockIndexBlockView = topIndexMap.get(stockId);
-                            stockIndexBlockView.setCurrentPrice(topIndexApiDto.getCurrentPrice());
+                            stockIndexBlockView.setPrice(
+                                    topIndexApiDto.getCurrentPrice(),
+                                    topIndexApiDto.getYesterdayClosePrice()
+                            );
                         }
                     }
                 } catch (RuntimeException e) {
@@ -284,9 +329,9 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
     }
 
     /**
-     * 处理涨跌统计
+     * 处理顶部指指数
      */
-    private void handleStockMarketStatistics() {
+    private void handleStockMarketTopIndex() {
         Runnable stockMarketStatusRunnable = new Runnable() {
             @SneakyThrows
             @Override
@@ -316,9 +361,9 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
     }
 
     /**
-     * 处理顶部指指数
+     * 处理涨跌统计
      */
-    private void handleStockMarketTopIndex() {
+    private void handleStockMarketStatistics() {
         Runnable stockMarketStatisticsRunnable = new Runnable() {
             @SneakyThrows
             @Override
@@ -340,11 +385,30 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                         msg.setData(bundle);
                         handler.sendMessage(msg);
                     }
-                    Thread.sleep(3000);
+                    Thread.sleep(10000);
                 }
             }
         };
         Thread thread = new Thread(stockMarketStatisticsRunnable);
         thread.start();
+    }
+
+    /**
+     * 排序设置OnClickListener
+     */
+    public void setSortClickListener() {
+        for (SortTextView sortTextView : sortTextViews) {
+            sortTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int id = view.getId();
+                    for (SortTextView sortTextView : sortTextViews) {
+                        if (id != sortTextView.getId()) {
+                            sortTextView.reset();
+                        }
+                    }
+                }
+            });
+        }
     }
 }

@@ -41,7 +41,7 @@ public class StockMarketStatusServ {
             } else if (10 <= hour && hour < 11) {
                 return StockMarketStatusConst.OPEN;
             } else if (11 <= hour && hour < 12) {
-                if (30 <= minutes) {
+                if (30 > minutes) {
                     return StockMarketStatusConst.OPEN;
                 } else {
                     return StockMarketStatusConst.NOON;

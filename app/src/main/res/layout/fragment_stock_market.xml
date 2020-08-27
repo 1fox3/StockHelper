@@ -52,14 +52,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-<!--            <com.fox.stockhelper.ui.view.StockIndexBlockView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:gravity="center"-->
-<!--                app:name="深证成指"-->
-<!--                app:currentPrice="3568.15"-->
-<!--                app:yesterdayClosePrice="3500.1"/>-->
         </LinearLayout>
         <!--模块分割线-->
         <ImageView
@@ -91,7 +83,7 @@
                     android:id="@+id/smUSDownTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="124"
+                    android:text="0"
                     android:textColor="@color/down"
                     android:layout_marginLeft="@dimen/common_margin"
                     android:layout_marginRight="@dimen/common_margin"/>
@@ -99,7 +91,7 @@
                     android:id="@+id/smUSDownIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="200"
+                    android:layout_weight="1"
                     android:src="@drawable/stock_down_shape"
                     android:scaleType="fitXY"
                     android:layout_marginLeft="@dimen/common_margin"/>
@@ -107,7 +99,7 @@
                     android:id="@+id/smUSFlatIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1000"
+                    android:layout_weight="1"
                     android:src="@drawable/stock_flat_shape"
                     android:scaleType="fitXY"
                     android:layout_marginLeft="@dimen/close_margin"
@@ -116,7 +108,7 @@
                     android:id="@+id/smUSUpIV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1000"
+                    android:layout_weight="1"
                     android:src="@drawable/stock_up_shape"
                     android:scaleType="fitXY"
                     android:layout_marginRight="@dimen/common_margin"/>
@@ -124,7 +116,7 @@
                     android:id="@+id/smUSUpTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2224"
+                    android:text="0"
                     android:textColor="@color/up"
                     android:layout_marginLeft="@dimen/common_margin"
                     android:layout_marginRight="@dimen/common_margin"/>
@@ -251,36 +243,41 @@
                 android:textSize="@dimen/ui_text_size_common"
                 android:text="股票"/>
             <com.fox.stockhelper.ui.view.SortTextView
-                android:id="@+id/priceSortText"
+                android:id="@+id/priceSTV"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:text="价格"/>
             <com.fox.stockhelper.ui.view.SortTextView
-                android:id="@+id/uptickRateSortText"
+                android:id="@+id/uptickRateSTV"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:text="涨幅"/>
             <com.fox.stockhelper.ui.view.SortTextView
-                android:id="@+id/surgeRateText"
+                android:id="@+id/surgeRateSTV"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:text="波动"/>
             <com.fox.stockhelper.ui.view.SortTextView
-                android:id="@+id/dealNumSortText"
+                android:id="@+id/dealNumSTV"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:text="成交量"/>
             <com.fox.stockhelper.ui.view.SortTextView
-                android:id="@+id/dealMoneyText"
+                android:id="@+id/dealMoneySTV"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:text="成交额"/>
         </LinearLayout>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </ListView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

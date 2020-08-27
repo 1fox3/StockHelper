@@ -3,6 +3,7 @@ package com.fox.stockhelper.ui.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,12 @@ import android.widget.TextView;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.ui.listener.SortTextListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * 排序文案
@@ -80,6 +83,10 @@ public class SortTextView extends LinearLayout {
      * 图片是否已显示
      */
     Boolean imgIsShow = false;
+    /**
+     * 单击事件监听器列表
+     */
+    List<OnClickListener> onClickListenerList;
 
     /**
      * 构造方法
@@ -151,6 +158,8 @@ public class SortTextView extends LinearLayout {
         if (0 != defaultImg) {
             this.changeImg(defaultImg);
         }
+        //点击事件监听
+        this.initOnClicked();
         return view;
     }
 
@@ -173,12 +182,13 @@ public class SortTextView extends LinearLayout {
      * @param imgId
      */
     private void changeImg(int imgId) {
-        sortImgIV.setImageResource(imgId);
         //判断图片是否已加载
         if (!imgIsShow) {
+            this.initImageView();
             sortTextLL.addView(sortImgIV);
             imgIsShow = true;
         }
+        sortImgIV.setImageResource(imgId);
     }
 
     /**
@@ -199,19 +209,26 @@ public class SortTextView extends LinearLayout {
         }
     }
 
-    @OnClick(R.id.sortTextLL)
-    public void onViewClicked(View view) {
-        switch (currentSortType) {
-            case SortTextView.SORT_NO:
-            case SortTextView.SORT_ASC:
-                currentSortType = SortTextView.SORT_DESC;
-                this.handleAsc();
-                break;
-            case SortTextView.SORT_DESC:
-                currentSortType = SortTextView.SORT_ASC;
-                this.handleDesc();
-                break;
-        }
+    /**
+     * 增加点击事件箭筒
+     */
+    public void initOnClicked() {
+        this.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (currentSortType) {
+                    case SortTextView.SORT_NO:
+                    case SortTextView.SORT_ASC:
+                        currentSortType = SortTextView.SORT_DESC;
+                        handleAsc();
+                        break;
+                    case SortTextView.SORT_DESC:
+                        currentSortType = SortTextView.SORT_ASC;
+                        handleDesc();
+                        break;
+                }
+            }
+        });
     }
 
     /**
@@ -236,5 +253,25 @@ public class SortTextView extends LinearLayout {
         if (null != sortTextListener) {
             sortTextListener.desc(this);
         }
+    }
+
+    /**
+     * 允许添加过个ClickListener
+     * @param onClickListener
+     */
+    @Override
+    public void setOnClickListener(OnClickListener onClickListener) {
+        if (null == onClickListenerList) {
+            onClickListenerList = new ArrayList<>();
+        }
+        onClickListenerList.add(onClickListener);
+        super.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (OnClickListener clickListener : onClickListenerList){
+                    clickListener.onClick(view);
+                }
+            }
+        });
     }
 }
