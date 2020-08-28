@@ -11,26 +11,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fox.stockhelper.R;
+import com.fox.stockhelper.api.stock.realtime.RankApi;
 import com.fox.stockhelper.api.stock.realtime.TopIndexApi;
 import com.fox.stockhelper.api.stock.realtime.UptickRateStatisticsApi;
 import com.fox.stockhelper.config.MsgWhatConfig;
 import com.fox.stockhelper.constant.stock.StockMarketStatusConst;
+import com.fox.stockhelper.entity.dto.api.stock.realtime.RankApiDto;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.TopIndexApiDto;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.UptickRateStatisticsApiDto;
 import com.fox.stockhelper.serv.stock.StockMarketStatusServ;
+import com.fox.stockhelper.ui.adapter.StockRankAdapter;
 import com.fox.stockhelper.ui.base.BaseFragment;
 import com.fox.stockhelper.ui.handler.CommonHandler;
 import com.fox.stockhelper.ui.listener.CommonHandleListener;
 import com.fox.stockhelper.ui.view.SortTextView;
 import com.fox.stockhelper.ui.view.StockIndexBlockView;
+import com.fox.stockhelper.ui.view.StockRankInfoView;
 import com.fox.stockhelper.util.DateUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -148,6 +154,15 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
      */
     @BindView(R.id.dealMoneySTV)
     SortTextView dealMoneySTV;
+    /**
+     * 股票排行
+     */
+    @BindView(R.id.stockRankList)
+    ListView stockRankListLV;
+    /**
+     * 股票排行适配器
+     */
+    StockRankAdapter stockRankAdapter;
 
     /**
      * 排序可选项
@@ -161,6 +176,22 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
      * 消息处理
      */
     Handler handler = new CommonHandler(this);
+    /**
+     * 排序条件
+     */
+    String sortColumn = "price";
+    /**
+     * 排序类型
+     */
+    String sortType = "DESC";
+    /**
+     * 页码
+     */
+    int pageNum = 1;
+    /**
+     * 每页记录条数
+     */
+    int pageSize = 15;
 
     /**
      * 指定上下文和股市
@@ -194,6 +225,10 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
         this.handleStockMarketStatistics();
         //设置排序监听方法
         this.setSortClickListener();
+        //排行适配器
+        stockRankAdapter = new StockRankAdapter(this.getContext(), R.layout.view_stock_rank_info);
+        //初始化排行
+        this.handleStockMarketRank();
         return view;
     }
 
@@ -298,6 +333,31 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                     e.printStackTrace();
                     Log.e("uptickRateStatisticsException", e.getMessage());
                 }
+                break;
+            case MsgWhatConfig.STOCK_RANK:
+                String[] stockRankArr = bundle.getStringArray("stockRank");
+                try {
+                    List<StockRankInfoView> stockRankInfoViewList = new ArrayList<>();
+                    List<RankApiDto> rankApiDtoList = new ArrayList<>();
+                    for (String stockRankStr : stockRankArr) {
+                        RankApiDto rankApiDto =
+                                new ObjectMapper().readValue(stockRankStr, RankApiDto.class);
+                        rankApiDtoList.add(rankApiDto);
+                    }
+                    stockRankAdapter.clear();
+                    stockRankAdapter.addAll(rankApiDtoList);
+                    stockRankListLV.setAdapter(stockRankAdapter);
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                    Log.e("topIndexRuntimeException", e.getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("topIndexException", e.getMessage());
+                }
+                break;
+            case MsgWhatConfig.STOCK_RANK_FRESH:
+                Log.e("msgStockRankFresh", sortType);
+                this.handleStockMarketRank();
                 break;
         }
     }
@@ -407,8 +467,59 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                             sortTextView.reset();
                         }
                     }
+                    sortColumn = ((SortTextView)view).getSortColumn();
+                    int currentSortType = ((SortTextView)view).getSortType();
+                    if (currentSortType == SortTextView.SORT_ASC) {
+                        sortType = "ASC";
+                    } else {
+                        sortType = "DESC";
+                    }
+                    Message msg = new Message();
+                    msg.what = MsgWhatConfig.STOCK_RANK_FRESH;
+                    handler.sendMessage(msg);
+                    Log.e("stockRankFresh", sortColumn);
                 }
             });
         }
+    }
+
+    /**
+     * 获取股票排行线程
+     * @return
+     */
+    private Runnable getStockMarketRankRunnable() {
+        return new Runnable() {
+            @SneakyThrows
+            @Override
+            public void run() {
+                RankApi rankApi = new RankApi();
+                Map<String, Object> params = new HashMap<>();
+                params.put("type", sortColumn);
+                params.put("sortType", sortType);
+                params.put("pageNum", pageNum);
+                params.put("pageSize", pageSize);
+                rankApi.setParams(params);
+                List<RankApiDto> rankApiDtoList =  (List<RankApiDto>)rankApi.request();
+                String[] stockRankArr = new String[rankApiDtoList.size()];
+                for (int i = 0; i < rankApiDtoList.size(); i++) {
+                    stockRankArr[i] = JSONObject.toJSONString(rankApiDtoList.get(i));
+                }
+                Message msg = new Message();
+                msg.what = MsgWhatConfig.STOCK_RANK;
+                Bundle bundle = new Bundle();
+                bundle.putStringArray("stockRank", stockRankArr);
+                msg.setData(bundle);
+                handler.sendMessage(msg);
+            }
+        };
+    }
+
+    /**
+     * 初始化排行
+     */
+    private void handleStockMarketRank() {
+        Runnable stockMarketStatisticsRunnable = getStockMarketRankRunnable();
+        Thread thread = new Thread(stockMarketStatisticsRunnable);
+        thread.start();
     }
 }

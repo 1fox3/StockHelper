@@ -1,8 +1,8 @@
 <resources>
     <declare-styleable name="SortTextView">
         <attr name="text" format="string"></attr>
+        <attr name="sortColumn" format="string"></attr>
     </declare-styleable>
-
     <declare-styleable name="StockValueTextView">
         <attr name="value" format="string"></attr>
         <attr name="type" format="enum">
@@ -18,5 +18,14 @@
         <attr name="name" format="string"></attr>
         <attr name="currentPrice" format="float"></attr>
         <attr name="yesterdayClosePrice" format="float" />
+    </declare-styleable>
+    <declare-styleable name="StockRankInfoView">
+        <attr name="stockName" format="string"></attr>
+        <attr name="stockCode" format="string"></attr>
+        <attr name="stockPrice" format="float" />
+        <attr name="uptickRate" format="float" />
+        <attr name="surgeRate" format="float" />
+        <attr name="dealNum" format="float" />
+        <attr name="dealMoney" format="float" />
     </declare-styleable>
 </resources>

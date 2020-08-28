@@ -58,25 +58,39 @@ public class StockIndexBlockView extends RelativeLayout {
      */
     public StockIndexBlockView(Context context) {
         super(context);
+        this.bindLayout();
         this.initView();
     }
 
     public StockIndexBlockView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.bindLayout();
         this.initAttrs(attrs);
         this.initView();
     }
 
     public StockIndexBlockView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.bindLayout();
         this.initAttrs(attrs);
         this.initView();
     }
 
     public StockIndexBlockView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        this.bindLayout();
         this.initAttrs(attrs);
         this.initView();
+    }
+
+    /**
+     * 绑定布局文件
+     */
+    private void bindLayout() {
+        View view = LayoutInflater.from(this.getContext()).inflate(
+                R.layout.view_stock_index_block, this, true
+        );
+        ButterKnife.bind(this, view);
     }
 
     /**
@@ -100,11 +114,6 @@ public class StockIndexBlockView extends RelativeLayout {
      * 初始化view
      */
     public void initView() {
-        View view = LayoutInflater.from(this.getContext()).inflate(
-                R.layout.view_stock_index_block, this, true
-        );
-        ButterKnife.bind(this, view);
-
         this.showName();
         this.showValue();
     }

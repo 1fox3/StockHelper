@@ -7,6 +7,7 @@
     tools:context="com.fox.stockhelper.ui.view.StockRankInfoView"
     android:layout_weight="1">
     <TextView
+        android:id="@+id/stockNameCode"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -14,6 +15,7 @@
         android:textSize="@dimen/ui_text_size_small"
         android:text="网达软件\n300030"/>
     <com.fox.stockhelper.ui.view.StockValueTextView
+        android:id="@+id/stockPrice"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -22,6 +24,7 @@
         app:value="1545.2"
         app:type="number"/>
     <com.fox.stockhelper.ui.view.StockValueTextView
+        android:id="@+id/stockUptickRate"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -30,6 +33,7 @@
         app:value="-1.2312"
         app:type="rate"/>
     <com.fox.stockhelper.ui.view.StockValueTextView
+        android:id="@+id/stockSurgeRate"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -38,6 +42,7 @@
         app:value="-0.0312"
         app:type="rate"/>
     <com.fox.stockhelper.ui.view.StockValueTextView
+        android:id="@+id/stockDealNum"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -46,6 +51,7 @@
         app:value="11212121212"
         app:type="number"/>
     <com.fox.stockhelper.ui.view.StockValueTextView
+        android:id="@+id/stockDealMoney"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

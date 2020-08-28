@@ -25,4 +25,12 @@ public class MsgWhatConfig {
      * 涨跌幅统计
      */
     public static final int UPTICK_RATE_STATISTICS = 5;
+    /**
+     * 股票排行
+     */
+    public static final int STOCK_RANK = 6;
+    /**
+     * 刷新股票排行
+     */
+    public static final int STOCK_RANK_FRESH = 7;
 }

@@ -240,68 +240,55 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textAlignment="center"
-                android:textSize="@dimen/ui_text_size_common"
+                android:textSize="@dimen/ui_text_size_small"
                 android:text="股票"/>
             <com.fox.stockhelper.ui.view.SortTextView
                 android:id="@+id/priceSTV"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:text="价格"/>
+                app:text="价格"
+                app:sortColumn="price"/>
             <com.fox.stockhelper.ui.view.SortTextView
                 android:id="@+id/uptickRateSTV"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:text="涨幅"/>
+                app:text="涨幅"
+                app:sortColumn="uptickRate"/>
             <com.fox.stockhelper.ui.view.SortTextView
                 android:id="@+id/surgeRateSTV"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:text="波动"/>
+                app:text="波动"
+                app:sortColumn="surgeRate"/>
             <com.fox.stockhelper.ui.view.SortTextView
                 android:id="@+id/dealNumSTV"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:text="成交量"/>
+                app:text="成交量"
+                app:sortColumn="dealNum"/>
             <com.fox.stockhelper.ui.view.SortTextView
                 android:id="@+id/dealMoneySTV"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:text="成交额"/>
+                app:text="成交额"
+                app:sortColumn="dealMoney"/>
         </LinearLayout>
         <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </ListView>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/stockRankList"
-            android:orientation="vertical">
-            <com.fox.stockhelper.ui.view.StockRankInfoView
-                android:id="@+id/stockinfo1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:background="#B7B7B7"/>
-            <com.fox.stockhelper.ui.view.StockRankInfoView
-                android:id="@+id/stockinfo2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:background="#B7B7B7"/>
-        </LinearLayout>
+            android:layout_width="match_parent"
+            android:layout_height="485dp">
+        </ListView>
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="60dp"/>
+            android:layout_height="wrap_content"
+            android:text="更多"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="70dp"/>
     </LinearLayout>
 </ScrollView>

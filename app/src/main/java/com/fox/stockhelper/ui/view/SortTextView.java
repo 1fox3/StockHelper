@@ -3,7 +3,6 @@ package com.fox.stockhelper.ui.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,15 +27,15 @@ public class SortTextView extends LinearLayout {
     /**
      * 未排序
      */
-    private static final int SORT_NO = -1;
+    public static final int SORT_NO = -1;
     /**
      * 升序
      */
-    private static final int SORT_ASC = 0;
+    public static final int SORT_ASC = 0;
     /**
      * 降序
      */
-    private static final int SORT_DESC = 1;
+    public static final int SORT_DESC = 1;
     /**
      * 当前排序方式
      */
@@ -65,6 +64,10 @@ public class SortTextView extends LinearLayout {
      * 降序图片
      */
     int descImg = R.drawable.arrow_down;
+    /**
+     * 排序字段
+     */
+    String sortColumn;
     /**
      * 整体布局
      */
@@ -139,6 +142,10 @@ public class SortTextView extends LinearLayout {
         if (null != text && !"".equals(text)) {
             this.sortTextStr = text;
         }
+        String sortColumn = typedArray.getString(R.styleable.SortTextView_sortColumn);
+        if (null != text && !"".equals(text)) {
+            this.sortColumn = sortColumn;
+        }
     }
 
     /**
@@ -206,6 +213,7 @@ public class SortTextView extends LinearLayout {
         sortImgIV.setImageResource(defaultImg);
         if (imgIsShow) {
             sortImgIV.setVisibility(View.GONE);
+            imgIsShow = false;
         }
     }
 
@@ -220,11 +228,11 @@ public class SortTextView extends LinearLayout {
                     case SortTextView.SORT_NO:
                     case SortTextView.SORT_ASC:
                         currentSortType = SortTextView.SORT_DESC;
-                        handleAsc();
+                        handleDesc();
                         break;
                     case SortTextView.SORT_DESC:
                         currentSortType = SortTextView.SORT_ASC;
-                        handleDesc();
+                        handleAsc();
                         break;
                 }
             }
@@ -273,5 +281,21 @@ public class SortTextView extends LinearLayout {
                 }
             }
         });
+    }
+
+    /**
+     * 排序字段
+     * @return
+     */
+    public String getSortColumn() {
+        return null == sortColumn ? "" : sortColumn;
+    }
+
+    /**
+     * 排序方式
+     * @return
+     */
+    public int getSortType() {
+        return currentSortType;
     }
 }

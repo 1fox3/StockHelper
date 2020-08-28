@@ -23,19 +23,19 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
     /**
      * 数值
      */
-    private static final int TYPE_NUMBER = 0;
+    public static final int TYPE_NUMBER = 0;
     /**
      * 百分比
      */
-    private static final int TYPE_RATE = 1;
+    public static final int TYPE_RATE = 1;
     /**
      * 计量单位数字
      */
-    private static final int UNIT_NUMBER = 0;
+    public static final int UNIT_NUMBER = 0;
     /**
      * 计量单位手
      */
-    private static final int UNIT_HAND = 1;
+    public static final int UNIT_HAND = 1;
     /**
      * 数值
      */
@@ -101,6 +101,19 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
                 R.styleable.StockValueTextView_unit,
                 StockValueTextView.UNIT_NUMBER
         );
+    }
+
+    /**
+     * 设置数值
+     * @param value
+     * @param type
+     * @param unit
+     */
+    public void setValue(double value, int type, int unit) {
+        this.value = value;
+        this.type = type;
+        this.unit = unit;
+        initView();
     }
 
     /**
