@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.fox.stockhelper.ui.fragment.StockMarketFragment">
+    tools:context=".ui.fragment.StockMarketFragment">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -285,9 +285,11 @@
             android:layout_height="485dp">
         </ListView>
         <TextView
+            android:id="@+id/stockRankMore"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="更多"/>
+            android:text="更多 >"
+            android:textAlignment="center"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="70dp"/>

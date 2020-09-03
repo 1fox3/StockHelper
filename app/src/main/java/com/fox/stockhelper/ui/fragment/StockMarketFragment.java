@@ -1,6 +1,7 @@
 package com.fox.stockhelper.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,12 +22,14 @@ import com.fox.stockhelper.R;
 import com.fox.stockhelper.api.stock.realtime.RankApi;
 import com.fox.stockhelper.api.stock.realtime.TopIndexApi;
 import com.fox.stockhelper.api.stock.realtime.UptickRateStatisticsApi;
+import com.fox.stockhelper.config.ActivityRequestCodeConfig;
 import com.fox.stockhelper.config.MsgWhatConfig;
 import com.fox.stockhelper.constant.stock.StockMarketStatusConst;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.RankApiDto;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.TopIndexApiDto;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.UptickRateStatisticsApiDto;
 import com.fox.stockhelper.serv.stock.StockMarketStatusServ;
+import com.fox.stockhelper.ui.activity.StockRankActivity;
 import com.fox.stockhelper.ui.adapter.StockRankAdapter;
 import com.fox.stockhelper.ui.base.BaseFragment;
 import com.fox.stockhelper.ui.handler.CommonHandler;
@@ -43,6 +46,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import lombok.SneakyThrows;
 
 /**
@@ -521,5 +525,16 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
         Runnable stockMarketStatisticsRunnable = getStockMarketRankRunnable();
         Thread thread = new Thread(stockMarketStatisticsRunnable);
         thread.start();
+    }
+
+    @OnClick({R.id.stockRankMore})
+    public void onViewClicked(View view) {
+        int id = view.getId();
+        switch (id) {
+            case R.id.stockRankMore:
+                Intent intent = new Intent(this.getContext(), StockRankActivity.class);
+                startActivityForResult(intent, ActivityRequestCodeConfig.STOCK_RANK_MORE);
+                break;
+        }
     }
 }

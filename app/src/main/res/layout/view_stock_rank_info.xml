@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.fox.stockhelper.ui.view.StockRankInfoView"
+    tools:context=".ui.view.StockRankInfoView"
     android:layout_weight="1">
     <TextView
         android:id="@+id/stockNameCode"

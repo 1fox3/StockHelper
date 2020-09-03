@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.fox.stockhelper.ui.view.SortTextView"
+    tools:context=".ui.view.SortTextView"
     android:gravity="center"
     android:id="@+id/sortTextLL">
     <TextView

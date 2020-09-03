@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/home_bottom_height"
     android:background="@color/home_bottom_bg"
-    tools:context="com.fox.stockhelper.ui.view.HomeBottomView">
+    tools:context=".ui.view.HomeBottomView">
     <LinearLayout
         android:id="@+id/trendL"
         android:layout_width="match_parent"
