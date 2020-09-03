@@ -2,6 +2,11 @@
     <declare-styleable name="SortTextView">
         <attr name="text" format="string"></attr>
         <attr name="sortColumn" format="string"></attr>
+        <attr name="sortType" format="enum">
+            <enum name="no" value="-1" />
+            <enum name="asc" value="0" />
+            <enum name="desc" value="1" />
+        </attr>
     </declare-styleable>
     <declare-styleable name="StockValueTextView">
         <attr name="value" format="string"></attr>

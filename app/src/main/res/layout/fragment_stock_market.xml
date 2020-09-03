@@ -248,7 +248,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:text="价格"
-                app:sortColumn="price"/>
+                app:sortColumn="price"
+                app:sortType="desc"/>
             <com.fox.stockhelper.ui.view.SortTextView
                 android:id="@+id/uptickRateSTV"
                 android:layout_width="0dp"

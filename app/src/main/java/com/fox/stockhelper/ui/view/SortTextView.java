@@ -146,6 +146,8 @@ public class SortTextView extends LinearLayout {
         if (null != text && !"".equals(text)) {
             this.sortColumn = sortColumn;
         }
+        int sortType = typedArray.getInt(R.styleable.SortTextView_sortType, SortTextView.SORT_NO);
+        currentSortType = sortType;
     }
 
     /**
@@ -161,6 +163,17 @@ public class SortTextView extends LinearLayout {
         this.initImageView();
         //文案
         sortTextTV.setText(sortTextStr);
+        switch (currentSortType) {
+            case SortTextView.SORT_NO:
+                defaultImg = noSortImg;
+                break;
+            case SortTextView.SORT_ASC:
+                defaultImg = ascImg;
+                break;
+            case SortTextView.SORT_DESC:
+                defaultImg = descImg;
+                break;
+        }
         //图片
         if (0 != defaultImg) {
             this.changeImg(defaultImg);
