@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context=".ui.activity.StockRankActivity">
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.StockRankActivity"
+    android:orientation="vertical">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="固定文本"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/stockRankHeaderRV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/stockRankListRV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-</RelativeLayout>
+</LinearLayout>
