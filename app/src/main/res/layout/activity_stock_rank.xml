@@ -1,56 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.StockRankActivity"
-    android:orientation="vertical">
+    android:orientation="horizontal"
+    tools:context=".ui.activity.StockRankActivity">
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="@dimen/stock_rank_item_width"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <TextView
-            android:layout_width="@dimen/stock_rank_item_width"
-            android:layout_height="match_parent"
-            android:textAlignment="center"
-            android:textSize="@dimen/ui_text_size_big"
-            android:text="股票名称"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/stockRankHeaderRV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:nestedScrollingEnabled="false"/>
+            android:text="股票名称"
+            android:textAlignment="center"
+            android:textSize="@dimen/ui_text_size_big" />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@android:color/darker_gray" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/stockRankNameRV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:nestedScrollingEnabled="false" />
     </LinearLayout>
-    <!--模块分割线-->
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:background="@android:color/darker_gray"/>
-    <LinearLayout
+    <HorizontalScrollView
+        android:id="@+id/stockRankValueSLHSV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.activity.StockRankActivity"
-        android:orientation="horizontal">
+        android:scrollbars="none">
         <LinearLayout
-            android:layout_width="@dimen/stock_rank_item_width"
-            android:layout_height="match_parent">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/stockRankNameRV"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:nestedScrollingEnabled="false"/>
-        </LinearLayout>
-        <com.fox.stockhelper.ui.view.ScrollListenerHorizontalScrollView
-            android:id="@+id/stockRankValueSLHSV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="none">
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.fox.stockhelper.ui.view.SortTextView
+                    android:layout_width="@dimen/stock_rank_item_width"
+                    android:layout_height="wrap_content"
+                    app:textSize="20"
+                    app:sortColumn="price"
+                    app:sortType="desc"
+                    app:text="价格" />
+                <com.fox.stockhelper.ui.view.SortTextView
+                    android:layout_width="@dimen/stock_rank_item_width"
+                    android:layout_height="wrap_content"
+                    app:textSize="20"
+                    app:sortColumn="uptickRate"
+                    app:text="涨幅" />
+                <com.fox.stockhelper.ui.view.SortTextView
+                    android:layout_width="@dimen/stock_rank_item_width"
+                    android:layout_height="wrap_content"
+                    app:textSize="20"
+                    app:sortColumn="surgeRate"
+                    app:text="波动" />
+                <com.fox.stockhelper.ui.view.SortTextView
+                    android:layout_width="@dimen/stock_rank_item_width"
+                    android:layout_height="wrap_content"
+                    app:textSize="20"
+                    app:sortColumn="dealNum"
+                    app:text="成交量" />
+                <com.fox.stockhelper.ui.view.SortTextView
+                    android:layout_width="@dimen/stock_rank_item_width"
+                    android:layout_height="wrap_content"
+                    app:textSize="20"
+                    app:sortColumn="dealMoney"
+                    app:text="成交额" />
+            </LinearLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:background="@android:color/darker_gray" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/stockRankValueRV"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:nestedScrollingEnabled="false"/>
-        </com.fox.stockhelper.ui.view.ScrollListenerHorizontalScrollView>
-    </LinearLayout>
+                android:nestedScrollingEnabled="false" />
+        </LinearLayout>
+    </HorizontalScrollView>
 </LinearLayout>

@@ -1,7 +1,7 @@
 <resources>
     <declare-styleable name="SortTextView">
         <attr name="text" format="string"></attr>
-        <attr name="textSize" format="float"></attr>
+        <attr name="textSize" format="integer"></attr>
         <attr name="sortColumn" format="string"></attr>
         <attr name="sortType" format="enum">
             <enum name="no" value="-1" />

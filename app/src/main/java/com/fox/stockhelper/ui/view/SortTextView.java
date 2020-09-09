@@ -52,7 +52,7 @@ public class SortTextView extends LinearLayout {
     /**
      * 字符大小
      */
-    float sortTextSize = 0;
+    int sortTextSize = 0;
     /**
      * 默认图片
      */
@@ -147,7 +147,7 @@ public class SortTextView extends LinearLayout {
         if (null != text && !"".equals(text)) {
             this.sortTextStr = text;
         }
-        float sortTextSize = typedArray.getFloat(R.styleable.SortTextView_textSize, 0.0f);
+        int sortTextSize = typedArray.getInt(R.styleable.SortTextView_textSize, 0);
         if (sortTextSize > 0) {
             this.sortTextSize = sortTextSize;
         }
@@ -173,7 +173,7 @@ public class SortTextView extends LinearLayout {
      * 设置文案
      * @param sortTextSize
      */
-    public void setSortTextSize(float sortTextSize) {
+    public void setSortTextSize(int sortTextSize) {
         this.sortTextSize = sortTextSize;
         //文案
         sortTextTV.setTextSize(TypedValue.COMPLEX_UNIT_SP, this.sortTextSize);

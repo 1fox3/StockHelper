@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.fox.stockhelper.ui.view.SortTextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/stockRankSortType"
-    android:layout_width="@dimen/stock_rank_item_width"
-    android:layout_height="wrap_content"
-    android:textSize="@dimen/ui_text_size_big"
-    android:text="固定文本" />
