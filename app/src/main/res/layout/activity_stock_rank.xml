@@ -16,7 +16,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/stockRankHeaderRV"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"/>
     </LinearLayout>
     <LinearLayout
@@ -26,7 +26,7 @@
         android:orientation="horizontal">
         <LinearLayout
             android:layout_width="@dimen/stock_rank_item_width"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/stockRankNameRV"
                 android:layout_width="match_parent"
@@ -35,13 +35,13 @@
         </LinearLayout>
         <com.fox.stockhelper.ui.view.ScrollListenerHorizontalScrollView
             android:id="@+id/stockRankValueSLHSV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:scrollbars="none">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/stockRankValueRV"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:nestedScrollingEnabled="false"/>
         </com.fox.stockhelper.ui.view.ScrollListenerHorizontalScrollView>
     </LinearLayout>

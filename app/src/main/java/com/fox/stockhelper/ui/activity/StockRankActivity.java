@@ -129,14 +129,14 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (R.id.stockRankHeaderRV != recyclerView.getId()) {
-                    if (1 == newState && 0 == mainVerticalScrollId) {
+                    if (0 != newState && 0 == mainVerticalScrollId) {
                         mainVerticalScrollId = recyclerView.getId();
                     }
                     if (0 == newState && 0 != mainVerticalScrollId && mainVerticalScrollId == recyclerView.getId()) {
                         mainVerticalScrollId = 0;
                     }
                 } else {
-                    if (1 == newState && 0 == mainHorizontalScrollId) {
+                    if (0 != newState && 0 == mainHorizontalScrollId) {
                         mainHorizontalScrollId = recyclerView.getId();
                     }
                     if (0 == newState && 0 != mainHorizontalScrollId && mainHorizontalScrollId == recyclerView.getId()) {
@@ -147,22 +147,18 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                Log.e("ScrollPos", String.valueOf(dx) + ":" + String.valueOf(dy));
                 switch (recyclerView.getId()) {
                     case R.id.stockRankHeaderRV:
-                        Log.e("ScrollView", "stockRankHeaderRV");
                         if (dx != 0 && dy == 0 && mainHorizontalScrollId == R.id.stockRankHeaderRV) {
                             stockRankValueSLHSV.scrollBy(dx, dy);
                         }
                         break;
                     case R.id.stockRankNameRV:
-                        Log.e("ScrollView", "stockRankNameRV");
                         if (dx == 0 && dy != 0 && mainVerticalScrollId == R.id.stockRankNameRV) {
                             stockRankValueRV.scrollBy(dx, dy);
                         }
                         break;
                     case R.id.stockRankValueRV:
-                        Log.e("ScrollView", "stockRankValueRV");
                         if (dx == 0 && dy != 0 && mainVerticalScrollId == R.id.stockRankValueRV) {
                             stockRankNameRV.scrollBy(dx, dy);
                         }
@@ -174,7 +170,6 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
 
     /**
      * 消息处理
-     *
      * @param message
      */
     @Override
@@ -185,7 +180,7 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
         return new ScrollListenerHorizontalScrollView.ScrollViewListener() {
             @Override
             public void onScrollStateChanged(int scrollType) {
-                Log.e("onScrollStateChanged", "ScrollViewListenerType:" + scrollType);
+                Log.e("scrollType", String.valueOf(scrollType));
                 if (0 != scrollType && 0 == mainVerticalScrollId) {
                     mainHorizontalScrollId = R.id.stockRankValueSLHSV;
                 }
@@ -196,7 +191,6 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
 
             @Override
             public void onScrolled(int dx) {
-                Log.e("onScrollStateChanged", "ScrollViewListenerPos:" + dx);
                 if (dx != 0 && mainHorizontalScrollId == R.id.stockRankValueSLHSV) {
                     stockRankHeaderRV.scrollBy(dx, 0);
                 }
