@@ -151,6 +151,16 @@ public class SortTextView extends LinearLayout {
     }
 
     /**
+     * 设置文案
+     * @param sortTextStr
+     */
+    public void setSortTextStr(String sortTextStr) {
+        this.sortTextStr = sortTextStr;
+        //文案
+        sortTextTV.setText(this.sortTextStr);
+    }
+
+    /**
      * 初始化组件
      * @return
      */

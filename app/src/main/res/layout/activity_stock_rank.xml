@@ -5,20 +5,44 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.StockRankActivity"
     android:orientation="vertical">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/stock_rank_item_width"
             android:layout_height="wrap_content"
-            android:text="固定文本"/>
+            android:textAlignment="center"
+            android:text="股票名称"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/stockRankHeaderRV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:nestedScrollingEnabled="false"/>
     </LinearLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/stockRankListRV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.activity.StockRankActivity"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="@dimen/stock_rank_item_width"
+            android:layout_height="wrap_content">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/stockRankNameRV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="false"/>
+        </LinearLayout>
+        <com.fox.stockhelper.ui.view.ScrollListenerHorizontalScrollView
+            android:id="@+id/stockRankValueSLHSV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/stockRankValueRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
+        </com.fox.stockhelper.ui.view.ScrollListenerHorizontalScrollView>
+    </LinearLayout>
 </LinearLayout>

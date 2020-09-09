@@ -15,5 +15,5 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
     }
 
-    public void setData(Object data) {}
+    public void setData(int position, Object data) {}
 }

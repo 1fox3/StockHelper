@@ -117,6 +117,15 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
     }
 
     /**
+     * 设置数值
+     * @param value
+     */
+    public void setValue(double value) {
+        this.value = value;
+        initView();
+    }
+
+    /**
      * 初始化显示
      */
     private void initView() {

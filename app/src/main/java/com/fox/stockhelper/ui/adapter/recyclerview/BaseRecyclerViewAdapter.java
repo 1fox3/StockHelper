@@ -1,5 +1,7 @@
 package com.fox.stockhelper.ui.adapter.recyclerview;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * @date 2020/9/3 17:01
  */
 public abstract class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
+    private Context context;
     /**
      * 列表数据
      */
@@ -34,7 +37,7 @@ public abstract class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseV
      */
     @Override
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
-        holder.setData(this.listData.get(position));
+        holder.setData(position, this.listData.get(position));
     }
 
     /**
@@ -44,5 +47,13 @@ public abstract class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseV
     @Override
     public int getItemCount() {
         return null == listData ? 0 : listData.size();
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public Context getContext() {
+        return this.context;
     }
 }

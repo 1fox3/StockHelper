@@ -1,16 +1,21 @@
 package com.fox.stockhelper.ui.activity;
 
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
-import android.view.View;
 
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.RankApiDto;
 import com.fox.stockhelper.ui.adapter.recyclerview.StockRankHeaderAdapter;
-import com.fox.stockhelper.ui.adapter.recyclerview.StockRankListAdapter;
+import com.fox.stockhelper.ui.adapter.recyclerview.StockRankNameAdapter;
+import com.fox.stockhelper.ui.adapter.recyclerview.StockRankValueAdapter;
 import com.fox.stockhelper.ui.base.BaseActivity;
+import com.fox.stockhelper.ui.handler.CommonHandler;
+import com.fox.stockhelper.ui.listener.CommonHandleListener;
+import com.fox.stockhelper.ui.view.ScrollListenerHorizontalScrollView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,79 +28,99 @@ import butterknife.ButterKnife;
  * @author lusongsong
  * @date 2020/9/3 14:51
  */
-public class StockRankActivity extends BaseActivity {
-    /**
-     * 排行头部
-     */
+public class StockRankActivity extends BaseActivity implements CommonHandleListener {
     @BindView(R.id.stockRankHeaderRV)
     RecyclerView stockRankHeaderRV;
+    @BindView(R.id.stockRankNameRV)
+    RecyclerView stockRankNameRV;
+    @BindView(R.id.stockRankValueSLHSV)
+    ScrollListenerHorizontalScrollView stockRankValueSLHSV;
+    @BindView(R.id.stockRankValueRV)
+    RecyclerView stockRankValueRV;
+
     /**
-     * 排行列表
+     * 当前主动滑动的id
      */
-    @BindView(R.id.stockRankListRV)
-    RecyclerView stockRankListRV;
-    /**
-     * 当前坐标
-     */
-    private int posX = 0;
-    private int posY = 0;
-    StockRankListAdapter listAdapter;
-    LinearLayoutManager listLinearLayoutManager;
+    private int mainHorizontalScrollId = 0;
+    private int mainVerticalScrollId = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_rank);
         ButterKnife.bind(StockRankActivity.this);
+        stockRankValueSLHSV.setHandler(new CommonHandler(this));
+        stockRankValueSLHSV.setOnScrollStateChangedListener(this.getOnScrollStateChangedListener());
         //初始化排行头部
         this.initStockRankHeaderRV();
-        //初始化排行列表
-        this.initStockRankListRV();
+        //初始化排行名称列表
+        this.initStockRankNameRV();
+        //初始化排行数值列表
+        this.initStockRankValueRV();
     }
 
     /**
      * 初始化排行头部
      */
     private void initStockRankHeaderRV() {
-        List<String> headerList = new ArrayList<>(5);
-        headerList.add("价格");
-        headerList.add("增幅");
-        headerList.add("波动");
-        headerList.add("成交量");
-        headerList.add("成交金额");
-        StockRankHeaderAdapter headerAdapter = new StockRankHeaderAdapter();
-        headerAdapter.addData(headerList);
+        List<String> rankHeaderList = Arrays.asList("价格", "增幅", "波动", "成交量", "成交金额");
+        StockRankHeaderAdapter stockRankHeaderAdapter = new StockRankHeaderAdapter();
+        stockRankHeaderAdapter.addData(rankHeaderList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         stockRankHeaderRV.setLayoutManager(linearLayoutManager);
         linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
-        stockRankHeaderRV.setAdapter(headerAdapter);
+        stockRankHeaderRV.setAdapter(stockRankHeaderAdapter);
         stockRankHeaderRV.addOnScrollListener(this.getRecyclerViewOnScrollListener());
     }
 
     /**
-     * 初始化排行列表
+     * 获取测试数据
+     * @return
      */
-    private void initStockRankListRV() {
-        int len = 50;
+    private List<RankApiDto> getRankTestValue() {
+        int len = 80;
         List<RankApiDto> apiDtoList = new ArrayList<>(len);
-        RankApiDto rankApiDto = new RankApiDto();
-        rankApiDto.setStockId(12);
-        rankApiDto.setStockName("同花顺");
-        rankApiDto.setStockCode("655080");
-        rankApiDto.setPrice(161.25f);
-        rankApiDto.setUptickRate(0.0865f);
-        rankApiDto.setSurgeRate(0.1865f);
-        rankApiDto.setDealNum(4421212165f);
-        rankApiDto.setDealMoney(112121221265f);
         for (int i = 0; i < len; i++) {
+            RankApiDto rankApiDto = new RankApiDto();
+            rankApiDto.setStockId(i + 1);
+            rankApiDto.setStockName("同花顺" + String.valueOf(i));
+            rankApiDto.setStockCode("655080");
+            rankApiDto.setPrice((float)i*10);
+            rankApiDto.setUptickRate(i * 0.1f);
+            rankApiDto.setSurgeRate((float)i * 0.2f);
+            rankApiDto.setDealNum((float)i* 10000f);
+            rankApiDto.setDealMoney((float)i* 100000f);
             apiDtoList.add(rankApiDto);
         }
-        listAdapter = new StockRankListAdapter();
-        listAdapter.addData(apiDtoList);
-        listLinearLayoutManager = new LinearLayoutManager(this);
-        stockRankListRV.setLayoutManager(listLinearLayoutManager);
-        listLinearLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        stockRankListRV.setAdapter(listAdapter);
-//        stockRankListRV.addOnScrollListener(this.getRecyclerViewOnScrollListener());
+        return apiDtoList;
+    }
+
+    /**
+     * 初始化排行名称头部
+     */
+    private void initStockRankNameRV() {
+        List<RankApiDto> apiDtoList = this.getRankTestValue();
+        StockRankNameAdapter stockRankNameAdapter = new StockRankNameAdapter();
+        stockRankNameAdapter.addData(apiDtoList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        stockRankNameRV.setLayoutManager(linearLayoutManager);
+        linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        stockRankNameRV.setAdapter(stockRankNameAdapter);
+        stockRankNameRV.addOnScrollListener(this.getRecyclerViewOnScrollListener());
+    }
+
+    /**
+     * 初始化排行数值头部
+     */
+    private void initStockRankValueRV() {
+        List<RankApiDto> apiDtoList = this.getRankTestValue();
+        StockRankValueAdapter stockRankValueAdapter = new StockRankValueAdapter();
+        stockRankValueAdapter.addData(apiDtoList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        stockRankValueRV.setLayoutManager(linearLayoutManager);
+        linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        stockRankValueRV.setAdapter(stockRankValueAdapter);
+        stockRankValueRV.addOnScrollListener(this.getRecyclerViewOnScrollListener());
     }
 
     private RecyclerView.OnScrollListener getRecyclerViewOnScrollListener() {
@@ -103,31 +128,77 @@ public class StockRankActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                Log.e("ScrollState", String.valueOf(newState));
+                if (R.id.stockRankHeaderRV != recyclerView.getId()) {
+                    if (1 == newState && 0 == mainVerticalScrollId) {
+                        mainVerticalScrollId = recyclerView.getId();
+                    }
+                    if (0 == newState && 0 != mainVerticalScrollId && mainVerticalScrollId == recyclerView.getId()) {
+                        mainVerticalScrollId = 0;
+                    }
+                } else {
+                    if (1 == newState && 0 == mainHorizontalScrollId) {
+                        mainHorizontalScrollId = recyclerView.getId();
+                    }
+                    if (0 == newState && 0 != mainHorizontalScrollId && mainHorizontalScrollId == recyclerView.getId()) {
+                        mainHorizontalScrollId = 0;
+                    }
+                }
             }
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                posX += dx;
-                posY += dy;
+                Log.e("ScrollPos", String.valueOf(dx) + ":" + String.valueOf(dy));
                 switch (recyclerView.getId()) {
                     case R.id.stockRankHeaderRV:
-                        int firstVisibleItem = listLinearLayoutManager.findFirstVisibleItemPosition();
-                        int lastVisibleItem = listLinearLayoutManager.findLastVisibleItemPosition();
-                        for (int i = firstVisibleItem; i <= lastVisibleItem; i++) {
-                            View view = listLinearLayoutManager.getChildAt(i);
-                            if (null == view) {
-                                continue;
-                            }
-                            RecyclerView stockRankItemRV = (RecyclerView) view.findViewById(R.id.stockRankItemRV);
-                            stockRankItemRV.scrollBy(dx, dy);
+                        Log.e("ScrollView", "stockRankHeaderRV");
+                        if (dx != 0 && dy == 0 && mainHorizontalScrollId == R.id.stockRankHeaderRV) {
+                            stockRankValueSLHSV.scrollBy(dx, dy);
                         }
-                        Log.e("StockRankActivity", String.valueOf(posX));
-                        listAdapter.setPosX(posX);
                         break;
-                    case R.id.stockRankListRV:
-                        stockRankHeaderRV.scrollBy(dx, dy);
+                    case R.id.stockRankNameRV:
+                        Log.e("ScrollView", "stockRankNameRV");
+                        if (dx == 0 && dy != 0 && mainVerticalScrollId == R.id.stockRankNameRV) {
+                            stockRankValueRV.scrollBy(dx, dy);
+                        }
                         break;
+                    case R.id.stockRankValueRV:
+                        Log.e("ScrollView", "stockRankValueRV");
+                        if (dx == 0 && dy != 0 && mainVerticalScrollId == R.id.stockRankValueRV) {
+                            stockRankNameRV.scrollBy(dx, dy);
+                        }
+                        break;
+                }
+            }
+        };
+    }
+
+    /**
+     * 消息处理
+     *
+     * @param message
+     */
+    @Override
+    public void handleMessage(Message message) {
+    }
+
+    private ScrollListenerHorizontalScrollView.ScrollViewListener getOnScrollStateChangedListener() {
+        return new ScrollListenerHorizontalScrollView.ScrollViewListener() {
+            @Override
+            public void onScrollStateChanged(int scrollType) {
+                Log.e("onScrollStateChanged", "ScrollViewListenerType:" + scrollType);
+                if (0 != scrollType && 0 == mainVerticalScrollId) {
+                    mainHorizontalScrollId = R.id.stockRankValueSLHSV;
+                }
+                if (0 == scrollType && 0 != mainHorizontalScrollId && mainHorizontalScrollId == R.id.stockRankValueSLHSV) {
+                    mainHorizontalScrollId = 0;
+                }
+            }
+
+            @Override
+            public void onScrolled(int dx) {
+                Log.e("onScrollStateChanged", "ScrollViewListenerPos:" + dx);
+                if (dx != 0 && mainHorizontalScrollId == R.id.stockRankValueSLHSV) {
+                    stockRankHeaderRV.scrollBy(dx, 0);
                 }
             }
         };
