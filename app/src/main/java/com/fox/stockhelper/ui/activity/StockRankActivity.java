@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -29,21 +30,40 @@ import butterknife.ButterKnife;
  * @date 2020/9/3 14:51
  */
 public class StockRankActivity extends BaseActivity implements CommonHandleListener {
+    /**
+     * 排序选项
+     */
     @BindView(R.id.stockRankHeaderRV)
     RecyclerView stockRankHeaderRV;
+    /**
+     * 名称列表
+     */
     @BindView(R.id.stockRankNameRV)
     RecyclerView stockRankNameRV;
+    /**
+     * 数值列表横向滑动组件
+     */
     @BindView(R.id.stockRankValueSLHSV)
     ScrollListenerHorizontalScrollView stockRankValueSLHSV;
+    /**
+     * 数值列表
+     */
     @BindView(R.id.stockRankValueRV)
     RecyclerView stockRankValueRV;
 
     /**
-     * 当前主动滑动的id
+     * 当前横向主动滑动的id
      */
     private int mainHorizontalScrollId = 0;
+    /**
+     * 当前纵向主动滑动的id
+     */
     private int mainVerticalScrollId = 0;
 
+    /**
+     * 构建显示内容
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +127,7 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         stockRankNameRV.setAdapter(stockRankNameAdapter);
         stockRankNameRV.addOnScrollListener(this.getRecyclerViewOnScrollListener());
+        stockRankNameRV.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
     }
 
     /**
@@ -121,8 +142,13 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         stockRankValueRV.setAdapter(stockRankValueAdapter);
         stockRankValueRV.addOnScrollListener(this.getRecyclerViewOnScrollListener());
+        stockRankValueRV.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
     }
 
+    /**
+     * RecyclerView滑动监听
+     * @return
+     */
     private RecyclerView.OnScrollListener getRecyclerViewOnScrollListener() {
         return new RecyclerView.OnScrollListener() {
             @Override
@@ -176,6 +202,10 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
     public void handleMessage(Message message) {
     }
 
+    /**
+     * 横向ScrollView滑动监听
+     * @return
+     */
     private ScrollListenerHorizontalScrollView.ScrollViewListener getOnScrollStateChangedListener() {
         return new ScrollListenerHorizontalScrollView.ScrollViewListener() {
             @Override

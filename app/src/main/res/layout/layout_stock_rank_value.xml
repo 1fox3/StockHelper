@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/stock_rank_item_height"
     android:orientation="horizontal">
     <com.fox.stockhelper.ui.view.StockValueTextView
         android:id="@+id/stockRankValuePrice"
@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
+        android:textSize="@dimen/ui_text_size_big"
         app:type="number"
         app:value="1545.2"/>
     <com.fox.stockhelper.ui.view.StockValueTextView
@@ -18,6 +19,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
+        android:textSize="@dimen/ui_text_size_big"
         app:type="rate"
         app:value="0.0256"/>
     <com.fox.stockhelper.ui.view.StockValueTextView
@@ -26,6 +28,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
+        android:textSize="@dimen/ui_text_size_big"
         app:type="rate"
         app:value="0.085"/>
     <com.fox.stockhelper.ui.view.StockValueTextView
@@ -34,6 +37,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
+        android:textSize="@dimen/ui_text_size_big"
         app:type="number"
         app:value="15121245.2"/>
     <com.fox.stockhelper.ui.view.StockValueTextView
@@ -41,6 +45,7 @@
         android:layout_width="@dimen/stock_rank_item_width"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:textSize="@dimen/ui_text_size_big"
         android:gravity="center"
         app:type="number"
         app:value="151212121245.2"/>

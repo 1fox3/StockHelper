@@ -26,6 +26,7 @@ public class StockRankHeaderAdapter extends BaseRecyclerViewAdapter {
         @Override
         public void setData(int position, Object data){
             stockRankSortType.setSortTextStr((String)data);
+            stockRankSortType.setSortTextSize(20);
         }
     }
 

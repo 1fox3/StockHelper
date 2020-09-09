@@ -3,6 +3,7 @@ package com.fox.stockhelper.ui.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,10 @@ public class SortTextView extends LinearLayout {
      * 文案
      */
     String sortTextStr = "价格";
+    /**
+     * 字符大小
+     */
+    float sortTextSize = 0;
     /**
      * 默认图片
      */
@@ -142,6 +147,10 @@ public class SortTextView extends LinearLayout {
         if (null != text && !"".equals(text)) {
             this.sortTextStr = text;
         }
+        float sortTextSize = typedArray.getFloat(R.styleable.SortTextView_textSize, 0.0f);
+        if (sortTextSize > 0) {
+            this.sortTextSize = sortTextSize;
+        }
         String sortColumn = typedArray.getString(R.styleable.SortTextView_sortColumn);
         if (null != text && !"".equals(text)) {
             this.sortColumn = sortColumn;
@@ -161,6 +170,16 @@ public class SortTextView extends LinearLayout {
     }
 
     /**
+     * 设置文案
+     * @param sortTextSize
+     */
+    public void setSortTextSize(float sortTextSize) {
+        this.sortTextSize = sortTextSize;
+        //文案
+        sortTextTV.setTextSize(TypedValue.COMPLEX_UNIT_SP, this.sortTextSize);
+    }
+
+    /**
      * 初始化组件
      * @return
      */
@@ -173,6 +192,9 @@ public class SortTextView extends LinearLayout {
         this.initImageView();
         //文案
         sortTextTV.setText(sortTextStr);
+        if (sortTextSize > 0) {
+            sortTextTV.setTextSize(TypedValue.COMPLEX_UNIT_SP, sortTextSize);
+        }
         switch (currentSortType) {
             case SortTextView.SORT_NO:
                 defaultImg = noSortImg;

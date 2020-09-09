@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/stockRankName"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/stock_rank_item_width"
-    android:layout_height="wrap_content"
-    android:textAlignment="center"
-    android:text="固定文本"/>
+    android:layout_height="@dimen/stock_rank_item_height"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/stockRankName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="@dimen/ui_text_size_common"
+        android:text="固定文本"/>
+    <TextView
+        android:id="@+id/stockRankCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="@dimen/ui_text_size_small"
+        android:text="固定文本"/>
+</LinearLayout>

@@ -18,14 +18,17 @@ import androidx.annotation.NonNull;
 public class StockRankNameAdapter extends BaseRecyclerViewAdapter {
     class StockRankNameViewHolder extends BaseViewHolder {
         TextView stockRankName;
+        TextView stockRankCode;
         public StockRankNameViewHolder(@NonNull View itemView) {
             super(itemView);
             stockRankName = (TextView) itemView.findViewById(R.id.stockRankName);
+            stockRankCode = (TextView) itemView.findViewById(R.id.stockRankCode);
         }
 
         @Override
         public void setData(int position, Object data){
             stockRankName.setText(((RankApiDto)data).getStockName());
+            stockRankCode.setText(((RankApiDto)data).getStockCode());
         }
     }
 

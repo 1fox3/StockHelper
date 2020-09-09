@@ -3,5 +3,5 @@
     android:id="@+id/stockRankSortType"
     android:layout_width="@dimen/stock_rank_item_width"
     android:layout_height="wrap_content"
-    android:textAlignment="center"
-    android:text="固定文本"/>
+    android:textSize="@dimen/ui_text_size_big"
+    android:text="固定文本" />
