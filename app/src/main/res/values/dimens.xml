@@ -25,6 +25,6 @@
     <!--股票集市选择提示线长度-->
     <dimen name="sm_cursor">30dp</dimen>
     <!--股票排行-->
-    <dimen name="stock_rank_item_width">120dp</dimen>
+    <dimen name="stock_rank_item_width">100dp</dimen>
     <dimen name="stock_rank_item_height">40dp</dimen>
 </resources>

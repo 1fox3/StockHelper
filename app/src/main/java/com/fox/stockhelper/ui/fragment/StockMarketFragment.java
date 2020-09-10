@@ -335,7 +335,6 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                     ));
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.e("uptickRateStatisticsException", e.getMessage());
                 }
                 break;
             case MsgWhatConfig.STOCK_RANK:
@@ -353,14 +352,11 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                     stockRankListLV.setAdapter(stockRankAdapter);
                 } catch (RuntimeException e) {
                     e.printStackTrace();
-                    Log.e("topIndexRuntimeException", e.getMessage());
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.e("topIndexException", e.getMessage());
                 }
                 break;
             case MsgWhatConfig.STOCK_RANK_FRESH:
-                Log.e("msgStockRankFresh", sortType);
                 this.handleStockMarketRank();
                 break;
         }
@@ -472,16 +468,10 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                         }
                     }
                     sortColumn = ((SortTextView)view).getSortColumn();
-                    int currentSortType = ((SortTextView)view).getSortType();
-                    if (currentSortType == SortTextView.SORT_ASC) {
-                        sortType = "ASC";
-                    } else {
-                        sortType = "DESC";
-                    }
+                    sortType = ((SortTextView)view).getSortType();
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.STOCK_RANK_FRESH;
                     handler.sendMessage(msg);
-                    Log.e("stockRankFresh", sortColumn);
                 }
             });
         }
@@ -533,6 +523,10 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
         switch (id) {
             case R.id.stockRankMore:
                 Intent intent = new Intent(this.getContext(), StockRankActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("sortColumn", sortColumn);
+                bundle.putString("sortType", sortType);
+                intent.putExtras(bundle);
                 startActivityForResult(intent, ActivityRequestCodeConfig.STOCK_RANK_MORE);
                 break;
         }

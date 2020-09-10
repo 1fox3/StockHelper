@@ -28,19 +28,19 @@ public class SortTextView extends LinearLayout {
     /**
      * 未排序
      */
-    public static final int SORT_NO = -1;
+    public static final String SORT_NO = "";
     /**
      * 升序
      */
-    public static final int SORT_ASC = 0;
+    public static final String SORT_ASC = "ASC";
     /**
      * 降序
      */
-    public static final int SORT_DESC = 1;
+    public static final String SORT_DESC = "DESC";
     /**
      * 当前排序方式
      */
-    int currentSortType = SortTextView.SORT_NO;
+    String currentSortType = SortTextView.SORT_NO;
     /**
      * 升降序处理
      */
@@ -155,8 +155,18 @@ public class SortTextView extends LinearLayout {
         if (null != text && !"".equals(text)) {
             this.sortColumn = sortColumn;
         }
-        int sortType = typedArray.getInt(R.styleable.SortTextView_sortType, SortTextView.SORT_NO);
-        currentSortType = sortType;
+        int sortType = typedArray.getInt(R.styleable.SortTextView_sortType, -1);
+        switch (sortType) {
+            case -1:
+                currentSortType = SORT_NO;
+                break;
+            case 0:
+                currentSortType = SORT_ASC;
+                break;
+            case 1:
+                currentSortType = SORT_DESC;
+                break;
+        }
     }
 
     /**
@@ -340,7 +350,16 @@ public class SortTextView extends LinearLayout {
      * 排序方式
      * @return
      */
-    public int getSortType() {
+    public String getSortType() {
         return currentSortType;
+    }
+
+    /**
+     * 设置排序类型
+     * @param sortType
+     */
+    public void setSortType(String sortType) {
+        this.currentSortType = sortType;
+        this.initView();
     }
 }

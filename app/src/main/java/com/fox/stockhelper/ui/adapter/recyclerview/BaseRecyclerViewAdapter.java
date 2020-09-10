@@ -17,17 +17,21 @@ public abstract class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseV
     /**
      * 列表数据
      */
-    private List<? extends Object> listData;
+    private List<? extends Object> listData = new ArrayList<>();
 
     /**
      * 添加数据
      * @param dataList
      */
     public void addData(List dataList) {
-        if (null == this.listData) {
-            this.listData = new ArrayList<>();
-        }
         listData.addAll(dataList);
+    }
+
+    /**
+     * 清空数据
+     */
+    public void clearData() {
+        listData = new ArrayList<>();
     }
 
     /**
