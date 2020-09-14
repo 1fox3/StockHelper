@@ -30,4 +30,12 @@ public class BaseFragment extends Fragment {
     protected int getColorByResourceId(int colorResId) {
         return this.context.getResources().getColor(colorResId);
     }
+
+    /**
+     * 获取上下文
+     * @return
+     */
+    public Context getContext() {
+        return this.context;
+    }
 }

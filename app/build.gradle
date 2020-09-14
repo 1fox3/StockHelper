@@ -51,4 +51,5 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.10'
     implementation 'com.alibaba:fastjson:1.2.60'
     implementation 'androidx.viewpager:viewpager:1.0.0'
+    api project(':MPChartLib')
 }
