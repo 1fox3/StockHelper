@@ -99,7 +99,7 @@ public class StockTopDealPriceAdapter extends BaseRecyclerViewAdapter {
      */
     private int getUptickType(float price) {
         int type = StockValueTextView.UPTICK_TYPE_FLAT;
-        if (0 < yesterdayClosePrice) {
+        if (0 < yesterdayClosePrice && 0 != price) {
             if (price > yesterdayClosePrice) {
                 type = StockValueTextView.UPTICK_TYPE_UP;
             } else if (price < yesterdayClosePrice) {

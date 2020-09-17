@@ -223,7 +223,7 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
                 valueStr = String.format("%.2f", currentValue * 100) + "%";
                 break;
             case TYPE_NUMBER:
-                valueStr = this.getNumberStr(currentValue);
+                valueStr = 0.0 == currentValue ? "--" : this.getNumberStr(currentValue);
                 break;
         }
 //        //处理计量单位对数值的影响

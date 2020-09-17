@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.fox.stockhelper.R;
+import com.fox.stockhelper.entity.dto.api.stock.realtime.DealInfoApiDto;
 
 import androidx.annotation.Nullable;
 import butterknife.BindView;
@@ -42,7 +43,7 @@ public class StockDealInfoView extends LinearLayout {
     /**
      * 交易日成交量
      */
-    private double dealNum = 0;
+    private long dealNum = 0;
     /**
      * 交易日成交金额
      */
@@ -136,7 +137,7 @@ public class StockDealInfoView extends LinearLayout {
                 R.styleable.StockDealInfoView_todayLowestPrice,
                 0f
         );
-        dealNum = typedArray.getFloat(
+        dealNum = (long) typedArray.getFloat(
                 R.styleable.StockDealInfoView_dealNum,
                 0f
         );
@@ -191,5 +192,42 @@ public class StockDealInfoView extends LinearLayout {
         } else {
             return StockValueTextView.UPTICK_TYPE_FLAT;
         }
+    }
+
+    /**
+     * 设置数据
+     * @param dealInfoApiDto
+     * @return
+     */
+    public StockDealInfoView setData(DealInfoApiDto dealInfoApiDto) {
+        if (null != dealInfoApiDto.getCurrentPrice() && 0 < dealInfoApiDto.getCurrentPrice()) {
+            currentPrice = dealInfoApiDto.getCurrentPrice();
+        }
+        if (null != dealInfoApiDto.getYesterdayClosePrice() && 0 < dealInfoApiDto.getYesterdayClosePrice()) {
+            yesterdayClosePrice = dealInfoApiDto.getYesterdayClosePrice();
+        }
+        if (null != dealInfoApiDto.getTodayOpenPrice() && 0 < dealInfoApiDto.getTodayOpenPrice()) {
+            todayOpenPrice = dealInfoApiDto.getTodayOpenPrice();
+        }
+        if (null != dealInfoApiDto.getTodayHighestPrice() && 0 < dealInfoApiDto.getTodayHighestPrice()) {
+            todayHighestPrice = dealInfoApiDto.getTodayHighestPrice();
+        }
+        if (null != dealInfoApiDto.getTodayLowestPrice() && 0 < dealInfoApiDto.getTodayLowestPrice()) {
+            todayLowestPrice = dealInfoApiDto.getTodayLowestPrice();
+        }
+        if (null != dealInfoApiDto.getDealNum() && 0 < dealInfoApiDto.getDealNum()) {
+            dealNum = dealInfoApiDto.getDealNum();
+        }
+        if (null != dealInfoApiDto.getDealMoney() && 0 < dealInfoApiDto.getDealMoney()) {
+            dealMoney = dealInfoApiDto.getDealMoney();
+        }
+        return this;
+    }
+
+    /**
+     * 刷新数据
+     */
+    public void reDraw() {
+        initView();
     }
 }

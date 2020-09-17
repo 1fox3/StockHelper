@@ -1,6 +1,7 @@
 package com.fox.stockhelper.ui.activity;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.ui.adapter.SimpleFragmentStatePagerAdapter;
@@ -29,6 +30,8 @@ public class StockDealLineActivity extends BaseActivity implements ViewPager.OnP
      * 股票id
      */
     Integer stockId;
+    @BindView(R.id.stockNameCodeTV)
+    TextView stockNameCodeTV;
     @BindView(R.id.stockDealLineTabTL)
     TabLayout stockDealLineTabTL;
     @BindView(R.id.stockDealLineTypeNTSVP)
@@ -41,6 +44,14 @@ public class StockDealLineActivity extends BaseActivity implements ViewPager.OnP
         ButterKnife.bind(StockDealLineActivity.this);
         Bundle bundle = getIntent().getBundleExtra("stock");
         stockId = bundle.getInt("stockId", 1);
+        String stockName = bundle.getString("stockName");
+        String stockCode = bundle.getString("stockCode");
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(stockName);
+        stringBuilder.append("(");
+        stringBuilder.append(stockCode);
+        stringBuilder.append(")");
+        stockNameCodeTV.setText(stringBuilder.toString());
         List<Fragment> stockDealLineFragmentList = new ArrayList<>(2);
         stockDealLineFragmentList.add(new StockDealLineRealtimeFragment(this, this.stockId));
         stockDealLineFragmentList.add(new StockDealLineOfflineFragment(this, this.stockId));

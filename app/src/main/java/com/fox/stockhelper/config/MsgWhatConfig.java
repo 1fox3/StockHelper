@@ -33,4 +33,8 @@ public class MsgWhatConfig {
      * 刷新股票排行
      */
     public static final int STOCK_RANK_FRESH = 7;
+    /**
+     * 股票实时交易信息
+     */
+    public static final int STOCK_DEAL_INFO = 8;
 }

@@ -355,7 +355,10 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                             Intent intent = new Intent(getContext(), StockDealLineActivity.class);
                             Bundle bundle = new Bundle();
-                            bundle.putInt("stockId", rankApiDtoList.get(i).getStockId());
+                            RankApiDto rankApiDto = rankApiDtoList.get(i);
+                            bundle.putInt("stockId", rankApiDto.getStockId());
+                            bundle.putString("stockName", rankApiDto.getStockName());
+                            bundle.putString("stockCode", rankApiDto.getStockCode());
                             intent.putExtra("stock", bundle);
                             startActivity(intent);
                         }

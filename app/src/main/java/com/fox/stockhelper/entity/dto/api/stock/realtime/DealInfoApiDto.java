@@ -1,7 +1,6 @@
 package com.fox.stockhelper.entity.dto.api.stock.realtime;
 
 import java.util.List;
-import java.util.Map;
 
 import lombok.Data;
 
@@ -87,11 +86,11 @@ public class DealInfoApiDto {
     /**
      * 排名靠前的5个买方报价
      */
-    List<Map<String, Float>> buyPriceList;
+    List<TopDealPriceSingleDto> buyPriceList;
     /**
      * 排名靠前的5个卖方报价
      */
-    List<Map<String, Float>> sellPriceList;
+    List<TopDealPriceSingleDto> sellPriceList;
     /**
      * 当前日期
      */
