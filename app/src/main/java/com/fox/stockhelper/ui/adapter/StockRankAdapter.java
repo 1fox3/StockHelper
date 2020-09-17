@@ -27,7 +27,6 @@ public class StockRankAdapter extends ArrayAdapter<RankApiDto> {
     /**
      * 股票排行数据
      */
-//    private List<StockRankInfoView> stockRankInfoViewList = new ArrayList<>();
     private List<RankApiDto> rankApiDtoList = new ArrayList<>();
 
     /**
@@ -39,15 +38,6 @@ public class StockRankAdapter extends ArrayAdapter<RankApiDto> {
         super(context, resource);
         this.resourceId = resource;
     }
-
-    /**
-     * 添加元素
-     * @param collection
-     */
-//    @Override
-//    public void addAll(Collection<? extends StockRankInfoView> collection) {
-//        stockRankInfoViewList.addAll(collection);
-//    }
 
     /**
      * 添加元素
@@ -81,7 +71,6 @@ public class StockRankAdapter extends ArrayAdapter<RankApiDto> {
         }
         ((StockRankInfoView)convertView).setRankInfo(rankApiDto);
         return convertView;
-//        return stockRankInfoViewList.get(position);
     }
 
     /**

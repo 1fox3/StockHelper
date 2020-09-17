@@ -18,8 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.LoginActivity"></activity>
-        <activity android:name=".ui.activity.StockRankActivity"></activity>
+        <activity android:name=".ui.activity.LoginActivity" />
+        <activity android:name=".ui.activity.StockRankActivity" />
+        <activity android:name=".ui.activity.StockDealLineActivity" />
     </application>
 
 </manifest>

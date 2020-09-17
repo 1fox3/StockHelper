@@ -289,6 +289,7 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
      */
     private void initStockRankNameRV() {
         stockRankNameAdapter = new StockRankNameAdapter();
+        stockRankNameAdapter.setContext(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         stockRankNameRV.setLayoutManager(linearLayoutManager);
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -302,6 +303,7 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
      */
     private void initStockRankValueRV() {
         stockRankValueAdapter = new StockRankValueAdapter();
+        stockRankValueAdapter.setContext(this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         stockRankValueRV.setLayoutManager(linearLayoutManager);
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);

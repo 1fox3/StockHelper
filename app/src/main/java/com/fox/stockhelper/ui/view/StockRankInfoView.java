@@ -137,27 +137,27 @@ public class StockRankInfoView extends LinearLayout {
                     (double)rankApiDto.getPrice(),
                     StockValueTextView.TYPE_NUMBER,
                     StockValueTextView.UNIT_NUMBER
-            );
+            ).reDraw();
             stockUptickRate.setValue(
                     (double)rankApiDto.getUptickRate(),
                     StockValueTextView.TYPE_RATE,
                     StockValueTextView.UNIT_NUMBER
-            );
+            ).reDraw();
             stockSurgeRate.setValue(
                     (double)rankApiDto.getSurgeRate(),
                     StockValueTextView.TYPE_RATE,
                     StockValueTextView.UNIT_NUMBER
-            );
+            ).reDraw();
             stockDealNum.setValue(
                     (double)rankApiDto.getDealNum(),
                     StockValueTextView.TYPE_NUMBER,
                     StockValueTextView.UNIT_NUMBER
-            );
+            ).reDraw();
             stockDealMoney.setValue(
                     (double)rankApiDto.getDealMoney(),
                     StockValueTextView.TYPE_NUMBER,
                     StockValueTextView.UNIT_NUMBER
-            );
+            ).reDraw();
         }
     }
 

@@ -1,8 +1,14 @@
 <resources>
+    <!--公共属性配置-->
+    <attr name="currentPrice" format="float" />
+    <attr name="yesterdayClosePrice" format="float" />
+    <attr name="dealNum" format="float" />
+    <attr name="dealMoney" format="float" />
+
     <declare-styleable name="SortTextView">
-        <attr name="text" format="string"></attr>
-        <attr name="textSize" format="integer"></attr>
-        <attr name="sortColumn" format="string"></attr>
+        <attr name="text" format="string" />
+        <attr name="textSize" format="integer" />
+        <attr name="sortColumn" format="string" />
         <attr name="sortType" format="enum">
             <enum name="no" value="-1" />
             <enum name="asc" value="0" />
@@ -10,7 +16,7 @@
         </attr>
     </declare-styleable>
     <declare-styleable name="StockValueTextView">
-        <attr name="value" format="string"></attr>
+        <attr name="value" format="string" />
         <attr name="type" format="enum">
             <enum name="number" value="0" />
             <enum name="rate" value="1" />
@@ -19,19 +25,33 @@
             <enum name="number" value="0" />
             <enum name="hand" value="1" />
         </attr>
+        <attr name="uptickType" format="enum">
+            <enum name="flat" value="0" />
+            <enum name="up" value="1" />
+            <enum name="down" value="2" />
+        </attr>
     </declare-styleable>
     <declare-styleable name="StockIndexBlockView">
-        <attr name="name" format="string"></attr>
-        <attr name="currentPrice" format="float"></attr>
-        <attr name="yesterdayClosePrice" format="float" />
+        <attr name="name" format="string" />
+        <attr name="currentPrice" />
+        <attr name="yesterdayClosePrice" />
     </declare-styleable>
     <declare-styleable name="StockRankInfoView">
-        <attr name="stockName" format="string"></attr>
-        <attr name="stockCode" format="string"></attr>
+        <attr name="stockName" format="string" />
+        <attr name="stockCode" format="string" />
         <attr name="stockPrice" format="float" />
         <attr name="uptickRate" format="float" />
         <attr name="surgeRate" format="float" />
-        <attr name="dealNum" format="float" />
-        <attr name="dealMoney" format="float" />
+        <attr name="dealNum" />
+        <attr name="dealMoney" />
+    </declare-styleable>
+    <declare-styleable name="StockDealInfoView">
+        <attr name="currentPrice" />
+        <attr name="yesterdayClosePrice" />
+        <attr name="todayOpenPrice" format="float" />
+        <attr name="todayHighestPrice" format="float" />
+        <attr name="todayLowestPrice" format="float" />
+        <attr name="dealNum" />
+        <attr name="dealMoney" />
     </declare-styleable>
 </resources>

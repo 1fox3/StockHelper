@@ -1,11 +1,15 @@
 package com.fox.stockhelper.ui.adapter.recyclerview;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.RankApiDto;
+import com.fox.stockhelper.ui.activity.StockDealLineActivity;
 import com.fox.stockhelper.ui.view.StockValueTextView;
 
 import androidx.annotation.NonNull;
@@ -17,7 +21,7 @@ import androidx.annotation.NonNull;
  */
 public class StockRankValueAdapter extends BaseRecyclerViewAdapter {
     class StockRankValueViewHolder extends BaseViewHolder {
-
+        LinearLayout stockRankValueLL;
         StockValueTextView stockRankValuePrice;
         StockValueTextView stockRankValueUptickRate;
         StockValueTextView stockRankValueSurgeRate;
@@ -26,6 +30,7 @@ public class StockRankValueAdapter extends BaseRecyclerViewAdapter {
 
         public StockRankValueViewHolder(@NonNull View itemView) {
             super(itemView);
+            stockRankValueLL = itemView.findViewById(R.id.stockRankValueLL);
             stockRankValuePrice = itemView.findViewById(R.id.stockRankValuePrice);
             stockRankValueUptickRate = itemView.findViewById(R.id.stockRankValueUptickRate);
             stockRankValueSurgeRate = itemView.findViewById(R.id.stockRankValueSurgeRate);
@@ -35,11 +40,21 @@ public class StockRankValueAdapter extends BaseRecyclerViewAdapter {
 
         @Override
         public void setData(int position, Object data){
-            stockRankValuePrice.setValue(((RankApiDto)data).getPrice());
-            stockRankValueUptickRate.setValue(((RankApiDto)data).getUptickRate());
-            stockRankValueSurgeRate.setValue(((RankApiDto)data).getSurgeRate());
-            stockRankValueDealNum.setValue(((RankApiDto)data).getDealNum());
-            stockRankValueDealMoney.setValue(((RankApiDto)data).getDealMoney());
+            stockRankValuePrice.setValue(((RankApiDto)data).getPrice()).reDraw();
+            stockRankValueUptickRate.setValue(((RankApiDto)data).getUptickRate()).reDraw();
+            stockRankValueSurgeRate.setValue(((RankApiDto)data).getSurgeRate()).reDraw();
+            stockRankValueDealNum.setValue(((RankApiDto)data).getDealNum()).reDraw();
+            stockRankValueDealMoney.setValue(((RankApiDto)data).getDealMoney()).reDraw();
+            stockRankValueLL.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), StockDealLineActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("stockId", ((RankApiDto)data).getStockId());
+                    intent.putExtra("stock", bundle);
+                    getContext().startActivity(intent);
+                }
+            });
         }
     }
 

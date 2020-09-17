@@ -15,9 +15,9 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
     /**
      * 数值计量单位范围
      */
-    private static final Map<Double, String> NUMBER_SCOPE = new HashMap<Double, String>(2) {
+    private static final Map<Long, String> NUMBER_SCOPE = new HashMap<Long, String>(3) {
         {
-            put(10000.0, "万");put(100000000.0, "亿");
+            put(10000L, "万");put(100000000L, "亿");put(1000000000000L, "万亿");
         }
     };
     /**
@@ -37,6 +37,22 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
      */
     public static final int UNIT_HAND = 1;
     /**
+     * 增幅类型平
+     */
+    public static final int UPTICK_TYPE_FLAT = 0;
+    /**
+     * 增幅类型涨
+     */
+    public static final int UPTICK_TYPE_UP = 1;
+    /**
+     * 增幅类型跌
+     */
+    public static final int UPTICK_TYPE_DOWN = 2;
+    /**
+     * 小数点精度
+     */
+    private int precisionLen = 2;
+    /**
      * 数值
      */
     private Double value;
@@ -48,6 +64,10 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
      * 计量单位
      */
     private int unit;
+    /**
+     * 增幅类型
+     */
+    private int uptickType;
 
     /**
      * 构造函数
@@ -101,6 +121,10 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
                 R.styleable.StockValueTextView_unit,
                 StockValueTextView.UNIT_NUMBER
         );
+        uptickType = typedArray.getInt(
+                R.styleable.StockValueTextView_uptickType,
+                StockValueTextView.UPTICK_TYPE_FLAT
+        );
     }
 
     /**
@@ -109,19 +133,36 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
      * @param type
      * @param unit
      */
-    public void setValue(double value, int type, int unit) {
+    public StockValueTextView setValue(double value, int type, int unit) {
         this.value = value;
         this.type = type;
         this.unit = unit;
-        initView();
+        return this;
     }
 
     /**
      * 设置数值
      * @param value
      */
-    public void setValue(double value) {
+    public StockValueTextView setValue(double value) {
         this.value = value;
+        return this;
+    }
+
+    /**
+     * 设置增幅类型
+     * @param uptickType
+     * @return
+     */
+    public StockValueTextView setUptickType(int uptickType) {
+        this.uptickType = uptickType;
+        return this;
+    }
+
+    /**
+     * 重新绘画
+     */
+    public void reDraw() {
         initView();
     }
 
@@ -129,19 +170,35 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
      * 初始化显示
      */
     private void initView() {
+        if (unit == UNIT_HAND) {
+            precisionLen = 0;
+        }
         String valueStr = this.getValueStr();
         if (null != valueStr || 0 < valueStr.length()) {
             this.setText(valueStr);
         }
-        if (null != value) {
-            if (0.0 < value) {
-                this.setTextColor(this.getContext().getColor(R.color.up));
-            } else if (0.0 > value) {
-                this.setTextColor(this.getContext().getColor(R.color.down));
+        if (type == TYPE_RATE) {
+            if (value > 0) {
+                uptickType = UPTICK_TYPE_UP;
+            } else if (value < 0) {
+                uptickType = UPTICK_TYPE_DOWN;
             } else {
-                this.setTextColor(this.getContext().getColor(R.color.flat));
+                uptickType = UPTICK_TYPE_FLAT;
             }
         }
+        int color;
+        switch (uptickType) {
+            case UPTICK_TYPE_UP:
+                color = R.color.up;
+                break;
+            case UPTICK_TYPE_DOWN:
+                color = R.color.down;
+                break;
+            default:
+                color = R.color.flat;
+                break;
+        }
+        this.setTextColor(this.getContext().getColor(color));
     }
 
     /**
@@ -169,15 +226,14 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
                 valueStr = this.getNumberStr(currentValue);
                 break;
         }
-        //处理计量单位对数值的影响
-        if (valueStr.length() > 0) {
-            switch (unit) {
-                case UNIT_HAND:
-                    valueStr += "手";
-                    break;
-            }
-        }
-
+//        //处理计量单位对数值的影响
+//        if (valueStr.length() > 0) {
+//            switch (unit) {
+//                case UNIT_HAND:
+//                    valueStr += "手";
+//                    break;
+//            }
+//        }
         return valueStr;
     }
 
@@ -193,8 +249,8 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
         }
         numberValue = Math.abs(numberValue);
         String scopeStr = "";
-        Double scopeNum = 1.0;
-        for (Double numberScope : NUMBER_SCOPE.keySet()) {
+        Long scopeNum = 1L;
+        for (Long numberScope : NUMBER_SCOPE.keySet()) {
             if (numberValue >= numberScope) {
                 scopeNum = numberScope;
                 scopeStr = NUMBER_SCOPE.get(numberScope);
@@ -203,7 +259,7 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
             }
         }
         numberValue /= scopeNum;
-        stringBuffer.append(String.format("%.2f", numberValue));
+        stringBuffer.append(String.format("%." + precisionLen + "f", numberValue));
         stringBuffer.append(scopeStr);
         return stringBuffer.toString();
     }

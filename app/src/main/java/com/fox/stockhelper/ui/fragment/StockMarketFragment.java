@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -29,6 +30,7 @@ import com.fox.stockhelper.entity.dto.api.stock.realtime.RankApiDto;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.TopIndexApiDto;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.UptickRateStatisticsApiDto;
 import com.fox.stockhelper.serv.stock.StockMarketStatusServ;
+import com.fox.stockhelper.ui.activity.StockDealLineActivity;
 import com.fox.stockhelper.ui.activity.StockRankActivity;
 import com.fox.stockhelper.ui.adapter.StockRankAdapter;
 import com.fox.stockhelper.ui.base.BaseFragment;
@@ -36,7 +38,6 @@ import com.fox.stockhelper.ui.handler.CommonHandler;
 import com.fox.stockhelper.ui.listener.CommonHandleListener;
 import com.fox.stockhelper.ui.view.SortTextView;
 import com.fox.stockhelper.ui.view.StockIndexBlockView;
-import com.fox.stockhelper.ui.view.StockRankInfoView;
 import com.fox.stockhelper.util.DateUtil;
 
 import java.util.ArrayList;
@@ -340,7 +341,6 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
             case MsgWhatConfig.STOCK_RANK:
                 String[] stockRankArr = bundle.getStringArray("stockRank");
                 try {
-                    List<StockRankInfoView> stockRankInfoViewList = new ArrayList<>();
                     List<RankApiDto> rankApiDtoList = new ArrayList<>();
                     for (String stockRankStr : stockRankArr) {
                         RankApiDto rankApiDto =
@@ -350,6 +350,16 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                     stockRankAdapter.clear();
                     stockRankAdapter.addAll(rankApiDtoList);
                     stockRankListLV.setAdapter(stockRankAdapter);
+                    stockRankListLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            Intent intent = new Intent(getContext(), StockDealLineActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("stockId", rankApiDtoList.get(i).getStockId());
+                            intent.putExtra("stock", bundle);
+                            startActivity(intent);
+                        }
+                    });
                 } catch (RuntimeException e) {
                     e.printStackTrace();
                 } catch (Exception e) {

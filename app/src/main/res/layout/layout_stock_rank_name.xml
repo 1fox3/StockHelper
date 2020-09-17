@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/stockRankNameLL"
     android:layout_width="@dimen/stock_rank_item_width"
     android:layout_height="@dimen/stock_rank_item_height"
     android:orientation="vertical">
