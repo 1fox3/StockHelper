@@ -37,4 +37,8 @@ public class MsgWhatConfig {
      * 股票实时交易信息
      */
     public static final int STOCK_DEAL_INFO = 8;
+    /**
+     * 股票实时交易线图信息
+     */
+    public static final int STOCK_DEAL_PRICE_LINE = 9;
 }

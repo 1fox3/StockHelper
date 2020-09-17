@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,11 @@ import android.view.ViewGroup;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.api.stock.realtime.DealInfoApi;
+import com.fox.stockhelper.api.stock.realtime.DealPriceLineApi;
 import com.fox.stockhelper.config.MsgWhatConfig;
 import com.fox.stockhelper.constant.stock.StockMarketStatusConst;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.DealInfoApiDto;
+import com.fox.stockhelper.entity.dto.api.stock.realtime.DealPriceLineApiDto;
 import com.fox.stockhelper.serv.stock.StockMarketStatusServ;
 import com.fox.stockhelper.ui.adapter.recyclerview.StockTopDealPriceAdapter;
 import com.fox.stockhelper.ui.base.BaseFragment;
@@ -24,7 +27,6 @@ import com.fox.stockhelper.util.DateUtil;
 import com.github.mikephil.charting.stockChart.OneDayChart;
 import com.github.mikephil.charting.stockChart.dataManage.TimeDataManage;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -124,6 +126,8 @@ public class StockDealLineRealtimeFragment extends BaseFragment implements Commo
         this.handleStockMarketStatus();
         //初始化交易信息
         this.handleDealInfo();
+        //初始化交易价格线图信息
+        this.handleDealPriceLine();
         //初始化TOP售价
         sellStockTopDealPriceAdapter = new StockTopDealPriceAdapter();
         LinearLayoutManager sellLinearLayoutManager = new LinearLayoutManager(this.getContext());
@@ -135,17 +139,6 @@ public class StockDealLineRealtimeFragment extends BaseFragment implements Commo
         LinearLayoutManager buyLinearLayoutManager = new LinearLayoutManager(this.getContext());
         buyLinearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         buyStockTopDealPriceRV.setLayoutManager(buyLinearLayoutManager);
-
-        //测试数据
-        try {
-            object = new JSONObject(TIMEDATA);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        //上证指数代码000001.IDX.SH
-        kTimeData.parseTimeData(object,"000001.IDX.SH",0);
-        stockOneDayChart.setDataToChart(kTimeData);
 
         return view;
     }
@@ -179,6 +172,21 @@ public class StockDealLineRealtimeFragment extends BaseFragment implements Commo
                     buyStockTopDealPriceAdapter.setYesterdayClosePrice(dealInfoApiDto.getYesterdayClosePrice());
                     buyStockTopDealPriceAdapter.addData(dealInfoApiDto.getBuyPriceList());
                     buyStockTopDealPriceRV.setAdapter(buyStockTopDealPriceAdapter);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case MsgWhatConfig.STOCK_DEAL_PRICE_LINE:
+                String dealPriceLineApiDtoStr = bundle.getString("stockDealPriceLine");
+                try {
+                    DealPriceLineApiDto dealPriceLineApiDto =
+                            new ObjectMapper()
+                                    .readValue(dealPriceLineApiDtoStr, DealPriceLineApiDto.class);
+                    object = new JSONObject(com.alibaba.fastjson.JSONObject.toJSONString(dealPriceLineApiDto.convertToRealTimeChartData()));
+                    Log.e("StockDealLineRealtimeFragment", com.alibaba.fastjson.JSONObject.toJSONString(dealPriceLineApiDto.convertToRealTimeChartData()));
+                    //上证指数代码000001.IDX.SH
+                    kTimeData.parseTimeData(object,"000001.IDX.SH",0);
+                    stockOneDayChart.setDataToChart(kTimeData);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -243,6 +251,40 @@ public class StockDealLineRealtimeFragment extends BaseFragment implements Commo
             }
         };
         Thread thread = new Thread(stockDealInfoRunnable);
+        thread.start();
+    }
+
+    /**
+     * 刷新交易价格线图信息
+     */
+    private void handleDealPriceLine() {
+        Runnable stockDealPriceLineRunnable = new Runnable() {
+            @SneakyThrows
+            @Override
+            public void run() {
+                while (true) {
+                    if (smStatus == StockMarketStatusConst.OPEN
+                            || smStatus == StockMarketStatusConst.COMPETE
+                    ) {
+                        DealPriceLineApi dealPriceLineApi = new DealPriceLineApi();
+                        Map<String, Object> params = new HashMap<>();
+                        params.put("stockId", stockId);
+                        dealPriceLineApi.setParams(params);
+                        DealPriceLineApiDto dealPriceLineApiDto = (DealPriceLineApiDto)dealPriceLineApi.request();
+                        Message msg = new Message();
+                        msg.what = MsgWhatConfig.STOCK_DEAL_PRICE_LINE;
+                        Bundle bundle = new Bundle();
+                        bundle.putString("stockDealPriceLine",
+                                com.alibaba.fastjson.JSONObject.toJSONString(dealPriceLineApiDto)
+                        );
+                        msg.setData(bundle);
+                        handler.sendMessage(msg);
+                        Thread.sleep(3000);
+                    }
+                }
+            }
+        };
+        Thread thread = new Thread(stockDealPriceLineRunnable);
         thread.start();
     }
 }
