@@ -2,27 +2,40 @@ package com.fox.stockhelper.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.fox.stockhelper.R;
+import com.fox.stockhelper.api.stock.offline.DealDayApi;
+import com.fox.stockhelper.config.MsgWhatConfig;
+import com.fox.stockhelper.entity.dto.api.stock.offline.DealDayApiDto;
 import com.fox.stockhelper.ui.base.BaseFragment;
+import com.fox.stockhelper.ui.handler.CommonHandler;
+import com.fox.stockhelper.ui.listener.CommonHandleListener;
 import com.github.mikephil.charting.stockChart.KLineChart;
 import com.github.mikephil.charting.stockChart.dataManage.KLineDataManage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import lombok.SneakyThrows;
 
 /**
  * 股市离线成交线图
  * @author lusongsong
  * @date 2020/9/14 15:58
  */
-public class StockDealLineOfflineFragment extends BaseFragment {
+public class StockDealLineOfflineFragment extends BaseFragment implements CommonHandleListener {
     /**
      * 股票id
      */
@@ -41,7 +54,10 @@ public class StockDealLineOfflineFragment extends BaseFragment {
     private boolean land = false;//是否横屏
     private KLineDataManage kLineData;
     private JSONObject object;
-    private int indexType = 1;
+    /**
+     * 消息处理
+     */
+    Handler handler = new CommonHandler(this);
     /**
      * 指定上下文构造器
      *
@@ -61,21 +77,68 @@ public class StockDealLineOfflineFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_stock_deal_line_offline, null);
         ButterKnife.bind(this, view);
         kLineData = new KLineDataManage(getActivity());
+        //初始化
         stockKLineChart.initChart(land);
-        try {
-            if(mType == 1){
-                object = new JSONObject(KLINEDATA);
-            }else if(mType == 7){
-                object = new JSONObject(KLINEWEEKDATA);
-            }else if(mType == 30){
-                object = new JSONObject(KLINEMONTHDATA);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        //上证指数代码000001.IDX.SH
-        kLineData.parseKlineData(object,"000001.IDX.SH",land);
-        stockKLineChart.setDataToChart(kLineData);
+        //初始化交易价格线图信息
+        this.handleDealPriceLine();
         return view;
+    }
+
+    /**
+     * 消息处理
+     *
+     * @param message
+     */
+    @Override
+    public void handleMessage(Message message) {
+        Bundle bundle = message.getData();
+        switch (message.what) {
+            case MsgWhatConfig.STOCK_DEAL_PRICE_LINE:
+                String dealPriceDayStr = bundle.getString("stockDealPriceDayLine");
+                Log.e("stockDealPriceDayLine", dealPriceDayStr);
+                try {
+                    try {
+                        object = new JSONObject(dealPriceDayStr);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //上证指数代码000001.IDX.SH
+                    kLineData.parseKlineData(object,"000001.IDX.SH", land);
+                    stockKLineChart.setDataToChart(kLineData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+    }
+
+    /**
+     * 刷新交易价格线图信息
+     */
+    private void handleDealPriceLine() {
+        Runnable stockPriceDayRunnable = new Runnable() {
+            @SneakyThrows
+            @Override
+            public void run() {
+                DealDayApi dealDayApi = new DealDayApi();
+                Map<String, Object> params = new HashMap<>();
+                params.put("stockId", stockId);
+                dealDayApi.setParams(params);
+                List<DealDayApiDto> dealDayApiDtoList = (List<DealDayApiDto>)dealDayApi.request();
+                Log.e("stockDealPriceDayLine", String.valueOf(dealDayApiDtoList.size()));
+                Map<String, List> priceDayMap = new HashMap<>(1);
+                priceDayMap.put("data", DealDayApiDto.listToChartData(dealDayApiDtoList));
+                Message msg = new Message();
+                msg.what = MsgWhatConfig.STOCK_DEAL_PRICE_LINE;
+                Bundle bundle = new Bundle();
+                bundle.putString("stockDealPriceDayLine",
+                        com.alibaba.fastjson.JSONObject.toJSONString(priceDayMap)
+                );
+                msg.setData(bundle);
+                handler.sendMessage(msg);
+            }
+        };
+        Thread thread = new Thread(stockPriceDayRunnable);
+        thread.start();
     }
 }

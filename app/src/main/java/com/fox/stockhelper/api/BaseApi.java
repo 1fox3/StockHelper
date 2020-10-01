@@ -1,5 +1,7 @@
 package com.fox.stockhelper.api;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JavaType;
@@ -10,9 +12,13 @@ import com.fox.stockhelper.exception.self.ApiException;
 import com.fox.stockhelper.util.HttpUtil;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,7 +69,11 @@ public class BaseApi {
      */
     protected Class dataClass;
     /**
-     * 返回数据是否为列表
+     * 返回数据是否为对象列表
+     */
+    protected boolean isListObject = false;
+    /**
+     * 返回数据是否为数值列表
      */
     protected boolean isListData = false;
     /**
@@ -126,9 +136,12 @@ public class BaseApi {
                 throw new ApiException(apiDto.getCode(), apiDto.getMsg());
             }
             ObjectMapper objectMapper = new ObjectMapper();
-            if (isListData) {
+            if (isListObject) {
                 JavaType javaType = objectMapper.getTypeFactory().constructParametricType(ArrayList.class, this.dataClass);
                 return objectMapper.readValue(JSONObject.toJSONString(this.data), javaType);
+            }
+            if (isListData) {
+                return convertListToObject();
             }
             return objectMapper.readValue(JSONObject.toJSONString(this.data), this.dataClass);
         } catch (ApiException e) {
@@ -138,5 +151,52 @@ public class BaseApi {
         } catch (JSONException e) {
             throw new ApiException(1, e.getMessage());
         }
+    }
+
+    /**
+     * 将二维列表数据装维列表对象
+     * @return
+     */
+    private List convertListToObject() {
+        Field[] fields = this.dataClass.getDeclaredFields();
+        List<String> fieldOrderList = new ArrayList<>();
+        try {
+            Method method = this.dataClass.getMethod("fieldOrderList");
+            fieldOrderList = (List<String>)method.invoke(this.dataClass.newInstance());
+        } catch (Exception e) {
+            Log.e("error", e.getMessage());
+        }
+        List list = new ArrayList();
+        List<Object> dataList = (List)this.data;
+        for (int i = 0; i < dataList.size(); i++) {
+            try {
+                Object obj = this.dataClass.newInstance();
+                List<Object> dataItem = (List<Object>)dataList.get(i);
+                for (int j = 0; j < fields.length; j++) {
+                    Field field = fields[j];
+                    field.setAccessible(true);
+                    int fieldOrder = fieldOrderList.indexOf(field.getName());
+                    Object value = dataItem.get(fieldOrder);
+                    switch (field.getGenericType().toString()) {
+                        case "class java.lang.String":
+                            field.set(obj, (String)value);
+                            break;
+                        case "class java.lang.Integer":
+                            field.set(obj, (Integer)value);
+                            break;
+                        case "class java.lang.Long":
+                            field.set(obj, new Long(value.toString()));
+                            break;
+                        case "class java.math.BigDecimal":
+                            field.set(obj, new BigDecimal(value.toString()));
+                            break;
+                    }
+                }
+                list.add(obj);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return list;
     }
 }

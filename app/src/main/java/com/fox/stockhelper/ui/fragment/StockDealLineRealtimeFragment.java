@@ -89,6 +89,9 @@ public class StockDealLineRealtimeFragment extends BaseFragment implements Commo
      */
     private TimeDataManage kTimeData = new TimeDataManage();
     private JSONObject object;
+    /**
+     *  股市状态
+     */
     int smStatus = StockMarketStatusConst.OPEN;
     /**
      * 消息处理

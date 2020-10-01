@@ -1,6 +1,6 @@
 package com.fox.stockhelper;
 
-import com.fox.stockhelper.api.stock.realtime.DealPriceLineApi;
+import com.fox.stockhelper.api.stock.offline.DealDayApi;
 
 import org.junit.Test;
 
@@ -18,11 +18,10 @@ public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
-        DealPriceLineApi dealInfoApi = new DealPriceLineApi();
+        DealDayApi dealDayApi = new DealDayApi();
         Map<String, Object> params = new HashMap<>();
-        params.put("stockId", 52070);
-        dealInfoApi.setParams(params);
-
-        System.out.println(dealInfoApi.request());
+        params.put("stockId", 33972);
+        dealDayApi.setParams(params);
+        System.out.println(dealDayApi.request().toString());
     }
 }

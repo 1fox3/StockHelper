@@ -14,6 +14,6 @@ public class RankApi extends BaseApi {
         method = METHOD_POST;
         requestParamKeys = new String[]{"type", "sortType", "pageNum", "pageSize"};
         dataClass = RankApiDto.class;
-        isListData = true;
+        isListObject = true;
     }
 }

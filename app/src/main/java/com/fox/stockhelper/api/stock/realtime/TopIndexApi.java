@@ -14,6 +14,6 @@ public class TopIndexApi extends BaseApi {
         method = METHOD_POST;
         requestParamKeys = new String[]{};
         dataClass = TopIndexApiDto.class;
-        isListData = true;
+        isListObject = true;
     }
 }

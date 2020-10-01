@@ -390,7 +390,7 @@ public class HttpUtil {
         }
         this.startTime = System.currentTimeMillis();
         HttpURLConnection urlCon = null;
-
+        Log.e("url", this.url + "?" + requestBody);
         try {
             //初始化
             URL urlObj = new URL(this.getRequestUrl(requestBody));
