@@ -9,14 +9,7 @@
     <com.fox.stockhelper.ui.view.StockDealInfoView
         android:id="@+id/stockDealInfoSDIV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:currentPrice="41.70"
-        app:yesterdayClosePrice="41.88"
-        app:todayOpenPrice="41.36"
-        app:todayHighestPrice="42.28"
-        app:todayLowestPrice="40.51"
-        app:dealNum="33095413"
-        app:dealMoney="1365716922.2"/>
+        android:layout_height="wrap_content"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
