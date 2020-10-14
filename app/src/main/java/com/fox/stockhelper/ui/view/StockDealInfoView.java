@@ -157,7 +157,7 @@ public class StockDealInfoView extends LinearLayout {
         BigDecimal uptickRate = BigDecimal.ZERO;
         if (1 == currentPrice.compareTo(BigDecimal.ZERO) && 1 == preClosePrice.compareTo(BigDecimal.ZERO)) {
             uptickPrice = currentPrice.subtract(preClosePrice);
-            uptickRate = uptickPrice.divide(preClosePrice, 4);
+            uptickRate = uptickPrice.divide(preClosePrice, 4, BigDecimal.ROUND_HALF_UP);
         }
         int uptickType = getUptickType(uptickPrice);
         currentPriceSVTV.setValue(currentPrice).setUptickType(uptickType).reDraw();
@@ -176,7 +176,7 @@ public class StockDealInfoView extends LinearLayout {
         dealMoneySVTV.setValue(dealMoney).reDraw();
         BigDecimal dealAvgPrice = BigDecimal.ZERO;
         if (dealNum > 0 && 1 == dealMoney.compareTo(BigDecimal.ZERO)) {
-            dealAvgPrice = dealMoney.divide(new BigDecimal(dealNum), 2);
+            dealAvgPrice = dealMoney.divide(new BigDecimal(dealNum), 2, BigDecimal.ROUND_HALF_UP);
         }
         dealAvgPriceSVTV.setValue(dealAvgPrice).reDraw();
     }

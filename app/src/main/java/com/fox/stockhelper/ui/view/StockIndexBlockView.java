@@ -126,7 +126,7 @@ public class StockIndexBlockView extends RelativeLayout {
      * @return
      */
     private String getNumberStr(BigDecimal numberValue) {
-        numberValue.setScale(2, BigDecimal.ROUND_HALF_UP);
+        numberValue = numberValue.setScale(2, BigDecimal.ROUND_HALF_UP);
         return numberValue.toString();
     }
 
