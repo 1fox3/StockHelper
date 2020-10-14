@@ -1,7 +1,7 @@
 <resources>
     <!--公共属性配置-->
     <attr name="currentPrice" format="float" />
-    <attr name="yesterdayClosePrice" format="float" />
+    <attr name="preClosePrice" format="float" />
     <attr name="dealNum" format="float" />
     <attr name="dealMoney" format="float" />
 
@@ -34,7 +34,7 @@
     <declare-styleable name="StockIndexBlockView">
         <attr name="name" format="string" />
         <attr name="currentPrice" />
-        <attr name="yesterdayClosePrice" />
+        <attr name="preClosePrice" />
     </declare-styleable>
     <declare-styleable name="StockRankInfoView">
         <attr name="stockName" format="string" />
@@ -47,10 +47,10 @@
     </declare-styleable>
     <declare-styleable name="StockDealInfoView">
         <attr name="currentPrice" />
-        <attr name="yesterdayClosePrice" />
-        <attr name="todayOpenPrice" format="float" />
-        <attr name="todayHighestPrice" format="float" />
-        <attr name="todayLowestPrice" format="float" />
+        <attr name="preClosePrice" />
+        <attr name="openPrice" format="float" />
+        <attr name="highestPrice" format="float" />
+        <attr name="lowestPrice" format="float" />
         <attr name="dealNum" />
         <attr name="dealMoney" />
     </declare-styleable>

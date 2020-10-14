@@ -12,6 +12,8 @@ import com.fox.stockhelper.entity.dto.api.stock.realtime.RankApiDto;
 import com.fox.stockhelper.ui.activity.StockDealLineActivity;
 import com.fox.stockhelper.ui.view.StockValueTextView;
 
+import java.math.BigDecimal;
+
 import androidx.annotation.NonNull;
 
 /**
@@ -40,10 +42,10 @@ public class StockRankValueAdapter extends BaseRecyclerViewAdapter {
 
         @Override
         public void setData(int position, Object data){
-            stockRankValuePrice.setValue(((RankApiDto)data).getPrice()).reDraw();
+            stockRankValuePrice.setValue(((RankApiDto)data).getCurrentPrice()).reDraw();
             stockRankValueUptickRate.setValue(((RankApiDto)data).getUptickRate()).reDraw();
             stockRankValueSurgeRate.setValue(((RankApiDto)data).getSurgeRate()).reDraw();
-            stockRankValueDealNum.setValue(((RankApiDto)data).getDealNum()).reDraw();
+            stockRankValueDealNum.setValue(new BigDecimal(((RankApiDto)data).getDealNum())).reDraw();
             stockRankValueDealMoney.setValue(((RankApiDto)data).getDealMoney()).reDraw();
             stockRankValueLL.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -1,8 +1,11 @@
 package com.fox.stockhelper.entity.dto.api.stock.realtime;
 
+import java.math.BigDecimal;
+
 import lombok.Data;
 
 /**
+ * 分钟线图点
  * @author lusongsong
  * @date 2020/9/17 17:33
  */
@@ -15,11 +18,11 @@ public class MinuteDealPriceInfoDto {
     /**
      * 价格
      */
-    Float price;
+    BigDecimal price;
     /**
      * 均价
      */
-    Float avgPrice;
+    BigDecimal avgPrice;
     /**
      * 成交量
      */

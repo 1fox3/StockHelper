@@ -1,5 +1,7 @@
 package com.fox.stockhelper.entity.dto.api.stock.realtime;
 
+import java.math.BigDecimal;
+
 import lombok.Data;
 
 /**
@@ -24,21 +26,21 @@ public class RankApiDto {
     /**
      * 股票价格
      */
-    Float price;
+    BigDecimal currentPrice;
     /**
      * 涨幅
      */
-    Float uptickRate;
+    BigDecimal uptickRate;
     /**
      * 波动
      */
-    Float surgeRate;
+    BigDecimal surgeRate;
     /**
      * 成交量
      */
-    Float dealNum;
+    Long dealNum;
     /**
      * 成交金额
      */
-    Float dealMoney;
+    BigDecimal dealMoney;
 }

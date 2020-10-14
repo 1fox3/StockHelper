@@ -1,5 +1,7 @@
 package com.fox.stockhelper.entity.dto.api.stock.realtime;
 
+import java.math.BigDecimal;
+
 import lombok.Data;
 
 /**
@@ -12,9 +14,9 @@ public class TopDealPriceSingleDto {
     /**
      * 数量
      */
-    private long num;
+    Long num;
     /**
      * 价格
      */
-    private float price;
+    BigDecimal price;
 }

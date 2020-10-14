@@ -2,6 +2,7 @@ package com.fox.stockhelper.entity.dto.api.stock.realtime;
 
 import com.fox.stockhelper.util.DateUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 import lombok.Data;
 
 /**
+ * 股票分钟线图
  * @author lusongsong
  * @date 2020/9/17 17:31
  */
@@ -26,7 +28,7 @@ public class DealPriceLineApiDto {
     /**
      * 日期
      */
-    String date;
+    String dt;
     /**
      * 线图分钟数量
      */
@@ -34,7 +36,7 @@ public class DealPriceLineApiDto {
     /**
      * 昨日收盘价
      */
-    Float yesterdayClosePrice;
+    BigDecimal preClosePrice;
     /**
      * 成交量
      */
@@ -55,7 +57,7 @@ public class DealPriceLineApiDto {
             List<Object> minuteData = new ArrayList<>(5);
             minuteData.add(
                     DateUtil.getDateFromStr(
-                            date + " " + minuteDealPriceInfoDto.getTime(),
+                            dt + " " + minuteDealPriceInfoDto.getTime(),
                             DateUtil.TIME_FORMAT_2
                     ).getTime()
             );
@@ -66,7 +68,7 @@ public class DealPriceLineApiDto {
             minuteDataList.add(minuteData);
         }
         realTimeChartData.put("data", minuteDataList);
-        realTimeChartData.put("preClose", yesterdayClosePrice);
+        realTimeChartData.put("preClose", preClosePrice);
         return realTimeChartData;
     }
 }

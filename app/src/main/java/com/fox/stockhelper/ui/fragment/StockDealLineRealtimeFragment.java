@@ -167,12 +167,12 @@ public class StockDealLineRealtimeFragment extends BaseFragment implements Commo
                     stockDealInfoSDIV.setData(dealInfoApiDto).reDraw();
                     //TOP售价
                     sellStockTopDealPriceAdapter.clearData();
-                    sellStockTopDealPriceAdapter.setYesterdayClosePrice(dealInfoApiDto.getYesterdayClosePrice());
+                    sellStockTopDealPriceAdapter.setPreClosePrice(dealInfoApiDto.getPreClosePrice());
                     sellStockTopDealPriceAdapter.addData(dealInfoApiDto.getSellPriceList());
                     sellStockTopDealPriceRV.setAdapter(sellStockTopDealPriceAdapter);
                     //TOP买价
                     buyStockTopDealPriceAdapter.clearData();
-                    buyStockTopDealPriceAdapter.setYesterdayClosePrice(dealInfoApiDto.getYesterdayClosePrice());
+                    buyStockTopDealPriceAdapter.setPreClosePrice(dealInfoApiDto.getPreClosePrice());
                     buyStockTopDealPriceAdapter.addData(dealInfoApiDto.getBuyPriceList());
                     buyStockTopDealPriceRV.setAdapter(buyStockTopDealPriceAdapter);
                 } catch (Exception e) {

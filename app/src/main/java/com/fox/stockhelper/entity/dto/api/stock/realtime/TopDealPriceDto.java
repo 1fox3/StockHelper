@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 /**
- * Top指标
+ * Top售价
  * @author lusongsong
  * @date 2020/8/21 16:34
  */
@@ -14,9 +14,9 @@ public class TopDealPriceDto {
     /**
      * 卖
      */
-    private List<TopDealPriceSingleDto> sell;
+    List<TopDealPriceSingleDto> sell;
     /**
      * 买
      */
-    private List<TopDealPriceSingleDto> buy;
+    List<TopDealPriceSingleDto> buy;
 }

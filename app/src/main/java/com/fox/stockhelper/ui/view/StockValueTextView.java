@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 
 import com.fox.stockhelper.R;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +56,7 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
     /**
      * 数值
      */
-    private Double value;
+    private BigDecimal value;
     /**
      * 数值类型
      */
@@ -109,10 +110,10 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
         TypedArray typedArray = this.getContext().obtainStyledAttributes(
                 attrs, R.styleable.StockValueTextView
         );
-        String valueStr = typedArray.getString(R.styleable.StockValueTextView_value);
-        if (null != valueStr) {
-            value = Double.valueOf(valueStr);
-        }
+        value = new BigDecimal(typedArray.getFloat(
+                R.styleable.StockValueTextView_value,
+                0f
+        ));
         type = typedArray.getInt(
                 R.styleable.StockValueTextView_type,
                 StockValueTextView.TYPE_NUMBER
@@ -133,7 +134,7 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
      * @param type
      * @param unit
      */
-    public StockValueTextView setValue(double value, int type, int unit) {
+    public StockValueTextView setValue(BigDecimal value, int type, int unit) {
         this.value = value;
         this.type = type;
         this.unit = unit;
@@ -144,7 +145,7 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
      * 设置数值
      * @param value
      */
-    public StockValueTextView setValue(double value) {
+    public StockValueTextView setValue(BigDecimal value) {
         this.value = value;
         return this;
     }
@@ -178,9 +179,9 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
             this.setText(valueStr);
         }
         if (type == TYPE_RATE) {
-            if (value > 0) {
+            if (1 == value.compareTo(BigDecimal.ZERO)) {
                 uptickType = UPTICK_TYPE_UP;
-            } else if (value < 0) {
+            } else if (-1 == value.compareTo(BigDecimal.ZERO)) {
                 uptickType = UPTICK_TYPE_DOWN;
             } else {
                 uptickType = UPTICK_TYPE_FLAT;
@@ -207,23 +208,26 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
      */
     private String getValueStr() {
         String valueStr = "";
-        Double currentValue = value;
-        if (null == value) {
+        BigDecimal currentValue = value;
+        currentValue.setScale(precisionLen, BigDecimal.ROUND_HALF_UP);
+        if (null == currentValue) {
             return valueStr;
         }
         //处理计量单位对数值的影响
         switch (unit) {
             case UNIT_HAND:
-                currentValue = currentValue / 100;
+                currentValue = currentValue.divide(new BigDecimal(100));
                 break;
         }
         //处理数值类型
         switch (type) {
             case TYPE_RATE:
-                valueStr = String.format("%.2f", currentValue * 100) + "%";
+                BigDecimal rateValue = currentValue.multiply(new BigDecimal(100)).setScale(precisionLen, BigDecimal.ROUND_HALF_UP);
+                valueStr = rateValue.toString() + "%";
                 break;
             case TYPE_NUMBER:
-                valueStr = 0.0 == currentValue ? "--" : this.getNumberStr(currentValue);
+                valueStr = 0 == currentValue.compareTo(BigDecimal.ZERO) ?
+                        "--" : this.getNumberStr(currentValue);
                 break;
         }
 //        //处理计量单位对数值的影响
@@ -242,24 +246,24 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
      * @param numberValue
      * @return
      */
-    private String getNumberStr(Double numberValue) {
+    private String getNumberStr(BigDecimal numberValue) {
         StringBuffer stringBuffer = new StringBuffer();
-        if (numberValue < 0.0) {
+        if (-1 == numberValue.compareTo(BigDecimal.ZERO)) {
             stringBuffer.append("-");
         }
-        numberValue = Math.abs(numberValue);
+        numberValue = numberValue.abs();
         String scopeStr = "";
         Long scopeNum = 1L;
         for (Long numberScope : NUMBER_SCOPE.keySet()) {
-            if (numberValue >= numberScope) {
+            if (1 == numberValue.compareTo(new BigDecimal(numberScope))) {
                 scopeNum = numberScope;
                 scopeStr = NUMBER_SCOPE.get(numberScope);
             } else {
                 break;
             }
         }
-        numberValue /= scopeNum;
-        stringBuffer.append(String.format("%." + precisionLen + "f", numberValue));
+        numberValue = numberValue.divide(new BigDecimal(scopeNum), precisionLen, BigDecimal.ROUND_HALF_UP);
+        stringBuffer.append(numberValue.toString());
         stringBuffer.append(scopeStr);
         return stringBuffer.toString();
     }

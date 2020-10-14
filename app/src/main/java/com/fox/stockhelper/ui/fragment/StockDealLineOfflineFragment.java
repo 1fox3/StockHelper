@@ -163,14 +163,14 @@ public class StockDealLineOfflineFragment extends BaseFragment implements Common
     public void choose(Integer index) {
         DealInfoApiDto dealInfoApiDto = new DealInfoApiDto();
         DealDayApiDto dealDayApiDto = dealDayApiDtoList.get(index);
-        dealInfoApiDto.setCurrentPrice(dealDayApiDto.getClosePrice().floatValue());
-        dealInfoApiDto.setYesterdayClosePrice(dealDayApiDto.getPreClosePrice().floatValue());
+        dealInfoApiDto.setCurrentPrice(dealDayApiDto.getClosePrice());
+        dealInfoApiDto.setPreClosePrice(dealDayApiDto.getPreClosePrice());
         Log.e("preClosePrice", dealDayApiDto.getPreClosePrice().toString());
-        dealInfoApiDto.setTodayOpenPrice(dealDayApiDto.getOpenPrice().floatValue());
-        dealInfoApiDto.setTodayHighestPrice(dealDayApiDto.getHighestPrice().floatValue());
-        dealInfoApiDto.setTodayLowestPrice(dealDayApiDto.getLowestPrice().floatValue());
+        dealInfoApiDto.setOpenPrice(dealDayApiDto.getOpenPrice());
+        dealInfoApiDto.setHighestPrice(dealDayApiDto.getHighestPrice());
+        dealInfoApiDto.setLowestPrice(dealDayApiDto.getLowestPrice());
         dealInfoApiDto.setDealNum(dealDayApiDto.getDealNum());
-        dealInfoApiDto.setDealMoney(dealDayApiDto.getDealMoney().doubleValue());
+        dealInfoApiDto.setDealMoney(dealDayApiDto.getDealMoney());
         stockDealInfoSDIV.setData(dealInfoApiDto).reDraw();
     }
 }

@@ -5,9 +5,16 @@ import lombok.Data;
 /**
  * 登录
  * @author lusongsong
+ * @date 2020/7/21 17:58
  */
 @Data
 public class LoginApiDto {
+    /**
+     * 登录session
+     */
     String sessionid;
-    int expireTime;
+    /**
+     * 失效时间
+     */
+    Integer expireTime;
 }

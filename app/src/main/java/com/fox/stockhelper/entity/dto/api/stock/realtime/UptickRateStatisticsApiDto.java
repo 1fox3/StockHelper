@@ -12,25 +12,25 @@ public class UptickRateStatisticsApiDto {
     /**
      * 涨
      */
-    private Integer up;
+    Integer up;
     /**
      * 涨停
      */
-    private Integer upLimit;
+    Integer upLimit;
     /**
      * 跌
      */
-    private Integer down;
+    Integer down;
     /**
      * 跌停
      */
-    private Integer downLimit;
+    Integer downLimit;
     /**
      * 平
      */
-    private Integer flat;
+    Integer flat;
     /**
      * 停牌
      */
-    private Integer stop;
+    Integer stop;
 }

@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.DealInfoApiDto;
 
+import java.math.BigDecimal;
+
 import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,31 +25,31 @@ public class StockDealInfoView extends LinearLayout {
     /**
      * 当前价格
      */
-    private float currentPrice = 0;
+    private BigDecimal currentPrice = BigDecimal.ZERO;
     /**
      * 上个交易日收盘价
      */
-    private float yesterdayClosePrice = 0;
+    private BigDecimal preClosePrice = BigDecimal.ZERO;
     /**
      * 交易日开盘价
      */
-    private float todayOpenPrice = 0;
+    private BigDecimal openPrice = BigDecimal.ZERO;
     /**
      * 交易日最高价
      */
-    private float todayHighestPrice = 0;
+    private BigDecimal highestPrice = BigDecimal.ZERO;
     /**
      * 交易日最低价
      */
-    private float todayLowestPrice = 0;
+    private BigDecimal lowestPrice = BigDecimal.ZERO;
     /**
      * 交易日成交量
      */
-    private long dealNum = 0;
+    private Long dealNum = 0L;
     /**
      * 交易日成交金额
      */
-    private double dealMoney = 0;
+    private BigDecimal dealMoney = BigDecimal.ZERO;
 
     @BindView(R.id.currentPriceSVTV)
     StockValueTextView currentPriceSVTV;
@@ -117,64 +119,64 @@ public class StockDealInfoView extends LinearLayout {
         TypedArray typedArray = this.getContext().obtainStyledAttributes(
                 attrs, R.styleable.StockDealInfoView
         );
-        currentPrice = typedArray.getFloat(
+        currentPrice = new BigDecimal(typedArray.getFloat(
                 R.styleable.StockDealInfoView_currentPrice,
                 0f
-        );
-        yesterdayClosePrice = typedArray.getFloat(
-                R.styleable.StockDealInfoView_yesterdayClosePrice,
+        ));
+        preClosePrice = new BigDecimal(typedArray.getFloat(
+                R.styleable.StockDealInfoView_preClosePrice,
                 0f
-        );
-        todayOpenPrice = typedArray.getFloat(
-                R.styleable.StockDealInfoView_todayOpenPrice,
+        ));
+        openPrice = new BigDecimal(typedArray.getFloat(
+                R.styleable.StockDealInfoView_openPrice,
                 0f
-        );
-        todayHighestPrice = typedArray.getFloat(
-                R.styleable.StockDealInfoView_todayHighestPrice,
+        ));
+        highestPrice = new BigDecimal(typedArray.getFloat(
+                R.styleable.StockDealInfoView_highestPrice,
                 0f
-        );
-        todayLowestPrice = typedArray.getFloat(
-                R.styleable.StockDealInfoView_todayLowestPrice,
+        ));
+        lowestPrice = new BigDecimal(typedArray.getFloat(
+                R.styleable.StockDealInfoView_lowestPrice,
                 0f
-        );
+        ));
         dealNum = (long) typedArray.getFloat(
                 R.styleable.StockDealInfoView_dealNum,
                 0f
         );
-        dealMoney = typedArray.getFloat(
+        dealMoney = new BigDecimal(typedArray.getFloat(
                 R.styleable.StockDealInfoView_dealMoney,
                 0f
-        );
+        ));
     }
 
     /**
      * 初始化界面
      */
     private void initView() {
-        float uptickPrice = 0;
-        float uptickRate = 0;
-        if (currentPrice > 0 && yesterdayClosePrice > 0) {
-            uptickPrice = currentPrice - yesterdayClosePrice;
-            uptickRate = uptickPrice / yesterdayClosePrice;
+        BigDecimal uptickPrice = BigDecimal.ZERO;
+        BigDecimal uptickRate = BigDecimal.ZERO;
+        if (1 == currentPrice.compareTo(BigDecimal.ZERO) && 1 == preClosePrice.compareTo(BigDecimal.ZERO)) {
+            uptickPrice = currentPrice.subtract(preClosePrice);
+            uptickRate = uptickPrice.divide(preClosePrice, 4);
         }
         int uptickType = getUptickType(uptickPrice);
         currentPriceSVTV.setValue(currentPrice).setUptickType(uptickType).reDraw();
         uptickPriceSVTV.setValue(uptickPrice).setUptickType(uptickType).reDraw();
         uptickRateSVTV.setValue(uptickRate).setUptickType(uptickType).reDraw();
-        todayHighestPriceSVTV.setValue(todayHighestPrice)
-                .setUptickType(getUptickType(todayHighestPrice - yesterdayClosePrice))
+        todayHighestPriceSVTV.setValue(highestPrice)
+                .setUptickType(getUptickType(highestPrice.subtract(preClosePrice)))
                 .reDraw();
-        todayLowestPriceSVTV.setValue(todayLowestPrice)
-                .setUptickType(getUptickType(todayLowestPrice - yesterdayClosePrice))
+        todayLowestPriceSVTV.setValue(lowestPrice)
+                .setUptickType(getUptickType(lowestPrice.subtract(preClosePrice)))
                 .reDraw();
-        todayOpenPriceSVTV.setValue(todayOpenPrice)
-                .setUptickType(getUptickType(todayOpenPrice - yesterdayClosePrice))
+        todayOpenPriceSVTV.setValue(openPrice)
+                .setUptickType(getUptickType(openPrice.subtract(preClosePrice)))
                 .reDraw();
-        dealNumSVTV.setValue(dealNum).reDraw();
+        dealNumSVTV.setValue(new BigDecimal(dealNum)).reDraw();
         dealMoneySVTV.setValue(dealMoney).reDraw();
-        double dealAvgPrice = 0;
-        if (dealNum > 0 && dealMoney > 0) {
-            dealAvgPrice = dealMoney / dealNum;
+        BigDecimal dealAvgPrice = BigDecimal.ZERO;
+        if (dealNum > 0 && 1 == dealMoney.compareTo(BigDecimal.ZERO)) {
+            dealAvgPrice = dealMoney.divide(new BigDecimal(dealNum), 2);
         }
         dealAvgPriceSVTV.setValue(dealAvgPrice).reDraw();
     }
@@ -184,14 +186,18 @@ public class StockDealInfoView extends LinearLayout {
      * @param value
      * @return
      */
-    private int getUptickType(float value) {
-        if (value > 0) {
-            return StockValueTextView.UPTICK_TYPE_UP;
-        } else if (value < 0) {
-            return StockValueTextView.UPTICK_TYPE_DOWN;
-        } else {
-            return StockValueTextView.UPTICK_TYPE_FLAT;
+    private int getUptickType(BigDecimal value) {
+        if (null != value) {
+            switch (value.compareTo(BigDecimal.ZERO)) {
+                case 1:
+                    return StockValueTextView.UPTICK_TYPE_UP;
+                case 0:
+                    return StockValueTextView.UPTICK_TYPE_FLAT;
+                case -1:
+                    return StockValueTextView.UPTICK_TYPE_DOWN;
+            }
         }
+        return StockValueTextView.UPTICK_TYPE_FLAT;
     }
 
     /**
@@ -200,25 +206,31 @@ public class StockDealInfoView extends LinearLayout {
      * @return
      */
     public StockDealInfoView setData(DealInfoApiDto dealInfoApiDto) {
-        if (null != dealInfoApiDto.getCurrentPrice() && 0 < dealInfoApiDto.getCurrentPrice()) {
+        if (null != dealInfoApiDto.getCurrentPrice()
+                && -1 != dealInfoApiDto.getCurrentPrice().compareTo(BigDecimal.ZERO)) {
             currentPrice = dealInfoApiDto.getCurrentPrice();
         }
-        if (null != dealInfoApiDto.getYesterdayClosePrice() && 0 < dealInfoApiDto.getYesterdayClosePrice()) {
-            yesterdayClosePrice = dealInfoApiDto.getYesterdayClosePrice();
+        if (null != dealInfoApiDto.getPreClosePrice()
+                && -1 != dealInfoApiDto.getPreClosePrice().compareTo(BigDecimal.ZERO)) {
+            preClosePrice = dealInfoApiDto.getPreClosePrice();
         }
-        if (null != dealInfoApiDto.getTodayOpenPrice() && 0 < dealInfoApiDto.getTodayOpenPrice()) {
-            todayOpenPrice = dealInfoApiDto.getTodayOpenPrice();
+        if (null != dealInfoApiDto.getOpenPrice()
+                && -1 != dealInfoApiDto.getOpenPrice().compareTo(BigDecimal.ZERO)) {
+            openPrice = dealInfoApiDto.getOpenPrice();
         }
-        if (null != dealInfoApiDto.getTodayHighestPrice() && 0 < dealInfoApiDto.getTodayHighestPrice()) {
-            todayHighestPrice = dealInfoApiDto.getTodayHighestPrice();
+        if (null != dealInfoApiDto.getHighestPrice()
+                && -1 != dealInfoApiDto.getHighestPrice().compareTo(BigDecimal.ZERO)) {
+            highestPrice = dealInfoApiDto.getHighestPrice();
         }
-        if (null != dealInfoApiDto.getTodayLowestPrice() && 0 < dealInfoApiDto.getTodayLowestPrice()) {
-            todayLowestPrice = dealInfoApiDto.getTodayLowestPrice();
+        if (null != dealInfoApiDto.getLowestPrice()
+                && -1 != dealInfoApiDto.getLowestPrice().compareTo(BigDecimal.ZERO)) {
+            lowestPrice = dealInfoApiDto.getLowestPrice();
         }
         if (null != dealInfoApiDto.getDealNum() && 0 < dealInfoApiDto.getDealNum()) {
             dealNum = dealInfoApiDto.getDealNum();
         }
-        if (null != dealInfoApiDto.getDealMoney() && 0 < dealInfoApiDto.getDealMoney()) {
+        if (null != dealInfoApiDto.getDealMoney()
+                && -1 != dealInfoApiDto.getDealMoney().compareTo(BigDecimal.ZERO)) {
             dealMoney = dealInfoApiDto.getDealMoney();
         }
         return this;

@@ -286,7 +286,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                             stockIndexBlockView.setName(topIndexApiDto.getStockName());
                             stockIndexBlockView.setPrice(
                                     topIndexApiDto.getCurrentPrice(),
-                                    topIndexApiDto.getYesterdayClosePrice()
+                                    topIndexApiDto.getPreClosePrice()
                             );
                             topIndexMap.put(stockId, stockIndexBlockView);
                             topIndexLL.addView(stockIndexBlockView);
@@ -294,7 +294,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                             stockIndexBlockView = topIndexMap.get(stockId);
                             stockIndexBlockView.setPrice(
                                     topIndexApiDto.getCurrentPrice(),
-                                    topIndexApiDto.getYesterdayClosePrice()
+                                    topIndexApiDto.getPreClosePrice()
                             );
                         }
                     }

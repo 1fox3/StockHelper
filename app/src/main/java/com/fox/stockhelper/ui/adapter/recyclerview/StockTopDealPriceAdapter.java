@@ -9,6 +9,8 @@ import com.fox.stockhelper.R;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.TopDealPriceSingleDto;
 import com.fox.stockhelper.ui.view.StockValueTextView;
 
+import java.math.BigDecimal;
+
 import androidx.annotation.NonNull;
 
 /**
@@ -32,7 +34,7 @@ public class StockTopDealPriceAdapter extends BaseRecyclerViewAdapter {
     /**
      * 昨日收盘价
      */
-    private float yesterdayClosePrice = 0;
+    private BigDecimal preClosePrice = BigDecimal.ZERO;
 
     class StockTopDealPriceViewHolder extends BaseViewHolder {
         TextView stockTopOrderNumTV;
@@ -52,10 +54,10 @@ public class StockTopDealPriceAdapter extends BaseRecyclerViewAdapter {
             int priceNum = priceType == TOP_PRICE_TYPE_SELL ?
                     getItemCount() - position : position + 1;
             stockTopOrderNumTV.setText(priceTypeStr + priceNum);
-            float price = ((TopDealPriceSingleDto)data).getPrice();
+            BigDecimal price = ((TopDealPriceSingleDto)data).getPrice();
             int uptickType = getUptickType(price);
             stockTopDealPriceSVTV.setValue(price).setUptickType(uptickType).reDraw();
-            stockTopDealNumSVTV.setValue(((TopDealPriceSingleDto)data).getNum())
+            stockTopDealNumSVTV.setValue(new BigDecimal(((TopDealPriceSingleDto)data).getNum()))
                     .setUptickType(uptickType).reDraw();
         }
     }
@@ -83,12 +85,12 @@ public class StockTopDealPriceAdapter extends BaseRecyclerViewAdapter {
 
     /**
      * 设置昨日收盘价
-     * @param yesterdayClosePrice
+     * @param preClosePrice
      * @return
      */
-    public StockTopDealPriceAdapter setYesterdayClosePrice(float yesterdayClosePrice) {
-        this.yesterdayClosePrice = yesterdayClosePrice > 0 ?
-                yesterdayClosePrice : this.yesterdayClosePrice;
+    public StockTopDealPriceAdapter setPreClosePrice(BigDecimal preClosePrice) {
+        this.preClosePrice = null != preClosePrice && 1 == preClosePrice.compareTo(BigDecimal.ZERO)
+                ? preClosePrice : this.preClosePrice;
         return this;
     }
 
@@ -97,15 +99,19 @@ public class StockTopDealPriceAdapter extends BaseRecyclerViewAdapter {
      * @param price
      * @return
      */
-    private int getUptickType(float price) {
+    private int getUptickType(BigDecimal price) {
         int type = StockValueTextView.UPTICK_TYPE_FLAT;
-        if (0 < yesterdayClosePrice && 0 != price) {
-            if (price > yesterdayClosePrice) {
-                type = StockValueTextView.UPTICK_TYPE_UP;
-            } else if (price < yesterdayClosePrice) {
-                type = StockValueTextView.UPTICK_TYPE_DOWN;
-            } else {
-                type = StockValueTextView.UPTICK_TYPE_FLAT;
+        if (1 == preClosePrice.compareTo(BigDecimal.ZERO) && 0 != price.compareTo(BigDecimal.ZERO)) {
+            switch (price.compareTo(preClosePrice)) {
+                case 1:
+                    type = StockValueTextView.UPTICK_TYPE_UP;
+                    break;
+                case 0:
+                    type = StockValueTextView.UPTICK_TYPE_FLAT;
+                    break;
+                case -1:
+                    type = StockValueTextView.UPTICK_TYPE_DOWN;
+                    break;
             }
         }
         return  type;

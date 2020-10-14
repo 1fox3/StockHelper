@@ -1,11 +1,12 @@
 package com.fox.stockhelper.entity.dto.api.stock.realtime;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import lombok.Data;
 
 /**
- * 股票排行接口数据格式
+ * 股票实时交易信息
  * @author lusongsong
  * @date 2020/8/28 11:14
  */
@@ -30,51 +31,51 @@ public class DealInfoApiDto {
     /**
      * 今日开盘价
      */
-    Float todayOpenPrice;
+    BigDecimal openPrice;
     /**
      * 昨日收盘价
      */
-    Float yesterdayClosePrice;
+    BigDecimal preClosePrice;
     /**
      * 当前价格
      */
-    Float currentPrice;
+    BigDecimal currentPrice;
     /**
      * 今日最高价
      */
-    Float todayHighestPrice;
+    BigDecimal highestPrice;
     /**
      * 今日最低价
      */
-    Float todayLowestPrice;
+    BigDecimal lowestPrice;
     /**
      * 价格涨幅
      */
-    Float uptickPrice;
+    BigDecimal uptickPrice;
     /**
      * 增长率
      */
-    Float uptickRate;
+    BigDecimal uptickRate;
     /**
      * 波动
      */
-    Float surgeRate;
+    BigDecimal surgeRate;
     /**
      * 竞买价
      */
-    Float competeBuyPrice;
+    BigDecimal competeBuyPrice;
     /**
      * 竞卖价
      */
-    Float competeSellPrice;
+    BigDecimal competeSellPrice;
     /**
      * 当前分钟最高价
      */
-    Float minuteHighestPrice;
+    BigDecimal minuteHighestPrice;
     /**
      * 当前分钟最低价
      */
-    Float minuteLowestPrice;
+    BigDecimal minuteLowestPrice;
     /**
      * 成交股数
      */
@@ -82,7 +83,7 @@ public class DealInfoApiDto {
     /**
      * 成交金额
      */
-    Double dealMoney;
+    BigDecimal dealMoney;
     /**
      * 排名靠前的5个买方报价
      */

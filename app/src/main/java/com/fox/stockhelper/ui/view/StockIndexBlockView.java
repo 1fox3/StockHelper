@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.fox.stockhelper.R;
 
+import java.math.BigDecimal;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -26,11 +28,11 @@ public class StockIndexBlockView extends RelativeLayout {
     /**
      * 当前价
      */
-    private Float currentPrice;
+    private BigDecimal currentPrice;
     /**
      * 上个交易日收盘价
      */
-    private Float yesterdayClosePrice;
+    private BigDecimal preClosePrice;
     /**
      * 名称文本组件
      */
@@ -102,12 +104,12 @@ public class StockIndexBlockView extends RelativeLayout {
                 attrs, R.styleable.StockIndexBlockView
         );
         name = typedArray.getString(R.styleable.StockIndexBlockView_name);
-        currentPrice = typedArray.getFloat(
+        currentPrice = new BigDecimal(typedArray.getFloat(
                 R.styleable.StockIndexBlockView_currentPrice, 0f
-        );
-        yesterdayClosePrice = typedArray.getFloat(
-                R.styleable.StockIndexBlockView_yesterdayClosePrice, 0f
-        );
+        ));
+        preClosePrice = new BigDecimal(typedArray.getFloat(
+                R.styleable.StockIndexBlockView_preClosePrice, 0f
+        ));
     }
 
     /**
@@ -123,8 +125,9 @@ public class StockIndexBlockView extends RelativeLayout {
      * @param numberValue
      * @return
      */
-    private String getNumberStr(float numberValue) {
-        return String.format("%.2f", numberValue);
+    private String getNumberStr(BigDecimal numberValue) {
+        numberValue.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return numberValue.toString();
     }
 
     /**
@@ -149,11 +152,11 @@ public class StockIndexBlockView extends RelativeLayout {
     /**
      * 设置价格
      * @param currentPrice
-     * @param yesterdayClosePrice
+     * @param preClosePrice
      */
-    public void setPrice(Float currentPrice, Float yesterdayClosePrice) {
+    public void setPrice(BigDecimal currentPrice, BigDecimal preClosePrice) {
         this.currentPrice = currentPrice;
-        this.yesterdayClosePrice = yesterdayClosePrice;
+        this.preClosePrice = preClosePrice;
         this.showValue();
     }
 
@@ -169,16 +172,18 @@ public class StockIndexBlockView extends RelativeLayout {
      * 显示数值
      */
     public void showValue() {
-        if (null != currentPrice && null != yesterdayClosePrice
-                && currentPrice > 0 && yesterdayClosePrice > 0) {
-            float uptickPrice = currentPrice - yesterdayClosePrice;
-            float uptickRate = uptickPrice / yesterdayClosePrice;
+        if (null != currentPrice && null != preClosePrice
+                && 0 < currentPrice.compareTo(BigDecimal.ZERO)
+                && 0 < preClosePrice.compareTo(BigDecimal.ZERO)) {
+            BigDecimal uptickPrice = currentPrice.subtract(preClosePrice);
+            BigDecimal uptickRate = uptickPrice.divide(preClosePrice, 4,  BigDecimal.ROUND_HALF_UP);
+            int uptickType = uptickPrice.compareTo(BigDecimal.ZERO);
             currentPriceTV.setText(getNumberStr(currentPrice));
-            uptickPriceTV.setText((uptickPrice > 0 ? "+" : "") + getNumberStr(uptickPrice));
-            uptickRateTV.setText((uptickRate > 0 ? "+" : "") + getNumberStr(uptickRate * 100) + "%");
-            if (0.0 < uptickPrice) {
+            uptickPriceTV.setText((1 == uptickType ? "+" : "") + getNumberStr(uptickPrice));
+            uptickRateTV.setText((1 == uptickType ? "+" : "") + getNumberStr(uptickRate.multiply(new BigDecimal(100))) + "%");
+            if (0 < uptickType) {
                 this.setTextColor(this.getContext().getColor(R.color.up));
-            } else if (0.0 > uptickPrice) {
+            } else if (0 > uptickType) {
                 this.setTextColor(this.getContext().getColor(R.color.down));
             } else {
                 this.setTextColor(this.getContext().getColor(R.color.flat));

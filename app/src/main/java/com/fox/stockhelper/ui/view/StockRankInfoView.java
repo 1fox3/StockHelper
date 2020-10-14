@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.RankApiDto;
 
+import java.math.BigDecimal;
+
 import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -105,26 +107,26 @@ public class StockRankInfoView extends LinearLayout {
         );
         rankApiDto.setStockName(typedArray.getString(R.styleable.StockRankInfoView_stockName));
         rankApiDto.setStockCode(typedArray.getString(R.styleable.StockRankInfoView_stockCode));
-        rankApiDto.setPrice(typedArray.getFloat(
+        rankApiDto.setCurrentPrice(new BigDecimal(typedArray.getFloat(
                 R.styleable.StockRankInfoView_stockPrice,
                 0f
-        ));
-        rankApiDto.setUptickRate(typedArray.getFloat(
+        )));
+        rankApiDto.setUptickRate(new BigDecimal(typedArray.getFloat(
                 R.styleable.StockRankInfoView_uptickRate,
                 0f
-        ));
-        rankApiDto.setSurgeRate(typedArray.getFloat(
+        )));
+        rankApiDto.setSurgeRate(new BigDecimal(typedArray.getFloat(
                 R.styleable.StockRankInfoView_surgeRate,
                 0f
-        ));
-        rankApiDto.setDealNum(typedArray.getFloat(
+        )));
+        rankApiDto.setDealNum((long)typedArray.getFloat(
                 R.styleable.StockRankInfoView_dealNum,
                 0f
         ));
-        rankApiDto.setDealMoney(typedArray.getFloat(
+        rankApiDto.setDealMoney(new BigDecimal(typedArray.getFloat(
                 R.styleable.StockRankInfoView_dealMoney,
                 0f
-        ));
+        )));
     }
 
     /**
@@ -134,27 +136,27 @@ public class StockRankInfoView extends LinearLayout {
         if (null != rankApiDto) {
             stockNameCode.setText(rankApiDto.getStockName() + "\n" + rankApiDto.getStockCode());
             stockPrice.setValue(
-                    (double)rankApiDto.getPrice(),
+                    rankApiDto.getCurrentPrice(),
                     StockValueTextView.TYPE_NUMBER,
                     StockValueTextView.UNIT_NUMBER
             ).reDraw();
             stockUptickRate.setValue(
-                    (double)rankApiDto.getUptickRate(),
+                    rankApiDto.getUptickRate(),
                     StockValueTextView.TYPE_RATE,
                     StockValueTextView.UNIT_NUMBER
             ).reDraw();
             stockSurgeRate.setValue(
-                    (double)rankApiDto.getSurgeRate(),
+                    rankApiDto.getSurgeRate(),
                     StockValueTextView.TYPE_RATE,
                     StockValueTextView.UNIT_NUMBER
             ).reDraw();
             stockDealNum.setValue(
-                    (double)rankApiDto.getDealNum(),
+                    new BigDecimal(rankApiDto.getDealNum()),
                     StockValueTextView.TYPE_NUMBER,
                     StockValueTextView.UNIT_NUMBER
             ).reDraw();
             stockDealMoney.setValue(
-                    (double)rankApiDto.getDealMoney(),
+                    rankApiDto.getDealMoney(),
                     StockValueTextView.TYPE_NUMBER,
                     StockValueTextView.UNIT_NUMBER
             ).reDraw();
