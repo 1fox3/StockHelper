@@ -54,4 +54,12 @@
         <attr name="dealNum" />
         <attr name="dealMoney" />
     </declare-styleable>
+    <declare-styleable name="StockDealMinuteInfoView">
+        <attr name="dt" format="string" />
+        <attr name="time" format="string" />
+        <attr name="price" format="float" />
+        <attr name="avgPrice" format="float" />
+        <attr name="dealNum" />
+        <attr name="dealMoney" />
+    </declare-styleable>
 </resources>

@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.fragment.StockLandLineKlineFragment">
+
+    <com.fox.stockhelper.ui.view.StockDealInfoView
+        android:id="@+id/stockDealInfoSDIV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <com.github.mikephil.charting.stockChart.KLineChart
+        android:id="@+id/stockKLineChart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

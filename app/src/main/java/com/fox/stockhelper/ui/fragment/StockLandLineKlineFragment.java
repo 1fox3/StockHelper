@@ -1,7 +1,6 @@
 package com.fox.stockhelper.ui.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,21 +8,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.fox.stockhelper.R;
+import com.fox.stockhelper.api.BaseApi;
 import com.fox.stockhelper.api.stock.offline.DealDayApi;
+import com.fox.stockhelper.api.stock.offline.DealMonthApi;
+import com.fox.stockhelper.api.stock.offline.DealWeekApi;
 import com.fox.stockhelper.config.MsgWhatConfig;
 import com.fox.stockhelper.entity.dto.api.stock.offline.DealDayApiDto;
-import com.fox.stockhelper.entity.dto.api.stock.realtime.DealInfoApiDto;
-import com.fox.stockhelper.ui.activity.StockAllKlineLandActivity;
 import com.fox.stockhelper.ui.base.BaseFragment;
-import com.fox.stockhelper.ui.chart.custom.StockKLineChart;
 import com.fox.stockhelper.ui.handler.CommonHandler;
 import com.fox.stockhelper.ui.listener.CommonHandleListener;
-import com.fox.stockhelper.ui.listener.ListChooseListener;
 import com.fox.stockhelper.ui.view.StockDealInfoView;
+import com.github.mikephil.charting.stockChart.BaseChart;
+import com.github.mikephil.charting.stockChart.KLineChart;
 import com.github.mikephil.charting.stockChart.dataManage.KLineDataManage;
+import com.github.mikephil.charting.stockChart.dataManage.TimeDataManage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,37 +37,36 @@ import butterknife.ButterKnife;
 import lombok.SneakyThrows;
 
 /**
- * 股市离线成交线图
  * @author lusongsong
- * @date 2020/9/14 15:58
+ * @date 2020/10/22 20:38
  */
-public class StockDealLineOfflineFragment extends BaseFragment implements CommonHandleListener, ListChooseListener {
+public class StockLandLineKlineFragment extends BaseFragment
+        implements CommonHandleListener, BaseChart.OnHighlightValueSelectedListener {
+    public static
     /**
      * 股票id
      */
-    private Integer stockId;
+    Integer stockId;
+    /**
+     * 线图类型
+     */
+    Integer klineType;
+
+    boolean land = true;
 
     @BindView(R.id.stockDealInfoSDIV)
     StockDealInfoView stockDealInfoSDIV;
-    /**
-     * 单谈表格
-     */
     @BindView(R.id.stockKLineChart)
-    StockKLineChart stockKLineChart;
+    KLineChart stockKLineChart;
     /**
-     * 查看所以线图图片
+     * 成交分时数据
      */
-    @BindView(R.id.allKlineIV)
-    ImageView allKlineIV;
-    private int mType = 1;//日K：1；周K：7；月K：30
-    private boolean land = false;//是否横屏
     private KLineDataManage kLineData;
     private JSONObject object;
     /**
      * 按天价格数据
      */
     List<DealDayApiDto> dealDayApiDtoList;
-
     /**
      * 消息处理
      */
@@ -77,35 +76,33 @@ public class StockDealLineOfflineFragment extends BaseFragment implements Common
      *
      * @param context
      */
-    public StockDealLineOfflineFragment(Context context) {
+    public StockLandLineKlineFragment(Context context) {
         super(context);
     }
-    public StockDealLineOfflineFragment(Context context, int stockId) {
+    public StockLandLineKlineFragment(Context context, Integer stockId, Integer klineType) {
         super(context);
         this.stockId = stockId;
+        this.klineType = klineType;
     }
 
+    /**
+     * 创建视图
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_stock_deal_line_offline, null);
+        View view = inflater.inflate(R.layout.fragment_stock_land_line_kline, null);
         ButterKnife.bind(this, view);
         kLineData = new KLineDataManage(getActivity());
         //初始化
         stockKLineChart.initChart(land);
-        stockKLineChart.setListChooseListener(this);
+        stockKLineChart.setHighlightValueSelectedListener(this);
         //初始化交易价格线图信息
         this.handleDealPriceLine();
-        allKlineIV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), StockAllKlineLandActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("stockId", stockId);
-                intent.putExtra("stock", bundle);
-                getContext().startActivity(intent);
-            }
-        });
         return view;
     }
 
@@ -146,7 +143,17 @@ public class StockDealLineOfflineFragment extends BaseFragment implements Common
             @SneakyThrows
             @Override
             public void run() {
-                DealDayApi dealDayApi = new DealDayApi();
+                BaseApi dealDayApi;
+                switch (klineType) {
+                    case 4:
+                        dealDayApi = new DealWeekApi();
+                        break;
+                    case 5:
+                        dealDayApi = new DealMonthApi();
+                        break;
+                    default:
+                        dealDayApi = new DealDayApi();
+                }
                 Map<String, Object> params = new HashMap<>();
                 params.put("stockId", stockId);
                 dealDayApi.setParams(params);
@@ -170,21 +177,18 @@ public class StockDealLineOfflineFragment extends BaseFragment implements Common
 
     /**
      * 选中
-     *
      * @param index
      */
-    @Override
     public void choose(Integer index) {
-        DealInfoApiDto dealInfoApiDto = new DealInfoApiDto();
-        DealDayApiDto dealDayApiDto = dealDayApiDtoList.get(index);
-        dealInfoApiDto.setCurrentPrice(dealDayApiDto.getClosePrice());
-        dealInfoApiDto.setPreClosePrice(dealDayApiDto.getPreClosePrice());
-        Log.e("preClosePrice", dealDayApiDto.getPreClosePrice().toString());
-        dealInfoApiDto.setOpenPrice(dealDayApiDto.getOpenPrice());
-        dealInfoApiDto.setHighestPrice(dealDayApiDto.getHighestPrice());
-        dealInfoApiDto.setLowestPrice(dealDayApiDto.getLowestPrice());
-        dealInfoApiDto.setDealNum(dealDayApiDto.getDealNum());
-        dealInfoApiDto.setDealMoney(dealDayApiDto.getDealMoney());
-        stockDealInfoSDIV.setData(dealInfoApiDto).reDraw();
+    }
+
+    @Override
+    public void onDayHighlightValueListener(TimeDataManage mData, int index, boolean isSelect) {
+        choose(index);
+    }
+
+    @Override
+    public void onKHighlightValueListener(KLineDataManage data, int index, boolean isSelect) {
+        choose(index);
     }
 }

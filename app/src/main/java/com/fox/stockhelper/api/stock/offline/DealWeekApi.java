@@ -4,13 +4,13 @@ import com.fox.stockhelper.api.BaseApi;
 import com.fox.stockhelper.entity.dto.api.stock.offline.DealDayApiDto;
 
 /**
- * 股票历史交易按天数据
+ * 股票历史交易按周数据
  * @author lusongsong
- * @date 2020/9/30 16:41
+ * @date 2020/10/22 19:48
  */
-public class DealDayApi extends BaseApi {
-    public DealDayApi() {
-        url = "stock/offline/day";
+public class DealWeekApi extends BaseApi {
+    public DealWeekApi() {
+        url = "stock/offline/week";
         method = METHOD_POST;
         requestParamKeys = new String[]{"stockId","fqType"};
         dataClass = DealDayApiDto.class;
