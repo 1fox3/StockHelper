@@ -12,7 +12,7 @@ public class RankApi extends BaseApi {
     public RankApi() {
         url = "stock/realtime/rank";
         method = METHOD_POST;
-        requestParamKeys = new String[]{"type", "sortType", "pageNum", "pageSize"};
+        requestParamKeys = new String[]{"stockMarket", "type", "sortType", "pageNum", "pageSize"};
         dataClass = RankApiDto.class;
         isListObject = true;
     }

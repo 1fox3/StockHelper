@@ -10,9 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fox.spider.stock.constant.StockConst;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.config.ActivityRequestCodeConfig;
 import com.fox.stockhelper.ui.adapter.StockMarketFragmentAdapter;
@@ -21,6 +23,7 @@ import com.fox.stockhelper.ui.fragment.StockMarketFragment;
 import com.fox.stockhelper.ui.view.HomeBottomView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -28,10 +31,10 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * APP入口类
+ *
  * @author lusongsong
  */
 public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
@@ -41,33 +44,9 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @BindView(R.id.search)
     EditText searchET;
     /**
-     * 股市数量
-     */
-    int stockMarketNum = 2;
-    /**
      * 当前选择的股市序号
      */
     int currentStockMarketNum = 0;
-    /**
-     * A股标题
-     */
-    @BindView(R.id.sm_hs_tv)
-    TextView stockMarketHSTV;
-    /**
-     * 港股标题
-     */
-    @BindView(R.id.sm_hk_tv)
-    TextView stockMarketHKTV;
-    /**
-     * A股下划线
-     */
-    @BindView(R.id.sm_hs_cursor)
-    ImageView stockMarketHSIV;
-    /**
-     * 港股下划线
-     */
-    @BindView(R.id.sm_hk_cursor)
-    ImageView stockMarketHKIV;
     /**
      * 股市页面切换
      */
@@ -88,9 +67,24 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @BindView(R.id.homeRL)
     RelativeLayout homeRL;
     /**
+     * 股市名称
+     */
+    @BindView(R.id.smNameLL)
+    LinearLayout smNameLL;
+    /**
+     * 股市选中下划线图片
+     */
+    @BindView(R.id.smCursorLL)
+    LinearLayout smCursorLL;
+    /**
      * 底部菜单
      */
     HomeBottomView homeBottomView;
+
+    /**
+     * 股市列表
+     */
+    public List<Integer> SM_ALL = Arrays.asList(StockConst.SM_A, StockConst.SM_HK);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,48 +122,75 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     }
 
     /**
-     * 点击切换页面
-     * @param view
-     */
-    @OnClick({R.id.sm_hs_tv, R.id.sm_hk_tv})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.sm_hs_tv:
-                this.chooseStockMarket(0);
-                break;
-            case R.id.sm_hk_tv:
-                this.chooseStockMarket(1);
-                break;
-        }
-    }
-
-    /**
      * 股市内容初始化
      */
     private void initStockMarket() {
-        //初始化股市title列表
-        smTextViewList = new ArrayList<>(stockMarketNum);
-        smTextViewList.add(stockMarketHSTV);
-        smTextViewList.add(stockMarketHKTV);
-        //初始化股市下划线列表
-        smImageViewList = new ArrayList<>(stockMarketNum);
-        smImageViewList.add(stockMarketHSIV);
-        smImageViewList.add(stockMarketHKIV);
-        //初始化股市页面列表
-        smFragmentList = new ArrayList<>(stockMarketNum);
-        smFragmentList.add(new StockMarketFragment(this, "hs"));
-        smFragmentList.add(new StockMarketFragment(this, "hk"));
+        if (SM_ALL.isEmpty()) {
+            return;
+        }
+
+        smFragmentList = new ArrayList<>(SM_ALL.size());
+        smTextViewList = new ArrayList<>(SM_ALL.size());
+        smImageViewList = new ArrayList<>(SM_ALL.size());
+        for (Integer stockMarket : SM_ALL) {
+            //初始化股市页面列表
+            smFragmentList.add(new StockMarketFragment(this, stockMarket));
+            //股市名称
+            TextView textView = getSMNameTextView(stockMarket, smFragmentList.size() - 1);
+            smTextViewList.add(textView);
+            smNameLL.addView(textView);
+            //股市下滑线
+            ImageView imageView = getSMCursorImageView(stockMarket);
+            smImageViewList.add(imageView);
+            smCursorLL.addView(imageView);
+        }
 
         //股市页面切换器
         StockMarketFragmentAdapter stockMarketFragmentAdapter =
                 new StockMarketFragmentAdapter(getSupportFragmentManager(), smFragmentList);
         stockTypeVP.setAdapter(stockMarketFragmentAdapter);
-        stockTypeVP.addOnPageChangeListener(this) ;
+        stockTypeVP.addOnPageChangeListener(this);
         this.chooseStockMarket(currentStockMarketNum);
     }
 
     /**
+     * 获取集市名称组件
+     *
+     * @param stockMarket
+     * @return
+     */
+    private TextView getSMNameTextView(Integer stockMarket, Integer currentSMId) {
+        TextView textView = new TextView(this);
+        textView.setText(StockConst.stockMarketName(stockMarket));
+        textView.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                1
+        ));
+        textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        textView.setOnClickListener(view -> chooseStockMarket(currentSMId));
+        return textView;
+    }
+
+    /**
+     * 获取股市选中图片组件
+     *
+     * @param stockMarket
+     * @return
+     */
+    private ImageView getSMCursorImageView(Integer stockMarket) {
+        ImageView imageView = new ImageView(this);
+        imageView.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                1
+        ));
+        return imageView;
+    }
+
+    /**
      * 选择股市
+     *
      * @param smNum
      */
     @SuppressLint("ResourceAsColor")

@@ -17,19 +17,20 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fox.spider.stock.api.sina.SinaRealtimeDealInfo;
+import com.fox.spider.stock.constant.StockConst;
+import com.fox.spider.stock.constant.StockMarketStatusConst;
+import com.fox.spider.stock.entity.po.sina.SinaRealtimeDealInfoPo;
+import com.fox.spider.stock.entity.vo.StockVo;
+import com.fox.spider.stock.util.StockMarketStatusUtil;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.api.stock.realtime.RankApi;
-import com.fox.stockhelper.api.stock.realtime.TopIndexApi;
 import com.fox.stockhelper.api.stock.realtime.UptickRateStatisticsApi;
 import com.fox.stockhelper.config.ActivityRequestCodeConfig;
 import com.fox.stockhelper.config.MsgWhatConfig;
-import com.fox.stockhelper.constant.stock.StockMarketStatusConst;
+import com.fox.stockhelper.constant.stock.SHStockConst;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.RankApiDto;
-import com.fox.stockhelper.entity.dto.api.stock.realtime.TopIndexApiDto;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.UptickRateStatisticsApiDto;
-import com.fox.stockhelper.serv.stock.StockMarketStatusServ;
 import com.fox.stockhelper.ui.activity.StockDealLineActivity;
 import com.fox.stockhelper.ui.activity.StockRankActivity;
 import com.fox.stockhelper.ui.adapter.StockRankAdapter;
@@ -40,7 +41,6 @@ import com.fox.stockhelper.ui.view.SortTextView;
 import com.fox.stockhelper.ui.view.StockIndexBlockView;
 import com.fox.stockhelper.util.DateUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,17 +52,30 @@ import lombok.SneakyThrows;
 
 /**
  * 股市首页
+ *
  * @author lusongsong
  */
 public class StockMarketFragment extends BaseFragment implements CommonHandleListener {
     /**
      * 股市
      */
-    private String stockMarket;
+    private Integer stockMarket;
     /**
      * 股市状态
      */
-    private int smStatus = StockMarketStatusConst.OPEN;
+    private Integer smStatus = 0;
+    /**
+     * top指标实时交易数据
+     */
+    private Map<String, SinaRealtimeDealInfoPo> topIndexDealInfoMap = new HashMap<>();
+    /**
+     * 涨跌统计
+     */
+    private UptickRateStatisticsApiDto uptickRateStatisticsApiDto;
+    /**
+     * 股票排行
+     */
+    private List<RankApiDto> rankApiDtoList;
     /**
      * 股市状态logo
      */
@@ -124,15 +137,25 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
     @BindView(R.id.smUSUpIV)
     ImageView smUSUpIV;
     /**
-     * 统计涨停文本
+     * 统计涨停数文本
      */
     @BindView(R.id.smUSUpLimitTV)
     TextView smUSUpLimitTV;
+    /**
+     * 涨停文案
+     */
+    @BindView(R.id.smUSUpLimitTextTV)
+    TextView smUSUpLimitTextTV;
     /**
      * 统计跌停文本
      */
     @BindView(R.id.smUSDownLimitTV)
     TextView smUSDownLimitTV;
+    /**
+     * 跌停文案
+     */
+    @BindView(R.id.smUSDownLimitTextTV)
+    TextView smUSDownLimitTextTV;
 
     /**
      * 价格排序
@@ -176,7 +199,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
     /**
      * top指标ui
      */
-    Map<Integer, StockIndexBlockView> topIndexMap = new HashMap<>();
+    Map<String, StockIndexBlockView> topIndexMap = new HashMap<>();
     /**
      * 消息处理
      */
@@ -200,10 +223,11 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
 
     /**
      * 指定上下文和股市
+     *
      * @param context
      * @param stockMarket
      */
-    public StockMarketFragment(Context context, String stockMarket) {
+    public StockMarketFragment(Context context, Integer stockMarket) {
         super(context);
         this.stockMarket = stockMarket;
     }
@@ -213,7 +237,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_stock_market, null);
         ButterKnife.bind(this, view);
-        sortTextViews = new SortTextView[] {
+        sortTextViews = new SortTextView[]{
                 priceSTV,
                 uptickRateSTV,
                 surgeRateSTV,
@@ -247,6 +271,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
 
     /**
      * 消息处理
+     *
      * @param message
      */
     @Override
@@ -254,26 +279,30 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
         Bundle bundle = message.getData();
         switch (message.what) {
             case MsgWhatConfig.SM_STATUS:
-                smStatus = bundle.getInt("smStatus");
-                int[] smStatusInfo = StockMarketStatusConst.getStatusInfo(smStatus);
-                smStatusIV.setImageResource(smStatusInfo[0]);
-                smStatusTV.setText(smStatusInfo[1]);
-                if (smStatus != StockMarketStatusConst.OPEN
-                        && smStatus != StockMarketStatusConst.COMPETE) {
-                    smStatusTV.setTextColor(Color.BLACK);
-                } else {
-                    smStatusTV.setTextColor(Color.RED);
+                Integer currentSMStatus = bundle.getInt("smStatus");
+                if (null != currentSMStatus && !currentSMStatus.equals(smStatus)) {
+                    smStatus = currentSMStatus;
+                    if (SHStockConst.STATUS_IMAGE_MAP.containsKey(smStatus)) {
+                        smStatusIV.setImageResource(SHStockConst.STATUS_IMAGE_MAP.get(smStatus));
+                    }
+                    if (StockMarketStatusConst.STATUS_DESC_MAP.containsKey(smStatus)) {
+                        smStatusTV.setText(StockMarketStatusConst.STATUS_DESC_MAP.get(smStatus));
+                    }
+                    if (smStatus != StockMarketStatusConst.OPEN
+                            && smStatus != StockMarketStatusConst.COMPETE) {
+                        smStatusTV.setTextColor(Color.BLACK);
+                    } else {
+                        smStatusTV.setTextColor(Color.RED);
+                    }
                 }
                 break;
             case MsgWhatConfig.TOP_INDEX:
-                String[] topIndexArr = bundle.getStringArray("topIndex");
                 try {
-                    for (String topIndexStr : topIndexArr) {
-                        TopIndexApiDto topIndexApiDto =
-                                new ObjectMapper().readValue(topIndexStr, TopIndexApiDto.class);
-                        int stockId = topIndexApiDto.getStockId();
+                    for (SinaRealtimeDealInfoPo sinaRealtimeDealInfoPo
+                            : topIndexDealInfoMap.values()) {
+                        String stockCode = sinaRealtimeDealInfoPo.getStockCode();
                         StockIndexBlockView stockIndexBlockView;
-                        if (!topIndexMap.containsKey(stockId)) {
+                        if (!topIndexMap.containsKey(stockCode)) {
                             stockIndexBlockView = new StockIndexBlockView(this.context);
                             stockIndexBlockView.setLayoutParams(
                                     new LinearLayout.LayoutParams(
@@ -283,18 +312,18 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                             );
                             //xml中的center数值是0x11，与RelativeLayout.END_OF(17)等价
                             stockIndexBlockView.setGravity(RelativeLayout.END_OF);
-                            stockIndexBlockView.setName(topIndexApiDto.getStockName());
+                            stockIndexBlockView.setName(sinaRealtimeDealInfoPo.getStockName());
                             stockIndexBlockView.setPrice(
-                                    topIndexApiDto.getCurrentPrice(),
-                                    topIndexApiDto.getPreClosePrice()
+                                    sinaRealtimeDealInfoPo.getCurrentPrice(),
+                                    sinaRealtimeDealInfoPo.getPreClosePrice()
                             );
-                            topIndexMap.put(stockId, stockIndexBlockView);
+                            topIndexMap.put(stockCode, stockIndexBlockView);
                             topIndexLL.addView(stockIndexBlockView);
                         } else {
-                            stockIndexBlockView = topIndexMap.get(stockId);
+                            stockIndexBlockView = topIndexMap.get(stockCode);
                             stockIndexBlockView.setPrice(
-                                    topIndexApiDto.getCurrentPrice(),
-                                    topIndexApiDto.getPreClosePrice()
+                                    sinaRealtimeDealInfoPo.getCurrentPrice(),
+                                    sinaRealtimeDealInfoPo.getPreClosePrice()
                             );
                         }
                     }
@@ -307,18 +336,19 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                 }
                 break;
             case MsgWhatConfig.UPTICK_RATE_STATISTICS:
-                String uptickRateStatisticsStr = bundle.getString("uptickRateStatistics");
                 try {
-                    UptickRateStatisticsApiDto uptickRateStatisticsApiDto =
-                            new ObjectMapper().readValue(
-                                    uptickRateStatisticsStr,
-                                    UptickRateStatisticsApiDto.class
-                            );
+                    if (StockConst.SM_NO_LIMIT_LIST.contains(stockMarket)) {
+                        smUSDownLimitTV.setText(String.valueOf(uptickRateStatisticsApiDto.getDown()));
+                        smUSUpLimitTV.setText(String.valueOf(uptickRateStatisticsApiDto.getUp()));
+                        smUSDownLimitTextTV.setText("跌");
+                        smUSUpLimitTextTV.setText("涨");
+                    } else {
+                        smUSDownLimitTV.setText(String.valueOf(uptickRateStatisticsApiDto.getDownLimit()));
+                        smUSUpLimitTV.setText(String.valueOf(uptickRateStatisticsApiDto.getUpLimit()));
+                    }
                     smUSDownTV.setText(String.valueOf(uptickRateStatisticsApiDto.getDown()));
-                    smUSDownLimitTV.setText(String.valueOf(uptickRateStatisticsApiDto.getDownLimit()));
                     smUSFlatTV.setText(String.valueOf(uptickRateStatisticsApiDto.getFlat()));
                     smUSUpTV.setText(String.valueOf(uptickRateStatisticsApiDto.getUp()));
-                    smUSUpLimitTV.setText(String.valueOf(uptickRateStatisticsApiDto.getUpLimit()));
                     smUSDownIV.setLayoutParams(new LinearLayout.LayoutParams(
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -339,14 +369,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                 }
                 break;
             case MsgWhatConfig.STOCK_RANK:
-                String[] stockRankArr = bundle.getStringArray("stockRank");
                 try {
-                    List<RankApiDto> rankApiDtoList = new ArrayList<>();
-                    for (String stockRankStr : stockRankArr) {
-                        RankApiDto rankApiDto =
-                                new ObjectMapper().readValue(stockRankStr, RankApiDto.class);
-                        rankApiDtoList.add(rankApiDto);
-                    }
                     stockRankAdapter.clear();
                     stockRankAdapter.addAll(rankApiDtoList);
                     stockRankListLV.setAdapter(stockRankAdapter);
@@ -384,7 +407,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
             @Override
             public void run() {
                 while (true) {
-                    int smStatus = StockMarketStatusServ.getStockMarketStatus();
+                    Integer smStatus = StockMarketStatusUtil.currentSMStatus(stockMarket);
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.SM_STATUS;
                     Bundle bundle = new Bundle();
@@ -410,22 +433,19 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
             @Override
             public void run() {
                 while (true) {
-                    if (smStatus == StockMarketStatusConst.OPEN
-                            || smStatus == StockMarketStatusConst.COMPETE) {
-                        TopIndexApi topIndexApi = new TopIndexApi();
-                        List<TopIndexApiDto> list = (List<TopIndexApiDto>)topIndexApi.request();
-                        String[] topIndexArr = new String[list.size()];
-                        for (int i = 0; i < list.size(); i++) {
-                            topIndexArr[i] = JSONObject.toJSONString(list.get(i));
-                        }
-                        Message msg = new Message();
-                        msg.what = MsgWhatConfig.TOP_INDEX;
-                        Bundle bundle = new Bundle();
-                        bundle.putStringArray("topIndex", topIndexArr);
-                        msg.setData(bundle);
-                        handler.sendMessage(msg);
+                    List<StockVo> stockVoList = StockConst.stockMarketTopIndex(stockMarket);
+                    SinaRealtimeDealInfo sinaRealtimeDealInfo = new SinaRealtimeDealInfo();
+                    topIndexDealInfoMap =
+                            sinaRealtimeDealInfo.batchRealtimeDealInfo(stockVoList);
+                    Message msg = new Message();
+                    msg.what = MsgWhatConfig.TOP_INDEX;
+                    handler.sendMessage(msg);
+                    if (StockMarketStatusConst.OPEN.equals(smStatus)
+                            || StockMarketStatusConst.COMPETE.equals(smStatus)) {
+                        Thread.sleep(2000);
+                    } else {
+                        break;
                     }
-                    Thread.sleep(3000);
                 }
             }
         };
@@ -442,23 +462,22 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
             @Override
             public void run() {
                 while (true) {
-                    if (smStatus == StockMarketStatusConst.OPEN
-                            || smStatus == StockMarketStatusConst.COMPETE) {
-                        UptickRateStatisticsApi uptickRateStatisticsApi =
-                                new UptickRateStatisticsApi();
-                        UptickRateStatisticsApiDto uptickRateStatisticsApiDto =
-                                (UptickRateStatisticsApiDto)uptickRateStatisticsApi.request();
-                        Message msg = new Message();
-                        msg.what = MsgWhatConfig.UPTICK_RATE_STATISTICS;
-                        Bundle bundle = new Bundle();
-                        bundle.putString(
-                                "uptickRateStatistics",
-                                JSONObject.toJSONString(uptickRateStatisticsApiDto)
-                        );
-                        msg.setData(bundle);
-                        handler.sendMessage(msg);
+                    Map<String, Object> params = new HashMap<>(1);
+                    params.put("stockMarket", stockMarket);
+                    UptickRateStatisticsApi uptickRateStatisticsApi =
+                            new UptickRateStatisticsApi();
+                    uptickRateStatisticsApi.setParams(params);
+                    uptickRateStatisticsApiDto =
+                            (UptickRateStatisticsApiDto) uptickRateStatisticsApi.request();
+                    Message msg = new Message();
+                    msg.what = MsgWhatConfig.UPTICK_RATE_STATISTICS;
+                    handler.sendMessage(msg);
+                    if (StockMarketStatusConst.OPEN.equals(smStatus)
+                            || StockMarketStatusConst.COMPETE.equals(smStatus)) {
+                        Thread.sleep(5000);
+                    } else {
+                        break;
                     }
-                    Thread.sleep(10000);
                 }
             }
         };
@@ -480,8 +499,8 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                             sortTextView.reset();
                         }
                     }
-                    sortColumn = ((SortTextView)view).getSortColumn();
-                    sortType = ((SortTextView)view).getSortType();
+                    sortColumn = ((SortTextView) view).getSortColumn();
+                    sortType = ((SortTextView) view).getSortType();
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.STOCK_RANK_FRESH;
                     handler.sendMessage(msg);
@@ -492,6 +511,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
 
     /**
      * 获取股票排行线程
+     *
      * @return
      */
     private Runnable getStockMarketRankRunnable() {
@@ -501,21 +521,15 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
             public void run() {
                 RankApi rankApi = new RankApi();
                 Map<String, Object> params = new HashMap<>();
+                params.put("stockMarket", stockMarket);
                 params.put("type", sortColumn);
                 params.put("sortType", sortType);
                 params.put("pageNum", pageNum);
                 params.put("pageSize", pageSize);
                 rankApi.setParams(params);
-                List<RankApiDto> rankApiDtoList =  (List<RankApiDto>)rankApi.request();
-                String[] stockRankArr = new String[rankApiDtoList.size()];
-                for (int i = 0; i < rankApiDtoList.size(); i++) {
-                    stockRankArr[i] = JSONObject.toJSONString(rankApiDtoList.get(i));
-                }
+                rankApiDtoList = (List<RankApiDto>) rankApi.request();
                 Message msg = new Message();
                 msg.what = MsgWhatConfig.STOCK_RANK;
-                Bundle bundle = new Bundle();
-                bundle.putStringArray("stockRank", stockRankArr);
-                msg.setData(bundle);
                 handler.sendMessage(msg);
             }
         };

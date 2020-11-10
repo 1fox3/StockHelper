@@ -149,6 +149,7 @@
                             android:paddingLeft="@dimen/common_margin"
                             android:paddingRight="@dimen/common_margin">
                             <TextView
+                                android:id="@+id/smUSUpLimitTextTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/s_max_up"/>
@@ -178,12 +179,12 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/s_max_down"/>
+                                android:text="@string/s_flat"/>
                             <TextView
-                                android:id="@+id/smUSDownLimitTV"
+                                android:id="@+id/smUSFlatTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/down"
+                                android:textColor="@color/flat"
                                 android:text="0"/>
                         </LinearLayout>
                     </RelativeLayout>
@@ -203,14 +204,15 @@
                             android:paddingLeft="@dimen/common_margin"
                             android:paddingRight="@dimen/common_margin">
                             <TextView
+                                android:id="@+id/smUSDownLimitTextTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/s_flat"/>
+                                android:text="@string/s_max_down"/>
                             <TextView
-                                android:id="@+id/smUSFlatTV"
+                                android:id="@+id/smUSDownLimitTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/flat"
+                                android:textColor="@color/down"
                                 android:text="0"/>
                         </LinearLayout>
                     </RelativeLayout>

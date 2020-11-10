@@ -12,14 +12,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fox.spider.stock.constant.StockMarketStatusConst;
+import com.fox.spider.stock.util.StockMarketStatusUtil;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.api.stock.realtime.DealInfoApi;
 import com.fox.stockhelper.api.stock.realtime.DealPriceLineApi;
 import com.fox.stockhelper.config.MsgWhatConfig;
-import com.fox.stockhelper.constant.stock.StockMarketStatusConst;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.DealInfoApiDto;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.DealPriceLineApiDto;
-import com.fox.stockhelper.serv.stock.StockMarketStatusServ;
 import com.fox.stockhelper.ui.activity.StockAllKlineLandActivity;
 import com.fox.stockhelper.ui.adapter.recyclerview.StockTopDealPriceAdapter;
 import com.fox.stockhelper.ui.base.BaseFragment;
@@ -219,7 +219,7 @@ public class StockDealLineRealtimeFragment extends BaseFragment implements Commo
             @Override
             public void run() {
                 while (true) {
-                    int smStatus = StockMarketStatusServ.getStockMarketStatus();
+                    int smStatus = StockMarketStatusUtil.currentSMStatus(1);
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.SM_STATUS;
                     Bundle bundle = new Bundle();

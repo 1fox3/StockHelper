@@ -45,49 +45,19 @@
                 android:layout_marginRight="@dimen/common_margin"
                 android:layout_weight="2"/>
         </LinearLayout>
+        <!--股市名称-->
         <LinearLayout
+            android:id="@+id/smNameLL"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/sm_hs_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/stock_hs"
-                android:textAlignment="center"
-                android:layout_weight="1"/>
-            <TextView
-                android:id="@+id/sm_hk_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/stock_hk"
-                android:textAlignment="center"
-                android:layout_weight="1"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
         </LinearLayout>
+        <!--标签选择提示线-->
         <LinearLayout
+            android:id="@+id/smCursorLL"
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_height="2dp">
-            <!--标签选择提示线-->
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-                <ImageView
-                    android:id="@+id/sm_hs_cursor"
-                    android:layout_width="@dimen/sm_cursor"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-                <ImageView
-                    android:id="@+id/sm_hk_cursor"
-                    android:layout_width="@dimen/sm_cursor"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
         </LinearLayout>
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/stock_type_vp"

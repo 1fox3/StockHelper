@@ -12,7 +12,7 @@ public class UptickRateStatisticsApi extends BaseApi {
     public UptickRateStatisticsApi() {
         url = "stock/realtime/uptickRateStatistics";
         method = METHOD_POST;
-        requestParamKeys = new String[]{};
+        requestParamKeys = new String[]{"stockMarket",};
         dataClass = UptickRateStatisticsApiDto.class;
     }
 }
