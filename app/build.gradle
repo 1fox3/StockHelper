@@ -53,4 +53,6 @@ dependencies {
     api project(':MPChartLib')
     implementation files('libs/spiderStock.jar')
     implementation files('libs/slf4j-api-1.7.30.jar')
+    implementation files('libs/ormlite-android-5.2.jar')
+    implementation files('libs/ormlite-core-5.2.jar')
 }

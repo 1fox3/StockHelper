@@ -17,12 +17,11 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fox.spider.stock.api.sina.SinaRealtimeDealInfo;
+import com.fox.spider.stock.api.sina.SinaRealtimeDealInfoApi;
 import com.fox.spider.stock.constant.StockConst;
 import com.fox.spider.stock.constant.StockMarketStatusConst;
 import com.fox.spider.stock.entity.po.sina.SinaRealtimeDealInfoPo;
 import com.fox.spider.stock.entity.vo.StockVo;
-import com.fox.spider.stock.util.StockMarketStatusUtil;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.api.stock.realtime.RankApi;
 import com.fox.stockhelper.api.stock.realtime.UptickRateStatisticsApi;
@@ -288,11 +287,11 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                     if (StockMarketStatusConst.STATUS_DESC_MAP.containsKey(smStatus)) {
                         smStatusTV.setText(StockMarketStatusConst.STATUS_DESC_MAP.get(smStatus));
                     }
-                    if (smStatus != StockMarketStatusConst.OPEN
-                            && smStatus != StockMarketStatusConst.COMPETE) {
-                        smStatusTV.setTextColor(Color.BLACK);
-                    } else {
+                    if (StockMarketStatusConst.OPEN == smStatus
+                            || StockMarketStatusConst.COMPETE == smStatus) {
                         smStatusTV.setTextColor(Color.RED);
+                    } else {
+                        smStatusTV.setTextColor(Color.BLACK);
                     }
                 }
                 break;
@@ -407,7 +406,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
             @Override
             public void run() {
                 while (true) {
-                    Integer smStatus = StockMarketStatusUtil.currentSMStatus(stockMarket);
+                    Integer smStatus = StockMarketStatusConst.timeSMStatus(stockMarket);
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.SM_STATUS;
                     Bundle bundle = new Bundle();
@@ -434,14 +433,14 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
             public void run() {
                 while (true) {
                     List<StockVo> stockVoList = StockConst.stockMarketTopIndex(stockMarket);
-                    SinaRealtimeDealInfo sinaRealtimeDealInfo = new SinaRealtimeDealInfo();
+                    SinaRealtimeDealInfoApi sinaRealtimeDealInfo = new SinaRealtimeDealInfoApi();
                     topIndexDealInfoMap =
                             sinaRealtimeDealInfo.batchRealtimeDealInfo(stockVoList);
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.TOP_INDEX;
                     handler.sendMessage(msg);
-                    if (StockMarketStatusConst.OPEN.equals(smStatus)
-                            || StockMarketStatusConst.COMPETE.equals(smStatus)) {
+                    if (StockMarketStatusConst.OPEN == smStatus
+                            || StockMarketStatusConst.COMPETE == smStatus) {
                         Thread.sleep(2000);
                     } else {
                         break;
@@ -472,8 +471,8 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.UPTICK_RATE_STATISTICS;
                     handler.sendMessage(msg);
-                    if (StockMarketStatusConst.OPEN.equals(smStatus)
-                            || StockMarketStatusConst.COMPETE.equals(smStatus)) {
+                    if (StockMarketStatusConst.OPEN == smStatus
+                            || StockMarketStatusConst.COMPETE == smStatus) {
                         Thread.sleep(5000);
                     } else {
                         break;

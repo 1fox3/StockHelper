@@ -17,11 +17,16 @@ import android.widget.TextView;
 import com.fox.spider.stock.constant.StockConst;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.config.ActivityRequestCodeConfig;
+import com.fox.stockhelper.database.DatabaseHelper;
+import com.fox.stockhelper.database.bean.LastDealDateBean;
 import com.fox.stockhelper.ui.adapter.StockMarketFragmentAdapter;
 import com.fox.stockhelper.ui.base.BaseActivity;
 import com.fox.stockhelper.ui.fragment.StockMarketFragment;
 import com.fox.stockhelper.ui.view.HomeBottomView;
+import com.fox.stockhelper.util.DateUtil;
+import com.j256.ormlite.dao.Dao;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -97,19 +102,20 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         searchET.setCompoundDrawables(searchDraw, null, null, null);
 
         //用户未登录，则跳转到登录页面
-        if (!this.isLogin()) {
+        if (!isLogin()) {
             Intent intent = new Intent(this, LoginActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("fromUI", getLocalClassName());
             intent.putExtra("login", bundle);
             startActivityForResult(intent, ActivityRequestCodeConfig.LOGIN);
         }
-
+        //数据库测试
+        dbTest();
         //初始化底部菜单按钮
-        this.initHomeBottom();
+        initHomeBottom();
 
         //股市页面初始化
-        this.initStockMarket();
+        initStockMarket();
     }
 
     @Override
@@ -241,5 +247,28 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         );
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         homeRL.addView(homeBottomView, layoutParams);
+    }
+
+    private void dbTest() {
+        Log.e("dbTestError", "aaaaa");
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        Dao dao = databaseHelper.getDao(LastDealDateBean.class);
+        LastDealDateBean lastDealDateBean = new LastDealDateBean();
+        lastDealDateBean.setStockMarket(StockConst.SM_SH);
+        lastDealDateBean.setDealDate(DateUtil.getCurrentDate());
+        try {
+            dao.create(lastDealDateBean);
+            Log.e("dbTestError", lastDealDateBean.toString());
+            List<LastDealDateBean> lastDealDateBeanList = dao.queryForAll();
+            if (null != lastDealDateBeanList && !lastDealDateBeanList.isEmpty()) {
+                for (LastDealDateBean dbLastDealDateBean : lastDealDateBeanList) {
+                    Log.e("dbTestError", dbLastDealDateBean.toString());
+                    System.out.println(dbLastDealDateBean);
+                }
+            }
+        } catch (SQLException e) {
+            Log.e("dbTestError", e.getMessage());
+            Log.e("dbTestError", String.valueOf(e.getErrorCode()));
+        }
     }
 }

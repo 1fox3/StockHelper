@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fox.spider.stock.constant.StockConst;
 import com.fox.spider.stock.constant.StockMarketStatusConst;
-import com.fox.spider.stock.util.StockMarketStatusUtil;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.api.stock.realtime.DealInfoApi;
 import com.fox.stockhelper.api.stock.realtime.DealPriceLineApi;
@@ -219,7 +219,7 @@ public class StockDealLineRealtimeFragment extends BaseFragment implements Commo
             @Override
             public void run() {
                 while (true) {
-                    int smStatus = StockMarketStatusUtil.currentSMStatus(1);
+                    int smStatus = StockMarketStatusConst.timeSMStatus(StockConst.SM_SH);
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.SM_STATUS;
                     Bundle bundle = new Bundle();
