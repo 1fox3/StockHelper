@@ -23,6 +23,10 @@
         <activity android:name=".ui.activity.StockDealLineActivity" />
         <activity android:name=".ui.activity.StockAllKlineLandActivity"
             android:screenOrientation="landscape" />
+
+        <service android:name=".service.StockMarketDealStatusService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

@@ -4,7 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.fox.stockhelper.database.bean.LastDealDateBean;
+import com.fox.stockhelper.database.bean.StockMarketAroundDealDateBean;
+import com.fox.stockhelper.util.LogUtil;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
@@ -22,7 +23,7 @@ import lombok.Synchronized;
  * @author lusongsong
  * @date 2020/11/24 22:08
  */
-public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
+public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     /**
      * 数据库名称
      */
@@ -30,12 +31,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     /**
      * 数据库版本
      */
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
     /**
      * 数据表实体类列表
      */
     private static List<Class> tables = Arrays.asList(
-            LastDealDateBean.class
+            StockMarketAroundDealDateBean.class
     );
     /**
      * 上下文
@@ -51,7 +52,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      *
      * @param context
      */
-    public DatabaseHelper(Context context) {
+    public OrmDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         myContext = context;
     }
@@ -65,6 +66,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource) {
         try {
+            LogUtil.error("onCreate");
             if (null == tables || tables.isEmpty()) {
                 return;
             }
@@ -77,22 +79,25 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     /**
-     * 更新表
+     * 数据库版本更新
      *
      * @param sqLiteDatabase
      * @param connectionSource
-     * @param i
-     * @param i1
+     * @param oldVersion
+     * @param newVersion
      */
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
+            LogUtil.error("onUpgrade");
             if (null == tables || tables.isEmpty()) {
                 return;
             }
             for (Class tableClass : tables) {
                 TableUtils.dropTable(connectionSource, tableClass, true);
             }
+//            TableUtils.dropTable(connectionSource, StockMarketAroundDealDateBean.class, true);
+            onCreate(sqLiteDatabase, connectionSource);
         } catch (SQLException e) {
             Log.e("dbOnUpgrade", e.getMessage());
         }
@@ -118,4 +123,20 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return tableDao.containsKey(className) ? tableDao.get(className) : null;
     }
 
+    /**
+     * 关闭
+     */
+    @Override
+    public void close() {
+        super.close();
+        for (String key : tableDao.keySet()) {
+            Dao dao = tableDao.get(key);
+            dao = null;
+        }
+        tableDao.clear();
+    }
+
+    public void deleteDB() {
+        myContext.deleteDatabase(DATABASE_NAME);
+    }
 }

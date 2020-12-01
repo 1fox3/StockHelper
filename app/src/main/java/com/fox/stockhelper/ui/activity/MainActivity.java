@@ -17,16 +17,13 @@ import android.widget.TextView;
 import com.fox.spider.stock.constant.StockConst;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.config.ActivityRequestCodeConfig;
-import com.fox.stockhelper.database.DatabaseHelper;
-import com.fox.stockhelper.database.bean.LastDealDateBean;
+import com.fox.stockhelper.service.StockMarketDealStatusService;
 import com.fox.stockhelper.ui.adapter.StockMarketFragmentAdapter;
 import com.fox.stockhelper.ui.base.BaseActivity;
 import com.fox.stockhelper.ui.fragment.StockMarketFragment;
 import com.fox.stockhelper.ui.view.HomeBottomView;
-import com.fox.stockhelper.util.DateUtil;
-import com.j256.ormlite.dao.Dao;
+import com.fox.stockhelper.util.LogUtil;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +38,7 @@ import butterknife.ButterKnife;
  * APP入口类
  *
  * @author lusongsong
+ * @date 2020‎/‎7‎/‎3‎ ‏‎18:18
  */
 public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
     /**
@@ -91,9 +89,16 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
      */
     public List<Integer> SM_ALL = Arrays.asList(StockConst.SM_A, StockConst.SM_HK);
 
+    /**
+     * 创建
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //记录生命周期日志
+        LogUtil.error("lifeCycleLog");
         setContentView(R.layout.activity_main);
         ButterKnife.bind(MainActivity.this);
         //将搜索输入框里的图片处理到合适大小
@@ -109,13 +114,78 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             intent.putExtra("login", bundle);
             startActivityForResult(intent, ActivityRequestCodeConfig.LOGIN);
         }
-        //数据库测试
-        dbTest();
+
+//        dbTest();
+        //启动全局服务
+        startGlobalService();
+
         //初始化底部菜单按钮
         initHomeBottom();
 
         //股市页面初始化
         initStockMarket();
+    }
+
+    /**
+     * 启动
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //记录生命周期日志
+        LogUtil.error("lifeCycleLog");
+    }
+
+    /**
+     * 重启
+     */
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //记录生命周期日志
+        LogUtil.error("lifeCycleLog");
+    }
+
+    /**
+     * 继续
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //记录生命周期日志
+        LogUtil.error("lifeCycleLog");
+    }
+
+    /**
+     * 暂停
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //记录生命周期日志
+        LogUtil.error("lifeCycleLog");
+    }
+
+    /**
+     * 停止
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //记录生命周期日志
+        LogUtil.error("lifeCycleLog");
+    }
+
+    /**
+     * 销毁
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //记录生命周期日志
+        LogUtil.error("lifeCycleLog");
+        //停止全局服务
+        stopGlobalService();
     }
 
     @Override
@@ -249,26 +319,17 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         homeRL.addView(homeBottomView, layoutParams);
     }
 
-    private void dbTest() {
-        Log.e("dbTestError", "aaaaa");
-        DatabaseHelper databaseHelper = new DatabaseHelper(this);
-        Dao dao = databaseHelper.getDao(LastDealDateBean.class);
-        LastDealDateBean lastDealDateBean = new LastDealDateBean();
-        lastDealDateBean.setStockMarket(StockConst.SM_SH);
-        lastDealDateBean.setDealDate(DateUtil.getCurrentDate());
-        try {
-            dao.create(lastDealDateBean);
-            Log.e("dbTestError", lastDealDateBean.toString());
-            List<LastDealDateBean> lastDealDateBeanList = dao.queryForAll();
-            if (null != lastDealDateBeanList && !lastDealDateBeanList.isEmpty()) {
-                for (LastDealDateBean dbLastDealDateBean : lastDealDateBeanList) {
-                    Log.e("dbTestError", dbLastDealDateBean.toString());
-                    System.out.println(dbLastDealDateBean);
-                }
-            }
-        } catch (SQLException e) {
-            Log.e("dbTestError", e.getMessage());
-            Log.e("dbTestError", String.valueOf(e.getErrorCode()));
-        }
+    /**
+     * 启动全局服务
+     */
+    private void startGlobalService() {
+        startService(new Intent(this, StockMarketDealStatusService.class));
+    }
+
+    /**
+     * 停止全局服务
+     */
+    private void stopGlobalService() {
+        stopService(new Intent(this, StockMarketDealStatusService.class));
     }
 }

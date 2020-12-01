@@ -12,10 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Activity基类
+ *
  * @author lusongsong
  * @date 2020-08-19
  */
-public class BaseActivity  extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity {
     /**
      * 登录的session,sp保存key
      */
@@ -43,6 +44,7 @@ public class BaseActivity  extends AppCompatActivity {
 
     /**
      * 用户是否已登录
+     *
      * @return
      */
     protected boolean isLogin() {
@@ -59,6 +61,7 @@ public class BaseActivity  extends AppCompatActivity {
 
     /**
      * 设置登录信息
+     *
      * @param sessionId
      * @param expireTime
      */
@@ -72,6 +75,7 @@ public class BaseActivity  extends AppCompatActivity {
 
     /**
      * 获取登录sessionId
+     *
      * @return
      */
     protected String getLoginSession() {
