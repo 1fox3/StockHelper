@@ -24,6 +24,9 @@
         <activity android:name=".ui.activity.StockAllKlineLandActivity"
             android:screenOrientation="landscape" />
 
+        <service android:name=".service.StockMarketAroundDealDateService"
+            android:enabled="true"
+            android:exported="true"/>
         <service android:name=".service.StockMarketDealStatusService"
             android:enabled="true"
             android:exported="true"/>

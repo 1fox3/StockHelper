@@ -1,20 +1,15 @@
 package com.fox.stockhelper.service;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
 import com.fox.spider.stock.constant.StockConst;
-import com.fox.stockhelper.api.stock.stockmarket.AroundDealDateApi;
-import com.fox.stockhelper.database.bean.StockMarketAroundDealDateBean;
+import com.fox.spider.stock.constant.StockMarketStatusConst;
 import com.fox.stockhelper.database.dao.StockMarketAroundDealDateDao;
-import com.fox.stockhelper.entity.dto.api.stock.stockmarket.AroundDealDateApiDto;
+import com.fox.stockhelper.database.dao.StockMarketDealStatusDao;
 import com.fox.stockhelper.util.DateUtil;
 import com.fox.stockhelper.util.LogUtil;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import androidx.annotation.Nullable;
 import lombok.SneakyThrows;
@@ -23,10 +18,22 @@ import lombok.SneakyThrows;
  * 股市交易状态同步任务
  *
  * @author lusongsong
- * @date 2020/11/30 14:40
+ * @date 2020/12/2 15:03
  */
 public class StockMarketDealStatusService extends Service {
-    private Context context;
+    /**
+     * 更新间隔
+     */
+    private static final int SYNC_SCOPE = 1000;
+    /**
+     * 股市交易日数据库操作类
+     */
+    StockMarketAroundDealDateDao stockMarketAroundDealDateDao;
+    /**
+     * 股市交易状态数据库操作类
+     */
+    StockMarketDealStatusDao stockMarketDealStatusDao;
+
     /**
      * 禁止绑定
      *
@@ -36,8 +43,6 @@ public class StockMarketDealStatusService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        //记录生命周期日志
-        LogUtil.error("lifeCycleLog");
         return null;
     }
 
@@ -51,9 +56,8 @@ public class StockMarketDealStatusService extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //记录生命周期日志
-        LogUtil.error("lifeCycleLog");
-        context = this;
+        stockMarketAroundDealDateDao = new StockMarketAroundDealDateDao(this);
+        stockMarketDealStatusDao = new StockMarketDealStatusDao(this);
         getTaskThread().start();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -70,42 +74,25 @@ public class StockMarketDealStatusService extends Service {
             public void run() {
                 while (true) {
                     try {
-                        StockMarketAroundDealDateDao stockMarketAroundDealDateDao =
-                                new StockMarketAroundDealDateDao(context);
                         String currentDate = DateUtil.getCurrentDate();
-                        AroundDealDateApi aroundDealDateApi = new AroundDealDateApi();
+                        if (null == currentDate) {
+                            continue;
+                        }
                         for (Integer stockMarket : StockConst.SM_ALL) {
-                            StockMarketAroundDealDateBean stockMarketAroundDealDateBean =
+                            String lastDealDate =
                                     stockMarketAroundDealDateDao.last(stockMarket);
-                            if (null != stockMarketAroundDealDateBean &&
-                                    currentDate.equals(stockMarketAroundDealDateBean.getDealDate())) {
+                            if (null == lastDealDate) {
                                 continue;
                             }
-                            Map<String, Object> params = new HashMap<>(1);
-                            params.put("stockMarket", stockMarket);
-                            aroundDealDateApi.setParams(params);
-                            AroundDealDateApiDto aroundDealDateApiDto =
-                                    (AroundDealDateApiDto) aroundDealDateApi.request();
-                            if (null == aroundDealDateApiDto) {
-                                continue;
+                            int dealStatus = StockMarketStatusConst.REST;
+                            if (lastDealDate.equals(currentDate)) {
+                                dealStatus = StockMarketStatusConst.timeSMStatus(stockMarket);
                             }
-                            stockMarketAroundDealDateDao.savePre(
-                                    stockMarket, aroundDealDateApiDto.getPre()
-                            );
-                            stockMarketAroundDealDateDao.saveLast(
-                                    stockMarket, aroundDealDateApiDto.getLast()
-                            );
-                            stockMarketAroundDealDateDao.saveNext(
-                                    stockMarket, aroundDealDateApiDto.getNext()
-                            );
+                            stockMarketDealStatusDao.updateStatus(stockMarket, dealStatus);
                         }
-                        Thread.sleep(3600000);
+                        Thread.sleep(SYNC_SCOPE);
                     } catch (Exception e) {
-                        StackTraceElement[] stackTraceElements = e.getStackTrace();
-                        for (StackTraceElement stackTraceElement : stackTraceElements) {
-                            LogUtil.error(stackTraceElement.getClassName() + "/" + stackTraceElement.getMethodName() + "/" + stackTraceElement.getLineNumber());
-                        }
-                        e.getStackTrace();
+                        e.printStackTrace();
                         LogUtil.error(e.getMessage());
                     }
                 }

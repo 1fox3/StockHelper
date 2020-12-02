@@ -47,13 +47,14 @@ public class StockMarketAroundDealDateDao extends BaseDao {
      * @param stockMarket
      * @return
      */
-    public StockMarketAroundDealDateBean getDealDateByType(Integer stockMarket, String type) {
+    public String getDealDateByType(Integer stockMarket, String type) {
         try {
             StockMarketAroundDealDateBean stockMarketAroundDealDateBean =
                     dao.queryBuilder().where()
                             .eq("stockMarket", stockMarket).and()
                             .eq("type", type).queryForFirst();
-            return stockMarketAroundDealDateBean;
+            return null == stockMarketAroundDealDateBean ?
+                    null : stockMarketAroundDealDateBean.getDealDate();
         } catch (SQLException e) {
             LogUtil.error(e.getMessage());
         }
@@ -107,7 +108,7 @@ public class StockMarketAroundDealDateDao extends BaseDao {
      * @param stockMarket
      * @return
      */
-    public StockMarketAroundDealDateBean pre(Integer stockMarket) {
+    public String pre(Integer stockMarket) {
         return getDealDateByType(stockMarket, TYPE_PRE);
     }
 
@@ -117,7 +118,7 @@ public class StockMarketAroundDealDateDao extends BaseDao {
      * @param stockMarket
      * @return
      */
-    public StockMarketAroundDealDateBean last(Integer stockMarket) {
+    public String last(Integer stockMarket) {
         return getDealDateByType(stockMarket, TYPE_LAST);
     }
 
@@ -127,7 +128,7 @@ public class StockMarketAroundDealDateDao extends BaseDao {
      * @param stockMarket
      * @return
      */
-    public StockMarketAroundDealDateBean next(Integer stockMarket) {
+    public String next(Integer stockMarket) {
         return getDealDateByType(stockMarket, TYPE_NEXT);
     }
 

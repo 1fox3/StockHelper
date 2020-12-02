@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.fox.spider.stock.constant.StockConst;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.config.ActivityRequestCodeConfig;
+import com.fox.stockhelper.service.StockMarketAroundDealDateService;
 import com.fox.stockhelper.service.StockMarketDealStatusService;
 import com.fox.stockhelper.ui.adapter.StockMarketFragmentAdapter;
 import com.fox.stockhelper.ui.base.BaseActivity;
@@ -88,6 +89,13 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
      * 股市列表
      */
     public List<Integer> SM_ALL = Arrays.asList(StockConst.SM_A, StockConst.SM_HK);
+    /**
+     * 全局服务列表
+     */
+    private static final List<Class> GLOBAL_SERVICE_LIST = Arrays.asList(
+            StockMarketAroundDealDateService.class,//股市最近交易日
+            StockMarketDealStatusService.class//股市交易状态
+    );
 
     /**
      * 创建
@@ -115,7 +123,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             startActivityForResult(intent, ActivityRequestCodeConfig.LOGIN);
         }
 
-//        dbTest();
         //启动全局服务
         startGlobalService();
 
@@ -323,13 +330,17 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
      * 启动全局服务
      */
     private void startGlobalService() {
-        startService(new Intent(this, StockMarketDealStatusService.class));
+        for (Class serviceClass : GLOBAL_SERVICE_LIST) {
+            startService(new Intent(this, serviceClass));
+        }
     }
 
     /**
      * 停止全局服务
      */
     private void stopGlobalService() {
-        stopService(new Intent(this, StockMarketDealStatusService.class));
+        for (Class serviceClass : GLOBAL_SERVICE_LIST) {
+            stopService(new Intent(this, serviceClass));
+        }
     }
 }

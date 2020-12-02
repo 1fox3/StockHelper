@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.fox.stockhelper.database.bean.StockMarketAroundDealDateBean;
+import com.fox.stockhelper.database.bean.StockMarketDealStatusBean;
 import com.fox.stockhelper.util.LogUtil;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -31,12 +32,13 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     /**
      * 数据库版本
      */
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     /**
      * 数据表实体类列表
      */
     private static List<Class> tables = Arrays.asList(
-            StockMarketAroundDealDateBean.class
+            StockMarketAroundDealDateBean.class,
+            StockMarketDealStatusBean.class
     );
     /**
      * 上下文
@@ -96,7 +98,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             for (Class tableClass : tables) {
                 TableUtils.dropTable(connectionSource, tableClass, true);
             }
-//            TableUtils.dropTable(connectionSource, StockMarketAroundDealDateBean.class, true);
             onCreate(sqLiteDatabase, connectionSource);
         } catch (SQLException e) {
             Log.e("dbOnUpgrade", e.getMessage());
