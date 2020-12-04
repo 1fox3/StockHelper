@@ -222,7 +222,7 @@ public class StockValueTextView extends androidx.appcompat.widget.AppCompatTextV
         //处理数值类型
         switch (type) {
             case TYPE_RATE:
-                BigDecimal rateValue = currentValue.multiply(new BigDecimal(100)).setScale(precisionLen, BigDecimal.ROUND_HALF_UP);
+                BigDecimal rateValue = currentValue.setScale(precisionLen, BigDecimal.ROUND_HALF_UP);
                 valueStr = rateValue.toString() + "%";
                 break;
             case TYPE_NUMBER:

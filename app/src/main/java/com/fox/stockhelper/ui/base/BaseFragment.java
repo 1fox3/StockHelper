@@ -16,6 +16,7 @@ public class BaseFragment extends Fragment {
 
     /**
      * 指定上下文构造器
+     *
      * @param context
      */
     public BaseFragment(Context context) {
@@ -23,16 +24,8 @@ public class BaseFragment extends Fragment {
     }
 
     /**
-     * 获取颜色
-     * @param colorResId
-     * @return
-     */
-    protected int getColorByResourceId(int colorResId) {
-        return this.context.getResources().getColor(colorResId);
-    }
-
-    /**
      * 获取上下文
+     *
      * @return
      */
     public Context getContext() {

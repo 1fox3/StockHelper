@@ -33,7 +33,7 @@ import com.fox.stockhelper.entity.dto.api.stock.realtime.UptickRateStatisticsApi
 import com.fox.stockhelper.ui.activity.StockDealLineActivity;
 import com.fox.stockhelper.ui.activity.StockRankActivity;
 import com.fox.stockhelper.ui.adapter.StockRankAdapter;
-import com.fox.stockhelper.ui.base.BaseFragment;
+import com.fox.stockhelper.ui.base.StockBaseFragment;
 import com.fox.stockhelper.ui.handler.CommonHandler;
 import com.fox.stockhelper.ui.listener.CommonHandleListener;
 import com.fox.stockhelper.ui.view.SortTextView;
@@ -54,15 +54,11 @@ import lombok.SneakyThrows;
  *
  * @author lusongsong
  */
-public class StockMarketFragment extends BaseFragment implements CommonHandleListener {
+public class StockMarketFragment extends StockBaseFragment implements CommonHandleListener {
     /**
-     * 股市
+     * 是否需要刷新数据
      */
-    private Integer stockMarket;
-    /**
-     * 股市状态
-     */
-    private Integer smStatus = 0;
+    protected boolean dataRefresh = true;
     /**
      * top指标实时交易数据
      */
@@ -229,6 +225,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
     public StockMarketFragment(Context context, Integer stockMarket) {
         super(context);
         this.stockMarket = stockMarket;
+        needStockMarketDealStatusService = true;
     }
 
     @Override
@@ -243,20 +240,12 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                 dealNumSTV,
                 dealMoneySTV
         };
-        //显示时间
-        this.initDate();
-        //股市状态
-        this.handleStockMarketStatus();
-        //top指标
-        this.handleStockMarketTopIndex();
-        //涨跌统计
-        this.handleStockMarketStatistics();
         //设置排序监听方法
-        this.setSortClickListener();
+        setSortClickListener();
         //排行适配器
         stockRankAdapter = new StockRankAdapter(this.getContext(), R.layout.view_stock_rank_info);
-        //初始化排行
-        this.handleStockMarketRank();
+        //开启数据刷新
+        startRefreshData();
         return view;
     }
 
@@ -269,6 +258,54 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
     }
 
     /**
+     * 开启数据刷新
+     */
+    private void startRefreshData() {
+        //显示时间
+        initDate();
+        //top指标
+        handleStockMarketTopIndex();
+        //涨跌统计
+        handleStockMarketStatistics();
+        //初始化排行
+        handleStockMarketRank();
+    }
+
+    /**
+     * 处理状态变化
+     *
+     * @param oldStatus
+     * @param newStatus
+     */
+    @Override
+    protected void handleStockMarketDealStatusBroadcast(Integer oldStatus, Integer newStatus) {
+        super.handleStockMarketDealStatusBroadcast(oldStatus, newStatus);
+        if (null != newStatus && !newStatus.equals(oldStatus)) {
+            if (SHStockConst.STATUS_IMAGE_MAP.containsKey(newStatus)) {
+                smStatusIV.setImageResource(SHStockConst.STATUS_IMAGE_MAP.get(newStatus));
+            }
+            if (StockMarketStatusConst.STATUS_DESC_MAP.containsKey(newStatus)) {
+                smStatusTV.setText(StockMarketStatusConst.STATUS_DESC_MAP.get(newStatus));
+            }
+            if (StockMarketStatusConst.OPEN == newStatus
+                    || StockMarketStatusConst.COMPETE == newStatus) {
+                smStatusTV.setTextColor(Color.RED);
+            } else {
+                smStatusTV.setTextColor(Color.BLACK);
+            }
+            if (StockMarketStatusConst.CAN_DEAL_STATUS_LIST.contains(newStatus)) {
+                if (!dataRefresh) {
+                    dataRefresh = true;
+                }
+            } else {
+                dataRefresh = false;
+            }
+            //状态发生变化时保证刷新一次
+            startRefreshData();
+        }
+    }
+
+    /**
      * 消息处理
      *
      * @param message
@@ -277,28 +314,16 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
     public void handleMessage(Message message) {
         Bundle bundle = message.getData();
         switch (message.what) {
-            case MsgWhatConfig.SM_STATUS:
-                Integer currentSMStatus = bundle.getInt("smStatus");
-                if (null != currentSMStatus && !currentSMStatus.equals(smStatus)) {
-                    smStatus = currentSMStatus;
-                    if (SHStockConst.STATUS_IMAGE_MAP.containsKey(smStatus)) {
-                        smStatusIV.setImageResource(SHStockConst.STATUS_IMAGE_MAP.get(smStatus));
-                    }
-                    if (StockMarketStatusConst.STATUS_DESC_MAP.containsKey(smStatus)) {
-                        smStatusTV.setText(StockMarketStatusConst.STATUS_DESC_MAP.get(smStatus));
-                    }
-                    if (StockMarketStatusConst.OPEN == smStatus
-                            || StockMarketStatusConst.COMPETE == smStatus) {
-                        smStatusTV.setTextColor(Color.RED);
-                    } else {
-                        smStatusTV.setTextColor(Color.BLACK);
-                    }
-                }
-                break;
             case MsgWhatConfig.TOP_INDEX:
                 try {
-                    for (SinaRealtimeDealInfoPo sinaRealtimeDealInfoPo
-                            : topIndexDealInfoMap.values()) {
+                    List<StockVo> stockVoList = StockConst.stockMarketTopIndex(stockMarket);
+                    SinaRealtimeDealInfoPo sinaRealtimeDealInfoPo;
+                    for (StockVo stockVo : stockVoList) {
+                        if (null == stockVo.getStockCode() || null == topIndexDealInfoMap
+                                || !topIndexDealInfoMap.containsKey(stockVo.getStockCode())) {
+                            continue;
+                        }
+                        sinaRealtimeDealInfoPo = topIndexDealInfoMap.get(stockVo.getStockCode());
                         String stockCode = sinaRealtimeDealInfoPo.getStockCode();
                         StockIndexBlockView stockIndexBlockView;
                         if (!topIndexMap.containsKey(stockCode)) {
@@ -378,7 +403,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                             Intent intent = new Intent(getContext(), StockDealLineActivity.class);
                             Bundle bundle = new Bundle();
                             RankApiDto rankApiDto = rankApiDtoList.get(i);
-                            bundle.putInt("stockId", rankApiDto.getStockId());
+                            bundle.putInt("stockMarket", stockMarket);
                             bundle.putString("stockName", rankApiDto.getStockName());
                             bundle.putString("stockCode", rankApiDto.getStockCode());
                             intent.putExtra("stock", bundle);
@@ -398,32 +423,6 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
     }
 
     /**
-     * 开启定时检查交易状态
-     */
-    private void handleStockMarketStatus() {
-        Runnable stockMarketStatusRunnable = new Runnable() {
-            @SneakyThrows
-            @Override
-            public void run() {
-                while (true) {
-                    Integer smStatus = StockMarketStatusConst.timeSMStatus(stockMarket);
-                    Message msg = new Message();
-                    msg.what = MsgWhatConfig.SM_STATUS;
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("smStatus", smStatus);
-                    msg.setData(bundle);
-                    handler.sendMessage(msg);
-                    int minute = Integer.valueOf(DateUtil.getCurrentDate(DateUtil.MINUTE_FORMAT_1));
-                    int second = Integer.valueOf(DateUtil.getCurrentDate(DateUtil.SECOND_FORMAT_1));
-                    int s = 300 - second - (minute % 5) * 60;
-                    Thread.sleep(s * 1000);
-                }
-            }
-        };
-        new Thread(stockMarketStatusRunnable).start();
-    }
-
-    /**
      * 处理顶部指指数
      */
     private void handleStockMarketTopIndex() {
@@ -439,8 +438,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.TOP_INDEX;
                     handler.sendMessage(msg);
-                    if (StockMarketStatusConst.OPEN == smStatus
-                            || StockMarketStatusConst.COMPETE == smStatus) {
+                    if (dataRefresh) {
                         Thread.sleep(2000);
                     } else {
                         break;
@@ -471,8 +469,7 @@ public class StockMarketFragment extends BaseFragment implements CommonHandleLis
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.UPTICK_RATE_STATISTICS;
                     handler.sendMessage(msg);
-                    if (StockMarketStatusConst.OPEN == smStatus
-                            || StockMarketStatusConst.COMPETE == smStatus) {
+                    if (dataRefresh) {
                         Thread.sleep(5000);
                     } else {
                         break;

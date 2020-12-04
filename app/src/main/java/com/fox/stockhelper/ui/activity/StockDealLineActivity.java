@@ -3,9 +3,11 @@ package com.fox.stockhelper.ui.activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.fox.spider.stock.constant.StockConst;
+import com.fox.spider.stock.entity.vo.StockVo;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.ui.adapter.SimpleFragmentStatePagerAdapter;
-import com.fox.stockhelper.ui.base.BaseActivity;
+import com.fox.stockhelper.ui.base.StockBaseActivity;
 import com.fox.stockhelper.ui.fragment.StockDealLineOfflineFragment;
 import com.fox.stockhelper.ui.fragment.StockDealLineRealtimeFragment;
 import com.fox.stockhelper.ui.view.NoTouchScrollViewpager;
@@ -22,14 +24,19 @@ import butterknife.ButterKnife;
 
 /**
  * 股市成交线图
+ *
  * @author lusongsong
  * @date 2020/9/14 15:15
  */
-public class StockDealLineActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
+public class StockDealLineActivity extends StockBaseActivity implements ViewPager.OnPageChangeListener {
     /**
-     * 股票id
+     * 股票编码
      */
-    Integer stockId;
+    String stockCode;
+    /**
+     * 股票名称
+     */
+    String stockName;
     @BindView(R.id.stockNameCodeTV)
     TextView stockNameCodeTV;
     @BindView(R.id.stockDealLineTabTL)
@@ -43,9 +50,9 @@ public class StockDealLineActivity extends BaseActivity implements ViewPager.OnP
         setContentView(R.layout.activity_stock_deal_line);
         ButterKnife.bind(StockDealLineActivity.this);
         Bundle bundle = getIntent().getBundleExtra("stock");
-        stockId = bundle.getInt("stockId", 1);
-        String stockName = bundle.getString("stockName");
-        String stockCode = bundle.getString("stockCode");
+        stockCode = bundle.getString("stockCode");
+        stockMarket = bundle.getInt("stockMarket", StockConst.SM_A);
+        stockName = bundle.getString("stockName");
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(stockName);
         stringBuilder.append("(");
@@ -53,8 +60,9 @@ public class StockDealLineActivity extends BaseActivity implements ViewPager.OnP
         stringBuilder.append(")");
         stockNameCodeTV.setText(stringBuilder.toString());
         List<Fragment> stockDealLineFragmentList = new ArrayList<>(2);
-        stockDealLineFragmentList.add(new StockDealLineRealtimeFragment(this, this.stockId));
-        stockDealLineFragmentList.add(new StockDealLineOfflineFragment(this, this.stockId));
+        StockVo stockVo = new StockVo(stockCode, stockMarket);
+        stockDealLineFragmentList.add(new StockDealLineRealtimeFragment(this, stockVo));
+        stockDealLineFragmentList.add(new StockDealLineOfflineFragment(this, stockVo));
         List<String> titleList = Arrays.asList("实时", "离线");
         //股市页面切换器
         SimpleFragmentStatePagerAdapter simpleFragmentStatePagerAdapter =
@@ -70,11 +78,14 @@ public class StockDealLineActivity extends BaseActivity implements ViewPager.OnP
 
 
     @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
 
     @Override
-    public void onPageSelected(int position) {}
+    public void onPageSelected(int position) {
+    }
 
     @Override
-    public void onPageScrollStateChanged(int state) {}
+    public void onPageScrollStateChanged(int state) {
+    }
 }

@@ -5,29 +5,34 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.fox.spider.stock.api.nets.NetsDayDealInfoApi;
+import com.fox.spider.stock.entity.po.nets.NetsDayDealInfoPo;
+import com.fox.spider.stock.entity.vo.StockVo;
 import com.fox.stockhelper.R;
-import com.fox.stockhelper.api.stock.offline.DealDayApi;
 import com.fox.stockhelper.config.MsgWhatConfig;
-import com.fox.stockhelper.entity.dto.api.stock.offline.DealDayApiDto;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.DealInfoApiDto;
 import com.fox.stockhelper.ui.activity.StockAllKlineLandActivity;
-import com.fox.stockhelper.ui.base.BaseFragment;
+import com.fox.stockhelper.ui.base.StockBaseFragment;
 import com.fox.stockhelper.ui.chart.custom.StockKLineChart;
 import com.fox.stockhelper.ui.handler.CommonHandler;
 import com.fox.stockhelper.ui.listener.CommonHandleListener;
 import com.fox.stockhelper.ui.listener.ListChooseListener;
 import com.fox.stockhelper.ui.view.StockDealInfoView;
+import com.fox.stockhelper.util.DateUtil;
 import com.github.mikephil.charting.stockChart.dataManage.KLineDataManage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,11 +46,11 @@ import lombok.SneakyThrows;
  * @author lusongsong
  * @date 2020/9/14 15:58
  */
-public class StockDealLineOfflineFragment extends BaseFragment implements CommonHandleListener, ListChooseListener {
+public class StockDealLineOfflineFragment extends StockBaseFragment implements CommonHandleListener, ListChooseListener {
     /**
-     * 股票id
+     * 股票编码
      */
-    private Integer stockId;
+    String stockCode;
 
     @BindView(R.id.stockDealInfoSDIV)
     StockDealInfoView stockDealInfoSDIV;
@@ -66,7 +71,7 @@ public class StockDealLineOfflineFragment extends BaseFragment implements Common
     /**
      * 按天价格数据
      */
-    List<DealDayApiDto> dealDayApiDtoList;
+    List<NetsDayDealInfoPo> dealDayInfoList;
 
     /**
      * 消息处理
@@ -77,12 +82,12 @@ public class StockDealLineOfflineFragment extends BaseFragment implements Common
      *
      * @param context
      */
-    public StockDealLineOfflineFragment(Context context) {
+    public StockDealLineOfflineFragment(Context context, StockVo stockVo) {
         super(context);
-    }
-    public StockDealLineOfflineFragment(Context context, int stockId) {
-        super(context);
-        this.stockId = stockId;
+        if (null != stockVo) {
+            stockMarket = stockVo.getStockMarket();
+            stockCode = stockVo.getStockCode();
+        }
     }
 
     @Override
@@ -101,7 +106,8 @@ public class StockDealLineOfflineFragment extends BaseFragment implements Common
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), StockAllKlineLandActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putInt("stockId", stockId);
+                bundle.putInt("stockMarket", stockMarket);
+                bundle.putString("stockCode", stockCode);
                 intent.putExtra("stock", bundle);
                 getContext().startActivity(intent);
             }
@@ -119,8 +125,7 @@ public class StockDealLineOfflineFragment extends BaseFragment implements Common
         Bundle bundle = message.getData();
         switch (message.what) {
             case MsgWhatConfig.STOCK_DEAL_PRICE_LINE:
-                String dealPriceDayStr = bundle.getString("stockDealPriceDayLine");
-                Log.e("stockDealPriceDayLine", dealPriceDayStr);
+                String dealPriceDayStr = listToChartData();
                 try {
                     try {
                         object = new JSONObject(dealPriceDayStr);
@@ -130,12 +135,61 @@ public class StockDealLineOfflineFragment extends BaseFragment implements Common
                     //上证指数代码000001.IDX.SH
                     kLineData.parseKlineData(object,"000001.IDX.SH", land);
                     stockKLineChart.setDataToChart(kLineData);
-                    choose(dealDayApiDtoList.size() - 1);
+                    choose(dealDayInfoList.size() - 1);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
         }
+    }
+
+    private String listToChartData() {
+        if (null == dealDayInfoList) {
+            return null;
+        }
+        List chartDataList = new ArrayList();
+        List<BigDecimal> closePriceList = new ArrayList<>(60);
+        List<Integer> maList = Arrays.asList(5, 10, 20, 30, 60);
+        Map<Integer, BigDecimal> sumClosePriceMap = new HashMap<>(maList.size());
+        for (Integer ma : maList) {
+            sumClosePriceMap.put(ma, new BigDecimal(0));
+        }
+        for (int i = 0; i < dealDayInfoList.size(); i++) {
+            NetsDayDealInfoPo netsDayDealInfoPo = dealDayInfoList.get(i);
+            if (null != netsDayDealInfoPo) {
+                List<Object> dataList = new ArrayList<>();
+                dataList.add(DateUtil.getDateFromStr(netsDayDealInfoPo.getDt()).getTime());
+                dataList.add(netsDayDealInfoPo.getOpenPrice().toString());
+                dataList.add(netsDayDealInfoPo.getHighestPrice().toString());
+                dataList.add(netsDayDealInfoPo.getLowestPrice().toString());
+                dataList.add(netsDayDealInfoPo.getClosePrice().toString());
+                dataList.add(netsDayDealInfoPo.getDealNum().toString());
+                dataList.add(netsDayDealInfoPo.getDealMoney().toString());
+                closePriceList.add(netsDayDealInfoPo.getClosePrice());
+                for (Integer ma : maList) {
+                    BigDecimal sumPrice = sumClosePriceMap.get(ma);
+                    sumPrice = sumPrice.add(netsDayDealInfoPo.getClosePrice());
+                    if (ma <= closePriceList.size()) {
+                        sumPrice = sumPrice.subtract(
+                                closePriceList.get(closePriceList.size() - ma)
+                        );
+                        dataList.add(sumPrice.divide(
+                                new BigDecimal(ma), 2, RoundingMode.HALF_UP)
+                        );
+                    } else {
+                        dataList.add(sumPrice.divide(
+                                new BigDecimal(closePriceList.size()), 2, RoundingMode.HALF_UP)
+                        );
+                    }
+                    sumClosePriceMap.put(ma, sumPrice);
+                }
+                dataList.add(netsDayDealInfoPo.getPreClosePrice().toString());
+                chartDataList.add(dataList);
+            }
+        }
+        Map<String, List> priceDayMap = new HashMap<>(1);
+        priceDayMap.put("data", chartDataList);
+        return com.alibaba.fastjson.JSONObject.toJSONString(priceDayMap);
     }
 
     /**
@@ -146,21 +200,13 @@ public class StockDealLineOfflineFragment extends BaseFragment implements Common
             @SneakyThrows
             @Override
             public void run() {
-                DealDayApi dealDayApi = new DealDayApi();
-                Map<String, Object> params = new HashMap<>();
-                params.put("stockId", stockId);
-                dealDayApi.setParams(params);
-                dealDayApiDtoList = (List<DealDayApiDto>)dealDayApi.request();
-                Log.e("stockDealPriceDayLine", String.valueOf(dealDayApiDtoList.size()));
-                Map<String, List> priceDayMap = new HashMap<>(1);
-                priceDayMap.put("data", DealDayApiDto.listToChartData(dealDayApiDtoList));
+                String currentDate = DateUtil.getCurrentDate();
+                NetsDayDealInfoApi netsDayDealInfoApi = new NetsDayDealInfoApi();
+                dealDayInfoList = netsDayDealInfoApi.dayDealInfo(
+                        new StockVo(stockCode, stockMarket), "1990-01-01", currentDate
+                );
                 Message msg = new Message();
                 msg.what = MsgWhatConfig.STOCK_DEAL_PRICE_LINE;
-                Bundle bundle = new Bundle();
-                bundle.putString("stockDealPriceDayLine",
-                        com.alibaba.fastjson.JSONObject.toJSONString(priceDayMap)
-                );
-                msg.setData(bundle);
                 handler.sendMessage(msg);
             }
         };
@@ -176,15 +222,14 @@ public class StockDealLineOfflineFragment extends BaseFragment implements Common
     @Override
     public void choose(Integer index) {
         DealInfoApiDto dealInfoApiDto = new DealInfoApiDto();
-        DealDayApiDto dealDayApiDto = dealDayApiDtoList.get(index);
-        dealInfoApiDto.setCurrentPrice(dealDayApiDto.getClosePrice());
-        dealInfoApiDto.setPreClosePrice(dealDayApiDto.getPreClosePrice());
-        Log.e("preClosePrice", dealDayApiDto.getPreClosePrice().toString());
-        dealInfoApiDto.setOpenPrice(dealDayApiDto.getOpenPrice());
-        dealInfoApiDto.setHighestPrice(dealDayApiDto.getHighestPrice());
-        dealInfoApiDto.setLowestPrice(dealDayApiDto.getLowestPrice());
-        dealInfoApiDto.setDealNum(dealDayApiDto.getDealNum());
-        dealInfoApiDto.setDealMoney(dealDayApiDto.getDealMoney());
+        NetsDayDealInfoPo netsDayDealInfoPo = dealDayInfoList.get(index);
+        dealInfoApiDto.setCurrentPrice(netsDayDealInfoPo.getClosePrice());
+        dealInfoApiDto.setPreClosePrice(netsDayDealInfoPo.getPreClosePrice());
+        dealInfoApiDto.setOpenPrice(netsDayDealInfoPo.getOpenPrice());
+        dealInfoApiDto.setHighestPrice(netsDayDealInfoPo.getHighestPrice());
+        dealInfoApiDto.setLowestPrice(netsDayDealInfoPo.getLowestPrice());
+        dealInfoApiDto.setDealNum(netsDayDealInfoPo.getDealNum());
+        dealInfoApiDto.setDealMoney(netsDayDealInfoPo.getDealMoney());
         stockDealInfoSDIV.setData(dealInfoApiDto).reDraw();
     }
 }
