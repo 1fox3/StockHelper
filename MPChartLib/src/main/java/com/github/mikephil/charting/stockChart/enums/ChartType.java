@@ -5,7 +5,7 @@ package com.github.mikephil.charting.stockChart.enums;
  */
 public enum ChartType {
     ONE_DAY(241),//沪深股票当日分时线总点数
-    FIVE_DAY(305),//沪深股票五日分时线总点数
+    FIVE_DAY(240),//沪深股票五日分时线总点数
     HK_ONE_DAY(331),//港股当日分时线总点数
     HK_FIVE_DAY(415),//港股五日分时线总点数
     US_ONE_DAY(390),//美股当日分时线总点数

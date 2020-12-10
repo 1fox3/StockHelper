@@ -547,6 +547,7 @@ public class StockMarketFragment extends StockBaseFragment implements CommonHand
             case R.id.stockRankMore:
                 Intent intent = new Intent(this.getContext(), StockRankActivity.class);
                 Bundle bundle = new Bundle();
+                bundle.putInt("stockMarket", stockMarket);
                 bundle.putString("sortColumn", sortColumn);
                 bundle.putString("sortType", sortType);
                 intent.putExtras(bundle);

@@ -2,8 +2,9 @@ package com.fox.stockhelper.ui.activity;
 
 import android.os.Bundle;
 
+import com.fox.spider.stock.constant.StockConst;
+import com.fox.spider.stock.entity.vo.StockVo;
 import com.fox.stockhelper.R;
-import com.fox.stockhelper.constant.stock.StockKlineConst;
 import com.fox.stockhelper.ui.adapter.SimpleFragmentStatePagerAdapter;
 import com.fox.stockhelper.ui.base.BaseActivity;
 import com.fox.stockhelper.ui.fragment.StockLandLineFiveDayFragment;
@@ -22,14 +23,22 @@ import butterknife.ButterKnife;
 
 /**
  * 股票所有类型横屏k线图
+ *
  * @author lusongsong
  * @date 2020/10/23 13:49
  */
 public class StockAllKlineLandActivity extends BaseActivity {
     /**
-     * 股票id
+     * 股市
      */
-    Integer stockId;
+    Integer stockMarket;
+    /**
+     * 股票代码
+     */
+    String stockCode;
+    /**
+     * 线图分类
+     */
     public static final List<String> titles = Arrays.asList(
             "分时",
             "5日",
@@ -49,17 +58,18 @@ public class StockAllKlineLandActivity extends BaseActivity {
         setContentView(R.layout.activity_stock_all_kline_land);
         ButterKnife.bind(StockAllKlineLandActivity.this);
         Bundle bundle = getIntent().getBundleExtra("stock");
-        stockId = bundle.getInt("stockId", 1);
+        stockMarket = bundle.getInt("stockId", StockConst.SM_A);
+        stockCode = bundle.getString("stockCode");
+        StockVo stockVo = new StockVo(stockCode, stockMarket);
 
         List<Fragment> fragmentList = new LinkedList<>();
-        fragmentList.add(new StockLandLineRealtimeFragment(this, stockId));
-        fragmentList.add(new StockLandLineFiveDayFragment(this, stockId));
-        fragmentList.add(new StockLandLineKlineFragment(this, stockId, StockKlineConst.DAY));
-        fragmentList.add(new StockLandLineKlineFragment(this, stockId, StockKlineConst.WEEK));
-        fragmentList.add(new StockLandLineKlineFragment(this, stockId, StockKlineConst.MONTH));
+        fragmentList.add(new StockLandLineRealtimeFragment(this, stockVo));
+        fragmentList.add(new StockLandLineFiveDayFragment(this, stockVo));
+        fragmentList.add(new StockLandLineKlineFragment(this, stockVo, StockConst.DT_DAY));
+        fragmentList.add(new StockLandLineKlineFragment(this, stockVo, StockConst.DT_WEEK));
+        fragmentList.add(new StockLandLineKlineFragment(this, stockVo, StockConst.DT_MONTH));
         klineNTSV.setOffscreenPageLimit(titles.size());
         klineNTSV.setAdapter(new SimpleFragmentStatePagerAdapter(getSupportFragmentManager(), fragmentList, titles));
         klineTL.setupWithViewPager(klineNTSV);
     }
-
 }

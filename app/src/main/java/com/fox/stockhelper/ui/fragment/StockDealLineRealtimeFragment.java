@@ -47,6 +47,7 @@ import lombok.SneakyThrows;
 
 /**
  * 股市实时成交线图
+ *
  * @author lusongsong
  * @date 2020/9/14 15:57
  */
@@ -120,6 +121,7 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
 
     /**
      * 构造函数
+     *
      * @param context
      */
     public StockDealLineRealtimeFragment(Context context, StockVo stockVo) {
@@ -133,6 +135,7 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
 
     /**
      * 创建视图
+     *
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -168,6 +171,8 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
                 getContext().startActivity(intent);
             }
         });
+        //首次填充数据
+        startRefreshData();
         return view;
     }
 
@@ -229,10 +234,10 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
                     sellStockTopDealPriceAdapter.setPreClosePrice(sinaRealtimeDealInfoPo.getPreClosePrice());
                     List<Map<String, BigDecimal>> sellList = sinaRealtimeDealInfoPo.getSellPriceList();
                     List<TopDealPriceSingleDto> sellPriceList = new ArrayList<>(sellList.size());
-                    for(Map<String, BigDecimal> sellPriceMap : sellList) {
+                    for (Map<String, BigDecimal> sellPriceMap : sellList) {
                         TopDealPriceSingleDto topDealPriceSingleDto = new TopDealPriceSingleDto();
-                        topDealPriceSingleDto.setNum(((BigDecimal)sellPriceMap.get("num")).longValue());
-                        topDealPriceSingleDto.setPrice(((BigDecimal)sellPriceMap.get("price")));
+                        topDealPriceSingleDto.setNum(((BigDecimal) sellPriceMap.get("num")).longValue());
+                        topDealPriceSingleDto.setPrice(((BigDecimal) sellPriceMap.get("price")));
                         sellPriceList.add(topDealPriceSingleDto);
                     }
                     sellStockTopDealPriceAdapter.addData(sellPriceList);
@@ -242,7 +247,7 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
                     buyStockTopDealPriceAdapter.setPreClosePrice(sinaRealtimeDealInfoPo.getPreClosePrice());
                     List<Map<String, BigDecimal>> buyList = sinaRealtimeDealInfoPo.getSellPriceList();
                     List<TopDealPriceSingleDto> buyPriceList = new ArrayList<>(sellList.size());
-                    for(Map<String, BigDecimal> buyPriceMap : buyList) {
+                    for (Map<String, BigDecimal> buyPriceMap : buyList) {
                         TopDealPriceSingleDto topDealPriceSingleDto = new TopDealPriceSingleDto();
                         topDealPriceSingleDto.setNum(buyPriceMap.get("num").longValue());
                         topDealPriceSingleDto.setPrice(buyPriceMap.get("price"));
@@ -258,7 +263,7 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
                 try {
                     object = new JSONObject(com.alibaba.fastjson.JSONObject.toJSONString(convertToRealTimeChartData()));
                     //上证指数代码000001.IDX.SH
-                    kTimeData.parseTimeData(object,"000001.IDX.SH",0);
+                    kTimeData.parseTimeData(object, "000001.IDX.SH", 0);
                     stockOneDayChart.setDataToChart(kTimeData);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -269,6 +274,7 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
 
     /**
      * 将数据转换成表格需要的格式
+     *
      * @return
      */
     public Map<String, Object> convertToRealTimeChartData() {

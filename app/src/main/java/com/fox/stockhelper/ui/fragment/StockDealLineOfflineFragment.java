@@ -43,6 +43,7 @@ import lombok.SneakyThrows;
 
 /**
  * 股市离线成交线图
+ *
  * @author lusongsong
  * @date 2020/9/14 15:58
  */
@@ -77,6 +78,7 @@ public class StockDealLineOfflineFragment extends StockBaseFragment implements C
      * 消息处理
      */
     Handler handler = new CommonHandler(this);
+
     /**
      * 指定上下文构造器
      *
@@ -122,7 +124,6 @@ public class StockDealLineOfflineFragment extends StockBaseFragment implements C
      */
     @Override
     public void handleMessage(Message message) {
-        Bundle bundle = message.getData();
         switch (message.what) {
             case MsgWhatConfig.STOCK_DEAL_PRICE_LINE:
                 String dealPriceDayStr = listToChartData();
@@ -133,7 +134,7 @@ public class StockDealLineOfflineFragment extends StockBaseFragment implements C
                         e.printStackTrace();
                     }
                     //上证指数代码000001.IDX.SH
-                    kLineData.parseKlineData(object,"000001.IDX.SH", land);
+                    kLineData.parseKlineData(object, "000001.IDX.SH", land);
                     stockKLineChart.setDataToChart(kLineData);
                     choose(dealDayInfoList.size() - 1);
                 } catch (Exception e) {
@@ -143,6 +144,11 @@ public class StockDealLineOfflineFragment extends StockBaseFragment implements C
         }
     }
 
+    /**
+     * 数据转图标
+     *
+     * @return
+     */
     private String listToChartData() {
         if (null == dealDayInfoList) {
             return null;

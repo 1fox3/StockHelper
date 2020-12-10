@@ -13,8 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fox.spider.stock.constant.StockConst;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.api.stock.realtime.RankApi;
 import com.fox.stockhelper.config.MsgWhatConfig;
@@ -45,6 +44,14 @@ import lombok.SneakyThrows;
  * @date 2020/9/3 14:51
  */
 public class StockRankActivity extends BaseActivity implements CommonHandleListener {
+    /**
+     * 股票交易所
+     */
+    Integer stockMarket;
+    /**
+     * 排行数据接口返回列表
+     */
+    List<RankApiDto> rankApiDtoList = new ArrayList<>();
     /**
      * 名称列表
      */
@@ -137,8 +144,10 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
      * 是否在加载数据
      */
     boolean isLoadingData = false;
+
     /**
      * 构建显示内容
+     *
      * @param savedInstanceState
      */
     @Override
@@ -146,6 +155,8 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_rank);
         ButterKnife.bind(StockRankActivity.this);
+        Bundle bundle = getIntent().getExtras();
+        stockMarket = bundle.getInt("stockMarket", StockConst.SM_A);
         sortTextViews = new SortTextView[]{
                 stockRankPriceSTV,
                 stockRankUptickRateSTV,
@@ -172,10 +183,10 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
      */
     private void initLoadingImg() {
         //设置图片动画属性，各参数说明可参照api
-        loadingImgAnimation= new RotateAnimation(
+        loadingImgAnimation = new RotateAnimation(
                 0f, 360f,
-                Animation.RELATIVE_TO_SELF,0.5f,
-                Animation.RELATIVE_TO_SELF,0.5f
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f
         );
         //设置旋转重复次数，即转几圈
         loadingImgAnimation.setRepeatCount(30);
@@ -185,7 +196,7 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
         loadingImgAnimation.setInterpolator(new LinearInterpolator());
         //设置ImageView的动画，也可以myImageView.startAnimation(myAlphaAnimation)
         loadImgIV.setAnimation(loadingImgAnimation);
-        loadingImgAnimation.setAnimationListener(new Animation.AnimationListener() {	//设置动画监听事件
+        loadingImgAnimation.setAnimationListener(new Animation.AnimationListener() {    //设置动画监听事件
             @Override
             public void onAnimationStart(Animation animation) {
                 Log.e("animation", "start");
@@ -198,6 +209,7 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
                 }
                 Log.e("animation", "repeat");
             }
+
             //图片旋转结束后触发事件，这里启动新的activity
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -223,16 +235,9 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
                 thread.start();
                 break;
             case MsgWhatConfig.STOCK_RANK:
-                String[] stockRankArr = bundle.getStringArray("stockRank");
                 //关闭动图
-                endLoadingData(stockRankArr.length);
+                endLoadingData(rankApiDtoList.size());
                 try {
-                    List<RankApiDto> rankApiDtoList = new ArrayList<>();
-                    for (String stockRankStr : stockRankArr) {
-                        RankApiDto rankApiDto =
-                                new ObjectMapper().readValue(stockRankStr, RankApiDto.class);
-                        rankApiDtoList.add(rankApiDto);
-                    }
                     this.addData(rankApiDtoList);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -345,7 +350,7 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
                         }
                         break;
                 }
-                int lastLastVisiblePosition = ((LinearLayoutManager)recyclerView.getLayoutManager())
+                int lastLastVisiblePosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
                         .findLastVisibleItemPosition();
                 if (lastLastVisiblePosition >= recyclerView.getAdapter().getItemCount() - 10) {
                     if (!isLoadingData) {
@@ -409,27 +414,20 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
             public void run() {
                 isLoadingData = true;
                 Map<String, Object> params = new HashMap<>();
+                params.put("stockMarket", stockMarket);
                 params.put("type", sortColumn);
                 params.put("sortType", sortType);
                 params.put("pageNum", pageNum);
                 params.put("pageSize", pageSize);
-                String[] stockRankArr = new String[pageSize];
-                List<RankApiDto> rankApiDtoList = new ArrayList<>();
                 try {
                     RankApi rankApi = new RankApi();
                     rankApi.setParams(params);
                     rankApiDtoList = (List<RankApiDto>) rankApi.request();
-                    for (int i = 0; i < rankApiDtoList.size(); i++) {
-                        stockRankArr[i] = JSONObject.toJSONString(rankApiDtoList.get(i));
-                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 Message msg = new Message();
                 msg.what = MsgWhatConfig.STOCK_RANK;
-                Bundle bundle = new Bundle();
-                bundle.putStringArray("stockRank", stockRankArr);
-                msg.setData(bundle);
                 handler.sendMessage(msg);
                 isLoadingData = false;
             }
@@ -449,6 +447,7 @@ public class StockRankActivity extends BaseActivity implements CommonHandleListe
 
     /**
      * 数据加载完成
+     *
      * @param resultDataSize
      */
     private void endLoadingData(int resultDataSize) {

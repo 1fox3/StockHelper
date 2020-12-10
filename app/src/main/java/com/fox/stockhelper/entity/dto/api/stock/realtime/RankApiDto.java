@@ -12,9 +12,9 @@ import lombok.Data;
 @Data
 public class RankApiDto {
     /**
-     * 股票id
+     * 股市
      */
-    Integer stockId;
+    Integer stockMarket;
     /**
      * 股票代码
      */

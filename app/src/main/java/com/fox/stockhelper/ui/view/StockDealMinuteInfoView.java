@@ -15,11 +15,13 @@ import java.math.BigDecimal;
 import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import lombok.Setter;
 
 /**
  * @author lusongsong
  * @date 2020/10/22 20:56
  */
+@Setter
 public class StockDealMinuteInfoView extends LinearLayout {
     /**
      * 日期

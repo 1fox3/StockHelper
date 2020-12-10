@@ -4,26 +4,33 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fox.spider.stock.api.nets.NetsRealtimeMinuteDealInfoApi;
+import com.fox.spider.stock.constant.StockMarketStatusConst;
+import com.fox.spider.stock.entity.po.nets.NetsRealtimeMinuteDealInfoPo;
+import com.fox.spider.stock.entity.po.nets.NetsRealtimeMinuteNodeDataPo;
+import com.fox.spider.stock.entity.vo.StockVo;
 import com.fox.stockhelper.R;
-import com.fox.stockhelper.api.stock.realtime.DealPriceLineApi;
 import com.fox.stockhelper.config.MsgWhatConfig;
-import com.fox.stockhelper.entity.dto.api.stock.realtime.DealPriceLineApiDto;
-import com.fox.stockhelper.ui.base.BaseFragment;
+import com.fox.stockhelper.ui.base.StockBaseFragment;
 import com.fox.stockhelper.ui.handler.CommonHandler;
 import com.fox.stockhelper.ui.listener.CommonHandleListener;
 import com.fox.stockhelper.ui.view.StockDealMinuteInfoView;
+import com.fox.stockhelper.util.DateUtil;
 import com.github.mikephil.charting.stockChart.BaseChart;
 import com.github.mikephil.charting.stockChart.OneDayChart;
 import com.github.mikephil.charting.stockChart.dataManage.KLineDataManage;
 import com.github.mikephil.charting.stockChart.dataManage.TimeDataManage;
 
+import org.json.JSONObject;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -31,16 +38,29 @@ import butterknife.ButterKnife;
 import lombok.SneakyThrows;
 
 /**
+ * 最新交易线图
+ *
  * @author lusongsong
  * @date 2020/10/22 20:39
  */
-public class StockLandLineRealtimeFragment extends BaseFragment
+public class StockLandLineRealtimeFragment extends StockBaseFragment
         implements CommonHandleListener, BaseChart.OnHighlightValueSelectedListener {
-    boolean land = true;
     /**
-     * 股票id
+     * 是否需要刷新数据
      */
-    Integer stockId;
+    protected boolean dataRefresh = true;
+    /**
+     * 股票
+     */
+    private StockVo stockVo;
+    /**
+     * 分钟线图信息
+     */
+    NetsRealtimeMinuteDealInfoPo netsRealtimeMinuteDealInfoPo;
+    /**
+     * 是否横屏显示
+     */
+    boolean land = true;
     @BindView(R.id.stockMinInfoSDMIV)
     StockDealMinuteInfoView stockMinInfoSDMIV;
     @BindView(R.id.stockRealtimeODC)
@@ -54,21 +74,21 @@ public class StockLandLineRealtimeFragment extends BaseFragment
      * 消息处理
      */
     Handler handler = new CommonHandler(this);
+
     /**
      * 指定上下文构造器
      *
      * @param context
      */
-    public StockLandLineRealtimeFragment(Context context) {
+    public StockLandLineRealtimeFragment(Context context, StockVo stockVo) {
         super(context);
-    }
-    public StockLandLineRealtimeFragment(Context context, int stockId) {
-        super(context);
-        this.stockId = stockId;
+        this.stockVo = stockVo;
+        stockMarket = stockVo.getStockMarket();
     }
 
     /**
      * 创建视图
+     *
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -79,11 +99,12 @@ public class StockLandLineRealtimeFragment extends BaseFragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_stock_land_line_realtime, null);
         ButterKnife.bind(this, view);
+        needStockMarketDealStatusService = true;
         //初始化
         stockRealtimeODC.initChart(land);
         stockRealtimeODC.setHighlightValueSelectedListener(this);
-        //初始化交易价格线图信息
-        this.handleDealPriceLine();
+        //首次填充数据
+        startRefreshData();
         return view;
     }
 
@@ -97,21 +118,47 @@ public class StockLandLineRealtimeFragment extends BaseFragment
         Bundle bundle = message.getData();
         switch (message.what) {
             case MsgWhatConfig.STOCK_DEAL_PRICE_LINE:
-                String dealPriceLineApiDtoStr = bundle.getString("stockDealPriceLine");
                 try {
-                    DealPriceLineApiDto dealPriceLineApiDto =
-                            new ObjectMapper()
-                                    .readValue(dealPriceLineApiDtoStr, DealPriceLineApiDto.class);
-                    object = new org.json.JSONObject(com.alibaba.fastjson.JSONObject.toJSONString(dealPriceLineApiDto.convertToRealTimeChartData()));
-                    Log.e("StockDealLineRealtimeFragment", com.alibaba.fastjson.JSONObject.toJSONString(dealPriceLineApiDto.convertToRealTimeChartData()));
+                    object = new JSONObject(com.alibaba.fastjson.JSONObject.toJSONString(convertToRealTimeChartData()));
                     //上证指数代码000001.IDX.SH
-                    kTimeData.parseTimeData(object,"000001.IDX.SH",0);
+                    kTimeData.parseTimeData(object, "000001.IDX.SH", 0);
                     stockRealtimeODC.setDataToChart(kTimeData);
+                    choose(netsRealtimeMinuteDealInfoPo.getKlineData().size() - 1);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
         }
+    }
+
+    /**
+     * 处理状态变化
+     *
+     * @param oldStatus
+     * @param newStatus
+     */
+    @Override
+    protected void handleStockMarketDealStatusBroadcast(Integer oldStatus, Integer newStatus) {
+        super.handleStockMarketDealStatusBroadcast(oldStatus, newStatus);
+        if (null != newStatus && !newStatus.equals(oldStatus)) {
+            if (StockMarketStatusConst.CAN_DEAL_STATUS_LIST.contains(newStatus)) {
+                if (!dataRefresh) {
+                    dataRefresh = true;
+                }
+            } else {
+                dataRefresh = false;
+            }
+            //状态发生变化时保证刷新一次
+            startRefreshData();
+        }
+    }
+
+    /**
+     * 开启数据刷新
+     */
+    private void startRefreshData() {
+        //初始化交易价格线图信息
+        handleDealPriceLine();
     }
 
     /**
@@ -122,19 +169,20 @@ public class StockLandLineRealtimeFragment extends BaseFragment
             @SneakyThrows
             @Override
             public void run() {
-                DealPriceLineApi dealPriceLineApi = new DealPriceLineApi();
-                Map<String, Object> params = new HashMap<>();
-                params.put("stockId", stockId);
-                dealPriceLineApi.setParams(params);
-                DealPriceLineApiDto dealPriceLineApiDto = (DealPriceLineApiDto)dealPriceLineApi.request();
-                Message msg = new Message();
-                msg.what = MsgWhatConfig.STOCK_DEAL_PRICE_LINE;
-                Bundle bundle = new Bundle();
-                bundle.putString("stockDealPriceLine",
-                        com.alibaba.fastjson.JSONObject.toJSONString(dealPriceLineApiDto)
-                );
-                msg.setData(bundle);
-                handler.sendMessage(msg);
+                while (true) {
+                    NetsRealtimeMinuteDealInfoApi netsRealtimeMinuteDealInfoApi =
+                            new NetsRealtimeMinuteDealInfoApi();
+                    netsRealtimeMinuteDealInfoPo =
+                            netsRealtimeMinuteDealInfoApi.realtimeMinuteKLine(stockVo);
+                    Message msg = new Message();
+                    msg.what = MsgWhatConfig.STOCK_DEAL_PRICE_LINE;
+                    handler.sendMessage(msg);
+                    if (dataRefresh) {
+                        Thread.sleep(2000);
+                    } else {
+                        break;
+                    }
+                }
             }
         };
         Thread thread = new Thread(stockDealPriceLineRunnable);
@@ -142,10 +190,49 @@ public class StockLandLineRealtimeFragment extends BaseFragment
     }
 
     /**
+     * 将数据转换成表格需要的格式
+     *
+     * @return
+     */
+    public Map<String, Object> convertToRealTimeChartData() {
+        List<NetsRealtimeMinuteNodeDataPo> netsRealtimeMinuteNodeDataPoList = netsRealtimeMinuteDealInfoPo.getKlineData();
+        Map<String, Object> realTimeChartData = new HashMap<>(2);
+        List<List<Object>> minuteDataList = new ArrayList<>(netsRealtimeMinuteNodeDataPoList.size());
+        for (NetsRealtimeMinuteNodeDataPo netsRealtimeMinuteNodeDataPo : netsRealtimeMinuteNodeDataPoList) {
+            List<Object> minuteData = new ArrayList<>(5);
+            minuteData.add(
+                    DateUtil.getDateFromStr(
+                            netsRealtimeMinuteDealInfoPo.getDealNum() + " " + netsRealtimeMinuteNodeDataPo.getTime(),
+                            DateUtil.TIME_FORMAT_2
+                    ).getTime()
+            );
+            minuteData.add(netsRealtimeMinuteNodeDataPo.getPrice());
+            minuteData.add(netsRealtimeMinuteNodeDataPo.getAvgPrice());
+            minuteData.add(netsRealtimeMinuteNodeDataPo.getDealNum());
+            minuteData.add(netsRealtimeMinuteNodeDataPo.getAvgPrice());
+            minuteDataList.add(minuteData);
+        }
+        realTimeChartData.put("data", minuteDataList);
+        realTimeChartData.put("preClose", netsRealtimeMinuteDealInfoPo.getPreClosePrice());
+        return realTimeChartData;
+    }
+
+    /**
      * 选中
+     *
      * @param index
      */
     public void choose(Integer index) {
+        List<NetsRealtimeMinuteNodeDataPo> netsRealtimeMinuteNodeDataPoList = netsRealtimeMinuteDealInfoPo.getKlineData();
+        NetsRealtimeMinuteNodeDataPo netsRealtimeMinuteNodeDataPo = netsRealtimeMinuteNodeDataPoList.get(index);
+        stockMinInfoSDMIV.setDt(netsRealtimeMinuteDealInfoPo.getDt());
+        stockMinInfoSDMIV.setTime(netsRealtimeMinuteNodeDataPo.getTime());
+        stockMinInfoSDMIV.setPrice(netsRealtimeMinuteNodeDataPo.getPrice());
+        stockMinInfoSDMIV.setAvgPrice(netsRealtimeMinuteNodeDataPo.getAvgPrice());
+        stockMinInfoSDMIV.setDealNum(netsRealtimeMinuteNodeDataPo.getDealNum());
+        stockMinInfoSDMIV.setDealMoney(netsRealtimeMinuteNodeDataPo.getAvgPrice().multiply(new BigDecimal(netsRealtimeMinuteNodeDataPo.getDealNum())));
+        stockMinInfoSDMIV.setTime(netsRealtimeMinuteNodeDataPo.getTime());
+        stockMinInfoSDMIV.reDraw();
     }
 
     @Override

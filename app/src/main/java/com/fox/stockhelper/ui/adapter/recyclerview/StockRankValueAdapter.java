@@ -52,7 +52,7 @@ public class StockRankValueAdapter extends BaseRecyclerViewAdapter {
                 public void onClick(View view) {
                     Intent intent = new Intent(getContext(), StockDealLineActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putInt("stockId", ((RankApiDto)data).getStockId());
+                    bundle.putInt("stockMarket", ((RankApiDto)data).getStockMarket());
                     bundle.putString("stockName", ((RankApiDto)data).getStockName());
                     bundle.putString("stockCode", ((RankApiDto)data).getStockCode());
                     intent.putExtra("stock", bundle);

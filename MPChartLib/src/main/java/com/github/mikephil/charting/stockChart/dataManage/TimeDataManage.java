@@ -7,7 +7,6 @@ import com.github.mikephil.charting.stockChart.model.TimeDataModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -204,11 +203,11 @@ public class TimeDataManage {
             fiveDayXLabelKey.add(414);
         } else {
             fiveDayXLabelKey.add(0);
-            fiveDayXLabelKey.add(60);
-            fiveDayXLabelKey.add(121);
-            fiveDayXLabelKey.add(182);
-            fiveDayXLabelKey.add(243);
-            fiveDayXLabelKey.add(304);
+            fiveDayXLabelKey.add(47);
+            fiveDayXLabelKey.add(95);
+            fiveDayXLabelKey.add(143);
+            fiveDayXLabelKey.add(191);
+            fiveDayXLabelKey.add(239);
         }
         return fiveDayXLabelKey;
     }
