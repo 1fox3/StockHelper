@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.fox.spider.stock.api.nets.NetsRealtimeMinuteDealInfoApi;
+import com.fox.spider.stock.api.nets.NetsRealtimeMinuteKLineApi;
 import com.fox.spider.stock.constant.StockMarketStatusConst;
-import com.fox.spider.stock.entity.po.nets.NetsRealtimeMinuteDealInfoPo;
+import com.fox.spider.stock.entity.po.nets.NetsRealtimeMinuteKLinePo;
 import com.fox.spider.stock.entity.po.nets.NetsRealtimeMinuteNodeDataPo;
 import com.fox.spider.stock.entity.vo.StockVo;
 import com.fox.stockhelper.R;
@@ -56,7 +56,7 @@ public class StockLandLineRealtimeFragment extends StockBaseFragment
     /**
      * 分钟线图信息
      */
-    NetsRealtimeMinuteDealInfoPo netsRealtimeMinuteDealInfoPo;
+    NetsRealtimeMinuteKLinePo netsRealtimeMinuteKLinePo;
     /**
      * 是否横屏显示
      */
@@ -123,7 +123,7 @@ public class StockLandLineRealtimeFragment extends StockBaseFragment
                     //上证指数代码000001.IDX.SH
                     kTimeData.parseTimeData(object, "000001.IDX.SH", 0);
                     stockRealtimeODC.setDataToChart(kTimeData);
-                    choose(netsRealtimeMinuteDealInfoPo.getKlineData().size() - 1);
+                    choose(netsRealtimeMinuteKLinePo.getKlineData().size() - 1);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -170,10 +170,10 @@ public class StockLandLineRealtimeFragment extends StockBaseFragment
             @Override
             public void run() {
                 while (true) {
-                    NetsRealtimeMinuteDealInfoApi netsRealtimeMinuteDealInfoApi =
-                            new NetsRealtimeMinuteDealInfoApi();
-                    netsRealtimeMinuteDealInfoPo =
-                            netsRealtimeMinuteDealInfoApi.realtimeMinuteKLine(stockVo);
+                    NetsRealtimeMinuteKLineApi netsRealtimeMinuteKLineApi =
+                            new NetsRealtimeMinuteKLineApi();
+                    netsRealtimeMinuteKLinePo =
+                            netsRealtimeMinuteKLineApi.realtimeMinuteKLine(stockVo);
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.STOCK_DEAL_PRICE_LINE;
                     handler.sendMessage(msg);
@@ -195,14 +195,14 @@ public class StockLandLineRealtimeFragment extends StockBaseFragment
      * @return
      */
     public Map<String, Object> convertToRealTimeChartData() {
-        List<NetsRealtimeMinuteNodeDataPo> netsRealtimeMinuteNodeDataPoList = netsRealtimeMinuteDealInfoPo.getKlineData();
+        List<NetsRealtimeMinuteNodeDataPo> netsRealtimeMinuteNodeDataPoList = netsRealtimeMinuteKLinePo.getKlineData();
         Map<String, Object> realTimeChartData = new HashMap<>(2);
         List<List<Object>> minuteDataList = new ArrayList<>(netsRealtimeMinuteNodeDataPoList.size());
         for (NetsRealtimeMinuteNodeDataPo netsRealtimeMinuteNodeDataPo : netsRealtimeMinuteNodeDataPoList) {
             List<Object> minuteData = new ArrayList<>(5);
             minuteData.add(
                     DateUtil.getDateFromStr(
-                            netsRealtimeMinuteDealInfoPo.getDealNum() + " " + netsRealtimeMinuteNodeDataPo.getTime(),
+                            netsRealtimeMinuteKLinePo.getDealNum() + " " + netsRealtimeMinuteNodeDataPo.getTime(),
                             DateUtil.TIME_FORMAT_2
                     ).getTime()
             );
@@ -213,7 +213,7 @@ public class StockLandLineRealtimeFragment extends StockBaseFragment
             minuteDataList.add(minuteData);
         }
         realTimeChartData.put("data", minuteDataList);
-        realTimeChartData.put("preClose", netsRealtimeMinuteDealInfoPo.getPreClosePrice());
+        realTimeChartData.put("preClose", netsRealtimeMinuteKLinePo.getPreClosePrice());
         return realTimeChartData;
     }
 
@@ -223,9 +223,9 @@ public class StockLandLineRealtimeFragment extends StockBaseFragment
      * @param index
      */
     public void choose(Integer index) {
-        List<NetsRealtimeMinuteNodeDataPo> netsRealtimeMinuteNodeDataPoList = netsRealtimeMinuteDealInfoPo.getKlineData();
+        List<NetsRealtimeMinuteNodeDataPo> netsRealtimeMinuteNodeDataPoList = netsRealtimeMinuteKLinePo.getKlineData();
         NetsRealtimeMinuteNodeDataPo netsRealtimeMinuteNodeDataPo = netsRealtimeMinuteNodeDataPoList.get(index);
-        stockMinInfoSDMIV.setDt(netsRealtimeMinuteDealInfoPo.getDt());
+        stockMinInfoSDMIV.setDt(netsRealtimeMinuteKLinePo.getDt());
         stockMinInfoSDMIV.setTime(netsRealtimeMinuteNodeDataPo.getTime());
         stockMinInfoSDMIV.setPrice(netsRealtimeMinuteNodeDataPo.getPrice());
         stockMinInfoSDMIV.setAvgPrice(netsRealtimeMinuteNodeDataPo.getAvgPrice());

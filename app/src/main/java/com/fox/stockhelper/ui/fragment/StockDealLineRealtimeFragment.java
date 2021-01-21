@@ -10,10 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.fox.spider.stock.api.nets.NetsRealtimeMinuteDealInfoApi;
+import com.fox.spider.stock.api.nets.NetsRealtimeMinuteKLineApi;
 import com.fox.spider.stock.api.sina.SinaRealtimeDealInfoApi;
 import com.fox.spider.stock.constant.StockMarketStatusConst;
-import com.fox.spider.stock.entity.po.nets.NetsRealtimeMinuteDealInfoPo;
+import com.fox.spider.stock.entity.po.nets.NetsRealtimeMinuteKLinePo;
 import com.fox.spider.stock.entity.po.nets.NetsRealtimeMinuteNodeDataPo;
 import com.fox.spider.stock.entity.po.sina.SinaRealtimeDealInfoPo;
 import com.fox.spider.stock.entity.vo.StockVo;
@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +68,7 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
     /**
      * 分钟线图信息
      */
-    NetsRealtimeMinuteDealInfoPo netsRealtimeMinuteDealInfoPo;
+    NetsRealtimeMinuteKLinePo netsRealtimeMinuteKLinePo;
     /**
      * 交易信息
      */
@@ -232,12 +233,12 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
                     //TOP售价
                     sellStockTopDealPriceAdapter.clearData();
                     sellStockTopDealPriceAdapter.setPreClosePrice(sinaRealtimeDealInfoPo.getPreClosePrice());
-                    List<Map<String, BigDecimal>> sellList = sinaRealtimeDealInfoPo.getSellPriceList();
-                    List<TopDealPriceSingleDto> sellPriceList = new ArrayList<>(sellList.size());
-                    for (Map<String, BigDecimal> sellPriceMap : sellList) {
+                    LinkedHashMap<BigDecimal, Long> sellPriceMap = sinaRealtimeDealInfoPo.getSellPriceMap();
+                    List<TopDealPriceSingleDto> sellPriceList = new ArrayList<>(sellPriceMap.size());
+                    for (BigDecimal sellPrice : sellPriceMap.keySet()) {
                         TopDealPriceSingleDto topDealPriceSingleDto = new TopDealPriceSingleDto();
-                        topDealPriceSingleDto.setNum(((BigDecimal) sellPriceMap.get("num")).longValue());
-                        topDealPriceSingleDto.setPrice(((BigDecimal) sellPriceMap.get("price")));
+                        topDealPriceSingleDto.setNum(sellPriceMap.get(sellPrice));
+                        topDealPriceSingleDto.setPrice(sellPrice);
                         sellPriceList.add(topDealPriceSingleDto);
                     }
                     sellStockTopDealPriceAdapter.addData(sellPriceList);
@@ -245,12 +246,12 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
                     //TOP买价
                     buyStockTopDealPriceAdapter.clearData();
                     buyStockTopDealPriceAdapter.setPreClosePrice(sinaRealtimeDealInfoPo.getPreClosePrice());
-                    List<Map<String, BigDecimal>> buyList = sinaRealtimeDealInfoPo.getSellPriceList();
-                    List<TopDealPriceSingleDto> buyPriceList = new ArrayList<>(sellList.size());
-                    for (Map<String, BigDecimal> buyPriceMap : buyList) {
+                    LinkedHashMap<BigDecimal, Long> buyPriceMap = sinaRealtimeDealInfoPo.getBuyPriceMap();
+                    List<TopDealPriceSingleDto> buyPriceList = new ArrayList<>(buyPriceMap.size());
+                    for (BigDecimal buyPrice : buyPriceMap.keySet()) {
                         TopDealPriceSingleDto topDealPriceSingleDto = new TopDealPriceSingleDto();
-                        topDealPriceSingleDto.setNum(buyPriceMap.get("num").longValue());
-                        topDealPriceSingleDto.setPrice(buyPriceMap.get("price"));
+                        topDealPriceSingleDto.setNum(buyPriceMap.get(buyPrice));
+                        topDealPriceSingleDto.setPrice(buyPrice);
                         buyPriceList.add(topDealPriceSingleDto);
                     }
                     buyStockTopDealPriceAdapter.addData(buyPriceList);
@@ -278,14 +279,14 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
      * @return
      */
     public Map<String, Object> convertToRealTimeChartData() {
-        List<NetsRealtimeMinuteNodeDataPo> netsRealtimeMinuteNodeDataPoList = netsRealtimeMinuteDealInfoPo.getKlineData();
+        List<NetsRealtimeMinuteNodeDataPo> netsRealtimeMinuteNodeDataPoList = netsRealtimeMinuteKLinePo.getKlineData();
         Map<String, Object> realTimeChartData = new HashMap<>(2);
         List<List<Object>> minuteDataList = new ArrayList<>(netsRealtimeMinuteNodeDataPoList.size());
         for (NetsRealtimeMinuteNodeDataPo netsRealtimeMinuteNodeDataPo : netsRealtimeMinuteNodeDataPoList) {
             List<Object> minuteData = new ArrayList<>(5);
             minuteData.add(
                     DateUtil.getDateFromStr(
-                            netsRealtimeMinuteDealInfoPo.getDealNum() + " " + netsRealtimeMinuteNodeDataPo.getTime(),
+                            netsRealtimeMinuteKLinePo.getDealNum() + " " + netsRealtimeMinuteNodeDataPo.getTime(),
                             DateUtil.TIME_FORMAT_2
                     ).getTime()
             );
@@ -296,7 +297,7 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
             minuteDataList.add(minuteData);
         }
         realTimeChartData.put("data", minuteDataList);
-        realTimeChartData.put("preClose", netsRealtimeMinuteDealInfoPo.getPreClosePrice());
+        realTimeChartData.put("preClose", netsRealtimeMinuteKLinePo.getPreClosePrice());
         return realTimeChartData;
     }
 
@@ -335,9 +336,9 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
             @Override
             public void run() {
                 while (true) {
-                    NetsRealtimeMinuteDealInfoApi netsRealtimeMinuteDealInfoApi =
-                            new NetsRealtimeMinuteDealInfoApi();
-                    netsRealtimeMinuteDealInfoPo =
+                    NetsRealtimeMinuteKLineApi netsRealtimeMinuteDealInfoApi =
+                            new NetsRealtimeMinuteKLineApi();
+                    netsRealtimeMinuteKLinePo =
                             netsRealtimeMinuteDealInfoApi.realtimeMinuteKLine(stockVo);
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.STOCK_DEAL_PRICE_LINE;
