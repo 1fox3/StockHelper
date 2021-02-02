@@ -2,7 +2,11 @@ package com.fox.stockhelper;
 
 import android.content.Context;
 
+import com.fox.spider.stock.constant.StockConst;
+import com.fox.spider.stock.entity.vo.StockVo;
 import com.fox.stockhelper.api.login.SendCodeApi;
+import com.fox.stockhelper.spider.out.StockSpiderBase;
+import com.fox.stockhelper.spider.out.StockSpiderRealtimeMinuteKLine;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,5 +41,19 @@ public class ExampleInstrumentedTest {
         SendCodeApi sendCodeApi = new SendCodeApi();
         sendCodeApi.setParams(params);
         Object object = sendCodeApi.request();
+    }
+
+    @Test
+    public void spiderApiTest() {
+        StockVo stockVo = new StockVo("603383", StockConst.SM_SH);
+        StockSpiderRealtimeMinuteKLine stockSpiderRealtimeMinuteKLine =
+                new StockSpiderRealtimeMinuteKLine();
+        stockSpiderRealtimeMinuteKLine.setChooseMethod(StockSpiderBase.CHOOSE_METHOD_POLL);
+//        StockSpiderRealtimeDealInfo stockSpiderRealtimeDealInfo = new StockSpiderRealtimeDealInfo();
+//        stockSpiderRealtimeDealInfo.setChooseMethod(StockSpiderBase.CHOOSE_METHOD_POLL);
+        for (int i = 0; i < 10; i++) {
+            System.out.println(stockSpiderRealtimeMinuteKLine.realtimeMinuteKLine(stockVo));
+//            System.out.println(stockSpiderRealtimeDealInfo.realtimeDealInfo(stockVo));
+        }
     }
 }

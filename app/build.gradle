@@ -53,6 +53,7 @@ dependencies {
     implementation 'com.j256.ormlite:ormlite-android:5.2'
     implementation 'com.j256.ormlite:ormlite-core:5.2'
     implementation 'androidx.viewpager:viewpager:1.0.0'
+    implementation 'cn.hutool:hutool-all:5.5.7'
     api project(':MPChartLib')
     implementation files('libs/spiderStock.jar')
 }
