@@ -27,6 +27,7 @@ import com.fox.stockhelper.ui.listener.CommonHandleListener;
 import com.fox.stockhelper.ui.view.StockDealInfoView;
 import com.fox.stockhelper.ui.view.StockTopPriceView;
 import com.fox.stockhelper.util.DateUtil;
+import com.fox.stockhelper.util.SelfBeanUtil;
 import com.github.mikephil.charting.stockChart.OneDayChart;
 import com.github.mikephil.charting.stockChart.dataManage.TimeDataManage;
 
@@ -202,13 +203,7 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
             case MsgWhatConfig.STOCK_DEAL_INFO:
                 try {
                     DealInfoApiDto dealInfoApiDto = new DealInfoApiDto();
-                    dealInfoApiDto.setCurrentPrice(stockRealtimeDealInfoPo.getCurrentPrice());
-                    dealInfoApiDto.setOpenPrice(stockRealtimeDealInfoPo.getOpenPrice());
-                    dealInfoApiDto.setPreClosePrice(stockRealtimeDealInfoPo.getPreClosePrice());
-                    dealInfoApiDto.setHighestPrice(stockRealtimeDealInfoPo.getHighestPrice());
-                    dealInfoApiDto.setLowestPrice(stockRealtimeDealInfoPo.getLowestPrice());
-                    dealInfoApiDto.setDealNum(stockRealtimeDealInfoPo.getDealNum());
-                    dealInfoApiDto.setDealMoney(stockRealtimeDealInfoPo.getDealMoney());
+                    SelfBeanUtil.copyProperties(stockRealtimeDealInfoPo, dealInfoApiDto);
                     //交易信息
                     stockDealInfoSDIV.setData(dealInfoApiDto).reDraw();
                     stockTopPriceSTPV.setPriceInfo(stockRealtimeDealInfoPo);

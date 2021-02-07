@@ -20,7 +20,7 @@
         </activity>
         <activity android:name=".ui.activity.LoginActivity" />
         <activity android:name=".ui.activity.StockRankActivity" />
-        <activity android:name=".ui.activity.StockDealLineActivity" />
+        <activity android:name=".ui.activity.StockHomeActivity" />
         <activity android:name=".ui.activity.StockAllKlineLandActivity"
             android:screenOrientation="landscape" />
 

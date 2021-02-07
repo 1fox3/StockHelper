@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.RankApiDto;
-import com.fox.stockhelper.ui.activity.StockDealLineActivity;
+import com.fox.stockhelper.ui.activity.StockHomeActivity;
 import com.fox.stockhelper.ui.view.StockValueTextView;
 
 import java.math.BigDecimal;
@@ -50,7 +50,7 @@ public class StockRankValueAdapter extends BaseRecyclerViewAdapter {
             stockRankValueLL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getContext(), StockDealLineActivity.class);
+                    Intent intent = new Intent(getContext(), StockHomeActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putInt("stockMarket", ((RankApiDto)data).getStockMarket());
                     bundle.putString("stockName", ((RankApiDto)data).getStockName());

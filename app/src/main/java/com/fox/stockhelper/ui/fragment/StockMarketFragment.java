@@ -30,7 +30,7 @@ import com.fox.stockhelper.entity.dto.api.stock.realtime.RankApiDto;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.UptickRateStatisticsApiDto;
 import com.fox.stockhelper.entity.po.stock.StockRealtimeDealInfoPo;
 import com.fox.stockhelper.spider.out.StockSpiderRealtimeDealInfoApi;
-import com.fox.stockhelper.ui.activity.StockDealLineActivity;
+import com.fox.stockhelper.ui.activity.StockHomeActivity;
 import com.fox.stockhelper.ui.activity.StockRankActivity;
 import com.fox.stockhelper.ui.adapter.StockRankAdapter;
 import com.fox.stockhelper.ui.base.StockBaseFragment;
@@ -408,7 +408,7 @@ public class StockMarketFragment extends StockBaseFragment implements CommonHand
                     stockRankListLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                            Intent intent = new Intent(getContext(), StockDealLineActivity.class);
+                            Intent intent = new Intent(getContext(), StockHomeActivity.class);
                             Bundle bundle = new Bundle();
                             RankApiDto rankApiDto = rankApiDtoList.get(i);
                             bundle.putInt("stockMarket", rankApiDto.getStockMarket());

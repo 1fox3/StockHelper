@@ -76,29 +76,33 @@ public class StockDealInfoView extends LinearLayout {
      */
     public StockDealInfoView(Context context) {
         super(context);
-        this.bindLayout();
-        this.initView();
+        initView(null);
     }
 
     public StockDealInfoView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        this.bindLayout();
-        this.initAttrs(attrs);
-        this.initView();
+        initView(attrs);
     }
 
     public StockDealInfoView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.bindLayout();
-        this.initAttrs(attrs);
-        this.initView();
+        initView(attrs);
     }
 
     public StockDealInfoView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        this.bindLayout();
-        this.initAttrs(attrs);
-        this.initView();
+        initView(attrs);
+    }
+
+    /**
+     * 初始化
+     *
+     * @param attrs
+     */
+    private void initView(AttributeSet attrs) {
+        bindLayout();
+        initAttrs(attrs);
+        draw();
     }
 
     /**
@@ -152,10 +156,10 @@ public class StockDealInfoView extends LinearLayout {
     /**
      * 初始化界面
      */
-    private void initView() {
+    private void draw() {
         BigDecimal uptickPrice = BigDecimal.ZERO;
         BigDecimal uptickRate = BigDecimal.ZERO;
-        if (1 == currentPrice.compareTo(BigDecimal.ZERO) && 1 == preClosePrice.compareTo(BigDecimal.ZERO)) {
+        if (0 < currentPrice.compareTo(BigDecimal.ZERO) && 0 < preClosePrice.compareTo(BigDecimal.ZERO)) {
             uptickPrice = currentPrice.subtract(preClosePrice);
             uptickRate = uptickPrice.multiply(new BigDecimal(100)).divide(preClosePrice, 2, BigDecimal.ROUND_HALF_UP);
         }
@@ -175,7 +179,7 @@ public class StockDealInfoView extends LinearLayout {
         dealNumSVTV.setValue(new BigDecimal(dealNum)).reDraw();
         dealMoneySVTV.setValue(dealMoney).reDraw();
         BigDecimal dealAvgPrice = BigDecimal.ZERO;
-        if (dealNum > 0 && 1 == dealMoney.compareTo(BigDecimal.ZERO)) {
+        if (dealNum > 0 && 0 < dealMoney.compareTo(BigDecimal.ZERO)) {
             dealAvgPrice = dealMoney.divide(new BigDecimal(dealNum), 2, BigDecimal.ROUND_HALF_UP);
         }
         dealAvgPriceSVTV.setValue(dealAvgPrice).reDraw();
@@ -207,30 +211,30 @@ public class StockDealInfoView extends LinearLayout {
      */
     public StockDealInfoView setData(DealInfoApiDto dealInfoApiDto) {
         if (null != dealInfoApiDto.getCurrentPrice()
-                && -1 != dealInfoApiDto.getCurrentPrice().compareTo(BigDecimal.ZERO)) {
+                && 0 < dealInfoApiDto.getCurrentPrice().compareTo(BigDecimal.ZERO)) {
             currentPrice = dealInfoApiDto.getCurrentPrice();
         }
         if (null != dealInfoApiDto.getPreClosePrice()
-                && -1 != dealInfoApiDto.getPreClosePrice().compareTo(BigDecimal.ZERO)) {
+                && 0 < dealInfoApiDto.getPreClosePrice().compareTo(BigDecimal.ZERO)) {
             preClosePrice = dealInfoApiDto.getPreClosePrice();
         }
         if (null != dealInfoApiDto.getOpenPrice()
-                && -1 != dealInfoApiDto.getOpenPrice().compareTo(BigDecimal.ZERO)) {
+                && 0 < dealInfoApiDto.getOpenPrice().compareTo(BigDecimal.ZERO)) {
             openPrice = dealInfoApiDto.getOpenPrice();
         }
         if (null != dealInfoApiDto.getHighestPrice()
-                && -1 != dealInfoApiDto.getHighestPrice().compareTo(BigDecimal.ZERO)) {
+                && 0 < dealInfoApiDto.getHighestPrice().compareTo(BigDecimal.ZERO)) {
             highestPrice = dealInfoApiDto.getHighestPrice();
         }
         if (null != dealInfoApiDto.getLowestPrice()
-                && -1 != dealInfoApiDto.getLowestPrice().compareTo(BigDecimal.ZERO)) {
+                && 0 < dealInfoApiDto.getLowestPrice().compareTo(BigDecimal.ZERO)) {
             lowestPrice = dealInfoApiDto.getLowestPrice();
         }
         if (null != dealInfoApiDto.getDealNum() && 0 < dealInfoApiDto.getDealNum()) {
             dealNum = dealInfoApiDto.getDealNum();
         }
         if (null != dealInfoApiDto.getDealMoney()
-                && -1 != dealInfoApiDto.getDealMoney().compareTo(BigDecimal.ZERO)) {
+                && 0 < dealInfoApiDto.getDealMoney().compareTo(BigDecimal.ZERO)) {
             dealMoney = dealInfoApiDto.getDealMoney();
         }
         return this;
@@ -240,6 +244,6 @@ public class StockDealInfoView extends LinearLayout {
      * 刷新数据
      */
     public void reDraw() {
-        initView();
+        draw();
     }
 }

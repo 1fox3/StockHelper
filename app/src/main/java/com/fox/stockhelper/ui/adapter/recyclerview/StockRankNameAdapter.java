@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.RankApiDto;
-import com.fox.stockhelper.ui.activity.StockDealLineActivity;
+import com.fox.stockhelper.ui.activity.StockHomeActivity;
 
 import androidx.annotation.NonNull;
 
@@ -38,7 +38,7 @@ public class StockRankNameAdapter extends BaseRecyclerViewAdapter {
             stockRankNameLL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getContext(), StockDealLineActivity.class);
+                    Intent intent = new Intent(getContext(), StockHomeActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putInt("stockMarket", ((RankApiDto)data).getStockMarket());
                     bundle.putString("stockCode", ((RankApiDto)data).getStockCode());

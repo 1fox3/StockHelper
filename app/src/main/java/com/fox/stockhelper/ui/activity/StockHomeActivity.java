@@ -28,7 +28,7 @@ import butterknife.ButterKnife;
  * @author lusongsong
  * @date 2020/9/14 15:15
  */
-public class StockDealLineActivity extends StockBaseActivity implements ViewPager.OnPageChangeListener {
+public class StockHomeActivity extends StockBaseActivity implements ViewPager.OnPageChangeListener {
     /**
      * 股票编码
      */
@@ -47,8 +47,8 @@ public class StockDealLineActivity extends StockBaseActivity implements ViewPage
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stock_deal_line);
-        ButterKnife.bind(StockDealLineActivity.this);
+        setContentView(R.layout.activity_stock_home);
+        ButterKnife.bind(StockHomeActivity.this);
         Bundle bundle = getIntent().getBundleExtra("stock");
         stockCode = bundle.getString("stockCode");
         stockMarket = bundle.getInt("stockMarket", StockConst.SM_A);
