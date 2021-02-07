@@ -1,18 +1,22 @@
 package com.fox.stockhelper;
 
 import android.content.Context;
+import android.graphics.Paint;
+import android.graphics.Rect;
 
 import com.fox.spider.stock.constant.StockConst;
 import com.fox.spider.stock.entity.vo.StockVo;
 import com.fox.stockhelper.api.login.SendCodeApi;
-import com.fox.stockhelper.spider.out.StockSpiderBase;
-import com.fox.stockhelper.spider.out.StockSpiderRealtimeMinuteKLine;
+import com.fox.stockhelper.spider.out.StockSpiderBaseApi;
+import com.fox.stockhelper.spider.out.StockSpiderRealtimeMinuteKLineApi;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -46,14 +50,32 @@ public class ExampleInstrumentedTest {
     @Test
     public void spiderApiTest() {
         StockVo stockVo = new StockVo("603383", StockConst.SM_SH);
-        StockSpiderRealtimeMinuteKLine stockSpiderRealtimeMinuteKLine =
-                new StockSpiderRealtimeMinuteKLine();
-        stockSpiderRealtimeMinuteKLine.setChooseMethod(StockSpiderBase.CHOOSE_METHOD_POLL);
+        StockSpiderRealtimeMinuteKLineApi stockSpiderRealtimeMinuteKLine =
+                new StockSpiderRealtimeMinuteKLineApi();
+        stockSpiderRealtimeMinuteKLine.setChooseMethod(StockSpiderBaseApi.CHOOSE_METHOD_POLL);
 //        StockSpiderRealtimeDealInfo stockSpiderRealtimeDealInfo = new StockSpiderRealtimeDealInfo();
 //        stockSpiderRealtimeDealInfo.setChooseMethod(StockSpiderBase.CHOOSE_METHOD_POLL);
         for (int i = 0; i < 10; i++) {
             System.out.println(stockSpiderRealtimeMinuteKLine.realtimeMinuteKLine(stockVo));
 //            System.out.println(stockSpiderRealtimeDealInfo.realtimeDealInfo(stockVo));
         }
+    }
+
+    private void getStrShowLen(String str) {
+        Paint paint= new Paint();
+        Rect rect = new Rect();
+        paint.getTextBounds(str, 0, str.length(), rect);
+        int strwidth = rect.width();
+        int strheight = rect.height();
+        float strwith = paint.measureText(str);
+        System.out.println(str + ":" + strwidth + ":" + strheight + ":" + strwith);
+    }
+    @Test
+    public void stockValueUtilTest() {
+        TreeMap<BigDecimal, Long> priceMap = new TreeMap<>();
+        priceMap.put(new BigDecimal("1"), 1121l);
+        priceMap.put(new BigDecimal("4"), 112l);
+        priceMap.put(new BigDecimal("2"), 1l);
+        System.out.println(priceMap);
     }
 }

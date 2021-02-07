@@ -17,7 +17,7 @@ import java.util.Map;
  * @author lusongsong
  * @date 2021/1/26 16:53
  */
-public class StockSpiderRealtimeDealInfo extends StockSpiderBase {
+public class StockSpiderRealtimeDealInfoApi extends StockSpiderBaseApi {
     /**
      * 对应接口
      */
@@ -27,11 +27,11 @@ public class StockSpiderRealtimeDealInfo extends StockSpiderBase {
     /**
      * 对应实现类接口
      */
-    public StockSpiderRealtimeDealInfo() {
+    public StockSpiderRealtimeDealInfoApi() {
         implClassList = Arrays.asList(
                 Arrays.asList(NetsSpiderRealtimeDealInfoApiImpl.class, false),
-                Arrays.asList(SinaSpiderRealtimeDealInfoApiImpl.class, false),
-                Arrays.asList(TencentSpiderRealtimeDealInfoApiImpl.class, true)
+                Arrays.asList(SinaSpiderRealtimeDealInfoApiImpl.class, true),
+                Arrays.asList(TencentSpiderRealtimeDealInfoApiImpl.class, false)
         );
     }
 

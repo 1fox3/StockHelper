@@ -16,7 +16,7 @@ import cn.hutool.core.util.RandomUtil;
  * @author lusongsong
  * @date 2021/1/26 16:52
  */
-public class StockSpiderBase {
+public class StockSpiderBaseApi {
     /**
      * 主
      */

@@ -1,7 +1,7 @@
 package com.fox.stockhelper.entity.po.stock;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 
 import lombok.Data;
 
@@ -64,9 +64,9 @@ public class StockRealtimeDealInfoPo {
     /**
      * 排名靠前的5个买方报价
      */
-    LinkedHashMap<BigDecimal, Long> buyPriceMap;
+    TreeMap<BigDecimal, Long> buyPriceMap;
     /**
      * 排名靠前的5个卖方报价
      */
-    LinkedHashMap<BigDecimal, Long> sellPriceMap;
+    TreeMap<BigDecimal, Long> sellPriceMap;
 }

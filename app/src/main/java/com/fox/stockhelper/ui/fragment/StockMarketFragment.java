@@ -17,10 +17,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fox.spider.stock.api.sina.SinaRealtimeDealInfoApi;
 import com.fox.spider.stock.constant.StockConst;
 import com.fox.spider.stock.constant.StockMarketStatusConst;
-import com.fox.spider.stock.entity.po.sina.SinaRealtimeDealInfoPo;
 import com.fox.spider.stock.entity.vo.StockVo;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.api.stock.realtime.RankApi;
@@ -30,6 +28,8 @@ import com.fox.stockhelper.config.MsgWhatConfig;
 import com.fox.stockhelper.constant.stock.SHStockConst;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.RankApiDto;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.UptickRateStatisticsApiDto;
+import com.fox.stockhelper.entity.po.stock.StockRealtimeDealInfoPo;
+import com.fox.stockhelper.spider.out.StockSpiderRealtimeDealInfoApi;
 import com.fox.stockhelper.ui.activity.StockDealLineActivity;
 import com.fox.stockhelper.ui.activity.StockRankActivity;
 import com.fox.stockhelper.ui.adapter.StockRankAdapter;
@@ -60,9 +60,18 @@ public class StockMarketFragment extends StockBaseFragment implements CommonHand
      */
     protected boolean dataRefresh = true;
     /**
+     * 股票最新交易日交易信息爬虫接口
+     */
+    private StockSpiderRealtimeDealInfoApi stockSpiderRealtimeDealInfo =
+            new StockSpiderRealtimeDealInfoApi();
+    /**
+     * top指标
+     */
+    private List<StockVo> topIndexStockVoList;
+    /**
      * top指标实时交易数据
      */
-    private Map<String, SinaRealtimeDealInfoPo> topIndexDealInfoMap = new HashMap<>();
+    private Map<String, StockRealtimeDealInfoPo> topIndexRealtimeDealInfoMap;
     /**
      * 涨跌统计
      */
@@ -233,6 +242,9 @@ public class StockMarketFragment extends StockBaseFragment implements CommonHand
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_stock_market, null);
         ButterKnife.bind(this, view);
+        //获取top指标
+        topIndexStockVoList = StockConst.stockMarketTopIndex(stockMarket);
+        //排行
         sortTextViews = new SortTextView[]{
                 priceSTV,
                 uptickRateSTV,
@@ -312,19 +324,19 @@ public class StockMarketFragment extends StockBaseFragment implements CommonHand
      */
     @Override
     public void handleMessage(Message message) {
-        Bundle bundle = message.getData();
         switch (message.what) {
             case MsgWhatConfig.TOP_INDEX:
                 try {
-                    List<StockVo> stockVoList = StockConst.stockMarketTopIndex(stockMarket);
-                    SinaRealtimeDealInfoPo sinaRealtimeDealInfoPo;
-                    for (StockVo stockVo : stockVoList) {
-                        if (null == stockVo.getStockCode() || null == topIndexDealInfoMap
-                                || !topIndexDealInfoMap.containsKey(stockVo.getStockCode())) {
+                    StockRealtimeDealInfoPo stockRealtimeDealInfoPo;
+                    for (StockVo stockVo : topIndexStockVoList) {
+                        if (null == stockVo || null == stockVo.getStockCode()
+                                || null == topIndexRealtimeDealInfoMap
+                                || !topIndexRealtimeDealInfoMap.containsKey(stockVo.getStockCode())
+                        ) {
                             continue;
                         }
-                        sinaRealtimeDealInfoPo = topIndexDealInfoMap.get(stockVo.getStockCode());
-                        String stockCode = sinaRealtimeDealInfoPo.getStockCode();
+                        String stockCode = stockVo.getStockCode();
+                        stockRealtimeDealInfoPo = topIndexRealtimeDealInfoMap.get(stockCode);
                         StockIndexBlockView stockIndexBlockView;
                         if (!topIndexMap.containsKey(stockCode)) {
                             stockIndexBlockView = new StockIndexBlockView(this.context);
@@ -336,20 +348,16 @@ public class StockMarketFragment extends StockBaseFragment implements CommonHand
                             );
                             //xml中的center数值是0x11，与RelativeLayout.END_OF(17)等价
                             stockIndexBlockView.setGravity(RelativeLayout.END_OF);
-                            stockIndexBlockView.setName(sinaRealtimeDealInfoPo.getStockName());
-                            stockIndexBlockView.setPrice(
-                                    sinaRealtimeDealInfoPo.getCurrentPrice(),
-                                    sinaRealtimeDealInfoPo.getPreClosePrice()
-                            );
+                            stockIndexBlockView.setName(stockRealtimeDealInfoPo.getStockName());
                             topIndexMap.put(stockCode, stockIndexBlockView);
                             topIndexLL.addView(stockIndexBlockView);
                         } else {
                             stockIndexBlockView = topIndexMap.get(stockCode);
-                            stockIndexBlockView.setPrice(
-                                    sinaRealtimeDealInfoPo.getCurrentPrice(),
-                                    sinaRealtimeDealInfoPo.getPreClosePrice()
-                            );
                         }
+                        stockIndexBlockView.setPrice(
+                                stockRealtimeDealInfoPo.getCurrentPrice(),
+                                stockRealtimeDealInfoPo.getPreClosePrice()
+                        );
                     }
                 } catch (RuntimeException e) {
                     e.printStackTrace();
@@ -403,7 +411,7 @@ public class StockMarketFragment extends StockBaseFragment implements CommonHand
                             Intent intent = new Intent(getContext(), StockDealLineActivity.class);
                             Bundle bundle = new Bundle();
                             RankApiDto rankApiDto = rankApiDtoList.get(i);
-                            bundle.putInt("stockMarket", stockMarket);
+                            bundle.putInt("stockMarket", rankApiDto.getStockMarket());
                             bundle.putString("stockName", rankApiDto.getStockName());
                             bundle.putString("stockCode", rankApiDto.getStockCode());
                             intent.putExtra("stock", bundle);
@@ -431,10 +439,8 @@ public class StockMarketFragment extends StockBaseFragment implements CommonHand
             @Override
             public void run() {
                 while (true) {
-                    List<StockVo> stockVoList = StockConst.stockMarketTopIndex(stockMarket);
-                    SinaRealtimeDealInfoApi sinaRealtimeDealInfo = new SinaRealtimeDealInfoApi();
-                    topIndexDealInfoMap =
-                            sinaRealtimeDealInfo.batchRealtimeDealInfo(stockVoList);
+                    topIndexRealtimeDealInfoMap =
+                            stockSpiderRealtimeDealInfo.batchRealtimeDealInfo(topIndexStockVoList);
                     Message msg = new Message();
                     msg.what = MsgWhatConfig.TOP_INDEX;
                     handler.sendMessage(msg);

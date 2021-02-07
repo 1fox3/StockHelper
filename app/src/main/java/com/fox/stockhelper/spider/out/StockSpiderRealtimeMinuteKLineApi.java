@@ -14,7 +14,7 @@ import java.util.Arrays;
  * @author lusongsong
  * @date 2021/2/1 15:53
  */
-public class StockSpiderRealtimeMinuteKLine extends StockSpiderBase {
+public class StockSpiderRealtimeMinuteKLineApi extends StockSpiderBaseApi {
     /**
      * 对应接口
      */
@@ -24,7 +24,7 @@ public class StockSpiderRealtimeMinuteKLine extends StockSpiderBase {
     /**
      * 注册接口实现类
      */
-    public StockSpiderRealtimeMinuteKLine() {
+    public StockSpiderRealtimeMinuteKLineApi() {
         implClassList = Arrays.asList(
                 Arrays.asList(NetsSpiderRealtimeMinuteKLineApiImpl.class, false),
                 Arrays.asList(TencentSpiderRealtimeMinuteKLineApiImpl.class, true)

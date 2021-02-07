@@ -20,7 +20,17 @@ public abstract class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseV
     private List<? extends Object> listData = new ArrayList<>();
 
     /**
+     * 设置数据
+     *
+     * @param dataList
+     */
+    public void setData(List dataList) {
+        listData = dataList;
+    }
+
+    /**
      * 添加数据
+     *
      * @param dataList
      */
     public void addData(List dataList) {
@@ -36,6 +46,7 @@ public abstract class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseV
 
     /**
      * 设置数据
+     *
      * @param holder
      * @param position
      */
@@ -46,6 +57,7 @@ public abstract class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseV
 
     /**
      * 获取列表长度
+     *
      * @return
      */
     @Override
