@@ -17,7 +17,8 @@ public final class Vector3 {
     public Vector3() {
     }
 
-    public Vector3(float[] array) {
+    public Vector3(float[] array)
+    {
         set(array[0], array[1], array[2]);
     }
 
@@ -47,7 +48,8 @@ public final class Vector3 {
         z -= other.z;
     }
 
-    public final void subtractMultiple(Vector3 other, float multiplicator) {
+    public final void subtractMultiple(Vector3 other, float multiplicator)
+    {
         x -= other.x * multiplicator;
         y -= other.y * multiplicator;
         z -= other.z * multiplicator;

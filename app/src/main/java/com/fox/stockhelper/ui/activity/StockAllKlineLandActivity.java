@@ -7,9 +7,9 @@ import com.fox.spider.stock.entity.vo.StockVo;
 import com.fox.stockhelper.R;
 import com.fox.stockhelper.ui.adapter.SimpleFragmentStatePagerAdapter;
 import com.fox.stockhelper.ui.base.BaseActivity;
-import com.fox.stockhelper.ui.fragment.StockLandLineFiveDayFragment;
+import com.fox.stockhelper.ui.fragment.StockLandLineMultiDayMinuteFragment;
 import com.fox.stockhelper.ui.fragment.StockLandLineKlineFragment;
-import com.fox.stockhelper.ui.fragment.StockLandLineRealtimeFragment;
+import com.fox.stockhelper.ui.fragment.StockLandLineSingleDayMinuteFragment;
 import com.fox.stockhelper.ui.view.NoTouchScrollViewpager;
 import com.google.android.material.tabs.TabLayout;
 
@@ -63,8 +63,8 @@ public class StockAllKlineLandActivity extends BaseActivity {
         StockVo stockVo = new StockVo(stockCode, stockMarket);
 
         List<Fragment> fragmentList = new LinkedList<>();
-        fragmentList.add(new StockLandLineRealtimeFragment(this, stockVo));
-        fragmentList.add(new StockLandLineFiveDayFragment(this, stockVo));
+        fragmentList.add(new StockLandLineSingleDayMinuteFragment(this, stockVo));
+        fragmentList.add(new StockLandLineMultiDayMinuteFragment(this, stockVo));
         fragmentList.add(new StockLandLineKlineFragment(this, stockVo, StockConst.DT_DAY));
         fragmentList.add(new StockLandLineKlineFragment(this, stockVo, StockConst.DT_WEEK));
         fragmentList.add(new StockLandLineKlineFragment(this, stockVo, StockConst.DT_MONTH));

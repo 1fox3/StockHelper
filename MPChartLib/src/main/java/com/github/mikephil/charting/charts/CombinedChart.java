@@ -81,10 +81,6 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
         // Old default behaviour
         setHighlightFullBarEnabled(true);
 
-        initRenderer();
-    }
-
-    public void initRenderer() {
         mRenderer = new CombinedChartRenderer(this, mAnimator, mViewPortHandler);
     }
 
@@ -118,9 +114,7 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
             return null;
         } else {
             Highlight h = getHighlighter().getHighlight(x, y);
-            if (h == null || !isHighlightFullBarEnabled()) {
-                return h;
-            }
+            if (h == null || !isHighlightFullBarEnabled()) return h;
 
             // For isHighlightFullBarEnabled, remove stackIndex
             return new Highlight(h.getX(), h.getY(),
@@ -131,41 +125,36 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
 
     @Override
     public LineData getLineData() {
-        if (mData == null) {
+        if (mData == null)
             return null;
-        }
         return mData.getLineData();
     }
 
     @Override
     public BarData getBarData() {
-        if (mData == null) {
+        if (mData == null)
             return null;
-        }
         return mData.getBarData();
     }
 
     @Override
     public ScatterData getScatterData() {
-        if (mData == null) {
+        if (mData == null)
             return null;
-        }
         return mData.getScatterData();
     }
 
     @Override
     public CandleData getCandleData() {
-        if (mData == null) {
+        if (mData == null)
             return null;
-        }
         return mData.getCandleData();
     }
 
     @Override
     public BubbleData getBubbleData() {
-        if (mData == null) {
+        if (mData == null)
             return null;
-        }
         return mData.getBubbleData();
     }
 
@@ -236,22 +225,19 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
      * @param order
      */
     public void setDrawOrder(DrawOrder[] order) {
-        if (order == null || order.length <= 0) {
+        if (order == null || order.length <= 0)
             return;
-        }
         mDrawOrder = order;
     }
 
     /**
      * draws all MarkerViews on the highlighted positions
      */
-    @Override
     protected void drawMarkers(Canvas canvas) {
 
         // if there is no marker view or drawing marker is disabled
-        if (mMarker == null || !isDrawMarkersEnabled() || !valuesToHighlight()) {
+        if (mMarker == null || !isDrawMarkersEnabled() || !valuesToHighlight())
             return;
-        }
 
         for (int i = 0; i < mIndicesToHighlight.length; i++) {
 
@@ -260,23 +246,20 @@ public class CombinedChart extends BarLineChartBase<CombinedData> implements Com
             IDataSet set = mData.getDataSetByHighlight(highlight);
 
             Entry e = mData.getEntryForHighlight(highlight);
-            if (e == null) {
+            if (e == null)
                 continue;
-            }
 
             int entryIndex = set.getEntryIndex(e);
 
             // make sure entry not null
-            if (entryIndex > set.getEntryCount() * mAnimator.getPhaseX()) {
+            if (entryIndex > set.getEntryCount() * mAnimator.getPhaseX())
                 continue;
-            }
 
             float[] pos = getMarkerPosition(highlight);
 
             // check bounds
-            if (!mViewPortHandler.isInBounds(pos[0], pos[1])) {
+            if (!mViewPortHandler.isInBounds(pos[0], pos[1]))
                 continue;
-            }
 
             // callbacks to update the content
             mMarker.refreshContent(e, highlight);

@@ -56,9 +56,8 @@ public class BarHighlighter extends ChartHighlighter<BarDataProvider> {
 
         BarEntry entry = set.getEntryForXValue(xVal, yVal);
 
-        if (entry == null) {
+        if (entry == null)
             return null;
-        }
 
         // not stacked
         if (entry.getYVals() == null) {
@@ -101,18 +100,16 @@ public class BarHighlighter extends ChartHighlighter<BarDataProvider> {
      */
     protected int getClosestStackIndex(Range[] ranges, float value) {
 
-        if (ranges == null || ranges.length == 0) {
+        if (ranges == null || ranges.length == 0)
             return 0;
-        }
 
         int stackIndex = 0;
 
         for (Range range : ranges) {
-            if (range.contains(value)) {
+            if (range.contains(value))
                 return stackIndex;
-            } else {
+            else
                 stackIndex++;
-            }
         }
 
         int length = Math.max(ranges.length - 1, 0);

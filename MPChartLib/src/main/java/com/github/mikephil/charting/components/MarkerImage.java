@@ -1,12 +1,14 @@
 package com.github.mikephil.charting.components;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-
-import androidx.core.content.ContextCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.data.Entry;
@@ -111,13 +113,13 @@ public class MarkerImage implements IMarker {
         }
 
         if (posX + mOffset2.x < 0) {
-            mOffset2.x = -posX;
+            mOffset2.x = - posX;
         } else if (chart != null && posX + width + mOffset2.x > chart.getWidth()) {
             mOffset2.x = chart.getWidth() - posX - width;
         }
 
         if (posY + mOffset2.y < 0) {
-            mOffset2.y = -posY;
+            mOffset2.y = - posY;
         } else if (chart != null && posY + height + mOffset2.y > chart.getHeight()) {
             mOffset2.y = chart.getHeight() - posY - height;
         }
@@ -133,19 +135,17 @@ public class MarkerImage implements IMarker {
     @Override
     public void draw(Canvas canvas, float posX, float posY) {
 
-        if (mDrawable == null) {
-            return;
-        }
+        if (mDrawable == null) return;
 
         MPPointF offset = getOffsetForDrawingAtPoint(posX, posY);
 
         float width = mSize.width;
         float height = mSize.height;
 
-        if (width == 0.f && mDrawable != null) {
+        if (width == 0.f) {
             width = mDrawable.getIntrinsicWidth();
         }
-        if (height == 0.f && mDrawable != null) {
+        if (height == 0.f) {
             height = mDrawable.getIntrinsicHeight();
         }
 
@@ -153,8 +153,8 @@ public class MarkerImage implements IMarker {
         mDrawable.setBounds(
                 mDrawableBoundsCache.left,
                 mDrawableBoundsCache.top,
-                mDrawableBoundsCache.left + (int) width,
-                mDrawableBoundsCache.top + (int) height);
+                mDrawableBoundsCache.left + (int)width,
+                mDrawableBoundsCache.top + (int)height);
 
         int saveId = canvas.save();
         // translate to the correct position and draw

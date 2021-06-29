@@ -25,7 +25,6 @@ public class ObjectPoolTest {
         public int foo = 0;
         public int bar = 0;
 
-        @Override
         protected ObjectPool.Poolable instantiate(){
             return new TestPoolable(0,0);
         }

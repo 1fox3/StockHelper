@@ -11,14 +11,12 @@ import com.github.mikephil.charting.utils.Utils;
 /**
  * Class representing one entry in the chart. Might contain multiple values.
  * Might only contain a single value depending on the used constructor.
- *
+ * 
  * @author Philipp Jahoda
  */
 public class Entry extends BaseEntry implements Parcelable {
 
-    /**
-     * the x value
-     */
+    /** the x value */
     private float x = 0f;
 
     public Entry() {
@@ -51,8 +49,8 @@ public class Entry extends BaseEntry implements Parcelable {
     /**
      * A Entry represents one single entry in the chart.
      *
-     * @param x    the x value
-     * @param y    the y value (the actual value of the entry)
+     * @param x the x value
+     * @param y the y value (the actual value of the entry)
      * @param icon icon image
      */
     public Entry(float x, float y, Drawable icon) {
@@ -63,8 +61,8 @@ public class Entry extends BaseEntry implements Parcelable {
     /**
      * A Entry represents one single entry in the chart.
      *
-     * @param x    the x value
-     * @param y    the y value (the actual value of the entry)
+     * @param x the x value
+     * @param y the y value (the actual value of the entry)
      * @param icon icon image
      * @param data Spot for additional data this Entry represents.
      */
@@ -75,7 +73,7 @@ public class Entry extends BaseEntry implements Parcelable {
 
     /**
      * Returns the x-value of this Entry object.
-     *
+     * 
      * @return
      */
     public float getX() {
@@ -84,7 +82,7 @@ public class Entry extends BaseEntry implements Parcelable {
 
     /**
      * Sets the x-value of this Entry object.
-     *
+     * 
      * @param x
      */
     public void setX(float x) {
@@ -93,7 +91,7 @@ public class Entry extends BaseEntry implements Parcelable {
 
     /**
      * returns an exact copy of the entry
-     *
+     * 
      * @return
      */
     public Entry copy() {
@@ -105,25 +103,25 @@ public class Entry extends BaseEntry implements Parcelable {
      * Compares value, xIndex and data of the entries. Returns true if entries
      * are equal in those points, false if not. Does not check by hash-code like
      * it's done by the "equals" method.
-     *
+     * 
      * @param e
      * @return
      */
     public boolean equalTo(Entry e) {
 
-        if (e == null) {
+        if (e == null)
             return false;
-        }
 
-        if (e.getData() != this.getData()) {
+        if (e.getData() != this.getData())
             return false;
-        }
 
-        if (Math.abs(e.x - this.x) > Utils.FLOAT_EPSILON) {
+        if (Math.abs(e.x - this.x) > Utils.FLOAT_EPSILON)
             return false;
-        }
 
-        return !(Math.abs(e.getY() - this.getY()) > Utils.FLOAT_EPSILON);
+        if (Math.abs(e.getY() - this.getY()) > Utils.FLOAT_EPSILON)
+            return false;
+
+        return true;
     }
 
     /**
@@ -164,12 +162,10 @@ public class Entry extends BaseEntry implements Parcelable {
     }
 
     public static final Parcelable.Creator<Entry> CREATOR = new Parcelable.Creator<Entry>() {
-        @Override
         public Entry createFromParcel(Parcel source) {
             return new Entry(source);
         }
 
-        @Override
         public Entry[] newArray(int size) {
             return new Entry[size];
         }

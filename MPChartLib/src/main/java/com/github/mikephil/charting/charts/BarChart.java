@@ -54,20 +54,13 @@ public class BarChart extends BarLineChartBase<BarData> implements BarDataProvid
     protected void init() {
         super.init();
 
-        initMyBarRenderer();
-//        mRenderer = new BarChartRenderer(this, mAnimator, mViewPortHandler);
+        mRenderer = new BarChartRenderer(this, mAnimator, mViewPortHandler);
 
         setHighlighter(new BarHighlighter(this));
 
         getXAxis().setSpaceMin(0.5f);
         getXAxis().setSpaceMax(0.5f);
     }
-
-    public void initMyBarRenderer() {
-        mRenderer = new BarChartRenderer(this, mAnimator, mViewPortHandler);
-    }
-
-    ;
 
     @Override
     protected void calcMinMax() {
@@ -101,9 +94,7 @@ public class BarChart extends BarLineChartBase<BarData> implements BarDataProvid
             return null;
         } else {
             Highlight h = getHighlighter().getHighlight(x, y);
-            if (h == null || !isHighlightFullBarEnabled()) {
-                return h;
-            }
+            if (h == null || !isHighlightFullBarEnabled()) return h;
 
             // For isHighlightFullBarEnabled, remove stackIndex
             return new Highlight(h.getX(), h.getY(),
@@ -174,7 +165,6 @@ public class BarChart extends BarLineChartBase<BarData> implements BarDataProvid
      *
      * @return
      */
-    @Override
     public boolean isDrawValueAboveBarEnabled() {
         return mDrawValueAboveBar;
     }
@@ -194,7 +184,6 @@ public class BarChart extends BarLineChartBase<BarData> implements BarDataProvid
      *
      * @return
      */
-    @Override
     public boolean isDrawBarShadowEnabled() {
         return mDrawBarShadow;
     }

@@ -1,15 +1,15 @@
 package com.github.mikephil.charting.interfaces.datasets;
 
 import android.graphics.DashPathEffect;
+import android.graphics.PointF;
 import android.graphics.Typeface;
 
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.MPPointF;
-import com.github.mikephil.charting.model.GradientColor;
 
 import java.util.List;
 
@@ -78,11 +78,13 @@ public interface IDataSet<T extends Entry> {
      * INFORMATION: This method does calculations at runtime. Do
      * not over-use in performance critical situations.
      *
-     * @param xValue     the x-value
+     * @param xValue the x-value
      * @param closestToY If there are multiple y-values for the specified x-value,
-     * @param rounding   determine whether to round up/down/closest
-     *                   if there is no Entry matching the provided x-value
+     * @param rounding determine whether to round up/down/closest
+     *                 if there is no Entry matching the provided x-value
      * @return
+     *
+     *
      */
     T getEntryForXValue(float xValue, float closestToY, DataSet.Rounding rounding);
 
@@ -94,7 +96,8 @@ public interface IDataSet<T extends Entry> {
      * INFORMATION: This method does calculations at runtime. Do
      * not over-use in performance critical situations.
      *
-     * @param xValue     the x-value
+     *
+     * @param xValue the x-value
      * @param closestToY If there are multiple y-values for the specified x-value,
      * @return
      */
@@ -127,10 +130,10 @@ public interface IDataSet<T extends Entry> {
      * INFORMATION: This method does calculations at runtime. Do
      * not over-use in performance critical situations.
      *
-     * @param xValue     the x-value
+     * @param xValue the x-value
      * @param closestToY If there are multiple y-values for the specified x-value,
-     * @param rounding   determine whether to round up/down/closest
-     *                   if there is no Entry matching the provided x-value
+     * @param rounding determine whether to round up/down/closest
+     *                 if there is no Entry matching the provided x-value
      * @return
      */
     int getEntryIndex(float xValue, float closestToY, DataSet.Rounding rounding);
@@ -283,28 +286,6 @@ public interface IDataSet<T extends Entry> {
     int getColor();
 
     /**
-     * Returns the Gradient color model
-     *
-     * @return
-     */
-    GradientColor getGradientColor();
-
-    /**
-     * Returns the Gradient colors
-     *
-     * @return
-     */
-    List<GradientColor> getGradientColors();
-
-    /**
-     * Returns the Gradient colors
-     *
-     * @param index
-     * @return
-     */
-    GradientColor getGradientColor(int index);
-
-    /**
      * Returns the color at the given index of the DataSet's color array.
      * Performs a IndexOutOfBounds check by modulus.
      *
@@ -337,14 +318,14 @@ public interface IDataSet<T extends Entry> {
      *
      * @param f
      */
-    void setValueFormatter(ValueFormatter f);
+    void setValueFormatter(IValueFormatter f);
 
     /**
      * Returns the formatter used for drawing the values inside the chart.
      *
      * @return
      */
-    ValueFormatter getValueFormatter();
+    IValueFormatter getValueFormatter();
 
     /**
      * Returns true if the valueFormatter object of this DataSet is null.
@@ -502,8 +483,4 @@ public interface IDataSet<T extends Entry> {
      * @return
      */
     boolean isVisible();
-
-    int getPrecision();
-
-    int getTimeDayType();
 }

@@ -79,7 +79,6 @@ public class PieEntry extends Entry {
         return super.getX();
     }
 
-    @Override
     public PieEntry copy() {
         PieEntry e = new PieEntry(getY(), label, getData());
         return e;

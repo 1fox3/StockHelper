@@ -82,32 +82,28 @@ public abstract class PieRadarChartBase<T extends ChartData<? extends IDataSet<?
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // use the pie- and radarchart listener own listener
-        if (mTouchEnabled && mChartTouchListener != null) {
+        if (mTouchEnabled && mChartTouchListener != null)
             return mChartTouchListener.onTouch(this, event);
-        } else {
+        else
             return super.onTouchEvent(event);
-        }
     }
 
     @Override
     public void computeScroll() {
 
-        if (mChartTouchListener instanceof PieRadarChartTouchListener) {
+        if (mChartTouchListener instanceof PieRadarChartTouchListener)
             ((PieRadarChartTouchListener) mChartTouchListener).computeScroll();
-        }
     }
 
     @Override
     public void notifyDataSetChanged() {
-        if (mData == null) {
+        if (mData == null)
             return;
-        }
 
         calcMinMax();
 
-        if (mLegend != null) {
+        if (mLegend != null)
             mLegendRenderer.computeLegend(mData);
-        }
 
         calculateOffsets();
     }
@@ -248,10 +244,9 @@ public abstract class PieRadarChartBase<T extends ChartData<? extends IDataSet<?
 
         mViewPortHandler.restrainViewPort(offsetLeft, offsetTop, offsetRight, offsetBottom);
 
-        if (mLogEnabled) {
+        if (mLogEnabled)
             Log.i(LOG_TAG, "offsetLeft: " + offsetLeft + ", offsetTop: " + offsetTop
                     + ", offsetRight: " + offsetRight + ", offsetBottom: " + offsetBottom);
-        }
     }
 
     /**
@@ -273,17 +268,15 @@ public abstract class PieRadarChartBase<T extends ChartData<? extends IDataSet<?
 
         float angle = (float) Math.toDegrees(r);
 
-        if (x > c.x) {
+        if (x > c.x)
             angle = 360f - angle;
-        }
 
         // add 90° because chart starts EAST
         angle = angle + 90f;
 
         // neutralize overflow
-        if (angle > 360f) {
+        if (angle > 360f)
             angle = angle - 360f;
-        }
 
         MPPointF.recycleInstance(c);
 
@@ -486,10 +479,6 @@ public abstract class PieRadarChartBase<T extends ChartData<? extends IDataSet<?
      */
     @SuppressLint("NewApi")
     public void spin(int durationmillis, float fromangle, float toangle, EasingFunction easing) {
-
-        if (android.os.Build.VERSION.SDK_INT < 11) {
-            return;
-        }
 
         setRotationAngle(fromangle);
 

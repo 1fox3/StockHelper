@@ -17,17 +17,16 @@ public class TransformerHorizontalBarChart extends Transformer {
      * 
      * @param inverted
      */
-    @Override
     public void prepareMatrixOffset(boolean inverted) {
 
         mMatrixOffset.reset();
 
         // offset.postTranslate(mOffsetLeft, getHeight() - mOffsetBottom);
 
-        if (!inverted) {
+        if (!inverted)
             mMatrixOffset.postTranslate(mViewPortHandler.offsetLeft(),
                     mViewPortHandler.getChartHeight() - mViewPortHandler.offsetBottom());
-        } else {
+        else {
             mMatrixOffset
                     .setTranslate(
                             -(mViewPortHandler.getChartWidth() - mViewPortHandler.offsetRight()),

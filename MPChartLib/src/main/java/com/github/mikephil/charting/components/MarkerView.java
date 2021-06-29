@@ -92,13 +92,13 @@ public class MarkerView extends RelativeLayout implements IMarker {
         float height = getHeight();
 
         if (posX + mOffset2.x < 0) {
-            mOffset2.x = -posX;
+            mOffset2.x = - posX;
         } else if (chart != null && posX + width + mOffset2.x > chart.getWidth()) {
             mOffset2.x = chart.getWidth() - posX - width;
         }
 
         if (posY + mOffset2.y < 0) {
-            mOffset2.y = -posY;
+            mOffset2.y = - posY;
         } else if (chart != null && posY + height + mOffset2.y > chart.getHeight()) {
             mOffset2.y = chart.getHeight() - posY - height;
         }

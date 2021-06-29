@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:orientation="vertical">
+        <com.fox.stockhelperchart.chart.StockKLineLineCombinedChart
+            android:id="@+id/stockKLineLineCombinedChart"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zero_margin"
+            android:layout_weight="3"/>
+
+        <com.fox.stockhelperchart.chart.StockKLineBarCombinedChart
+            android:id="@+id/stockKLineBarCombinedChart"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zero_margin"
+            android:layout_weight="2" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="20">
+        <TextView
+            android:id="@+id/stockFQTypeNoTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/markerViewStrTextSize"
+            android:textColor="@color/textColor"
+            android:text="除权"/>
+        <TextView
+            android:id="@+id/stockFQTypeBeforeTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColor"
+            android:text="前复权"
+            android:paddingTop="@dimen/kLineBarTypeMargin"
+            android:paddingBottom="@dimen/kLineBarTypeMargin"/>
+        <ListView
+            android:id="@+id/stockKLineBarTypeLV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
+</LinearLayout>

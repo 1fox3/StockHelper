@@ -1,0 +1,7 @@
+<resources>
+    <!--普通组件间隔距离-->
+    <dimen name="zero_margin">0dp</dimen>
+    <dimen name="kLineBarTypeMargin">10dp</dimen>
+    <!--MarketView字体大小-->
+    <dimen name="markerViewStrTextSize">10sp</dimen>
+</resources>

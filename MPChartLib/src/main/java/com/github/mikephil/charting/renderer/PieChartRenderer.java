@@ -22,7 +22,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
@@ -87,11 +87,11 @@ public class PieChartRenderer extends DataRenderer {
         mCenterTextPaint.setTextSize(Utils.convertDpToPixel(12f));
 
         mValuePaint.setTextSize(Utils.convertDpToPixel(13f));
-        mValuePaint.setColor(Color.BLACK);
+        mValuePaint.setColor(Color.WHITE);
         mValuePaint.setTextAlign(Align.CENTER);
 
         mEntryLabelsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mEntryLabelsPaint.setColor(Color.BLACK);
+        mEntryLabelsPaint.setColor(Color.WHITE);
         mEntryLabelsPaint.setTextAlign(Align.CENTER);
         mEntryLabelsPaint.setTextSize(Utils.convertDpToPixel(13f));
 
@@ -136,9 +136,8 @@ public class PieChartRenderer extends DataRenderer {
                 drawBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
                 mDrawBitmap = new WeakReference<>(drawBitmap);
                 mBitmapCanvas = new Canvas(drawBitmap);
-            } else {
+            } else
                 return;
-            }
         }
 
         drawBitmap.eraseColor(Color.TRANSPARENT);
@@ -147,9 +146,8 @@ public class PieChartRenderer extends DataRenderer {
 
         for (IPieDataSet set : pieData.getDataSets()) {
 
-            if (set.isVisible() && set.getEntryCount() > 0) {
+            if (set.isVisible() && set.getEntryCount() > 0)
                 drawDataSet(c, set);
-            }
         }
     }
 
@@ -204,9 +202,8 @@ public class PieChartRenderer extends DataRenderer {
      */
     protected float getSliceSpace(IPieDataSet dataSet) {
 
-        if (!dataSet.isAutomaticallyDisableSliceSpacingEnabled()) {
+        if (!dataSet.isAutomaticallyDisableSliceSpacingEnabled())
             return dataSet.getSliceSpace();
-        }
 
         float spaceSizeRatio = dataSet.getSliceSpace() / mViewPortHandler.getSmallestContentExtension();
         float minValueRatio = dataSet.getYMin() / mChart.getData().getYValueSum() * 2;
@@ -262,7 +259,7 @@ public class PieChartRenderer extends DataRenderer {
             }
 
             // Don't draw if it's highlighted, unless the chart uses rounded slices
-            if (mChart.needsHighlight(j) && !drawRoundedSlices) {
+            if (dataSet.isHighlightEnabled() && mChart.needsHighlight(j) && !drawRoundedSlices) {
                 angle += sliceAngle * phaseX;
                 continue;
             }
@@ -325,9 +322,8 @@ public class PieChartRenderer extends DataRenderer {
                                     startAngleOuter,
                                     sweepAngleOuter);
 
-                    if (minSpacedRadius < 0.f) {
+                    if (minSpacedRadius < 0.f)
                         minSpacedRadius = -minSpacedRadius;
-                    }
 
                     innerRadius = Math.max(innerRadius, minSpacedRadius);
                 }
@@ -352,11 +348,10 @@ public class PieChartRenderer extends DataRenderer {
                         float y = center.y + (radius - roundedRadius) * (float) Math.sin(endAngleInner * Utils.FDEG2RAD);
                         roundedCircleBox.set(x - roundedRadius, y - roundedRadius, x + roundedRadius, y + roundedRadius);
                         mPathBuffer.arcTo(roundedCircleBox, endAngleInner, 180);
-                    } else {
+                    } else
                         mPathBuffer.lineTo(
                                 center.x + innerRadius * (float) Math.cos(endAngleInner * Utils.FDEG2RAD),
                                 center.y + innerRadius * (float) Math.sin(endAngleInner * Utils.FDEG2RAD));
-                    }
 
                     mPathBuffer.arcTo(
                             mInnerRectBuffer,
@@ -458,9 +453,8 @@ public class PieChartRenderer extends DataRenderer {
 
             final boolean drawValues = dataSet.isDrawValuesEnabled();
 
-            if (!drawValues && !drawEntryLabels) {
+            if (!drawValues && !drawEntryLabels)
                 continue;
-            }
 
             final PieDataSet.ValuePosition xValuePosition = dataSet.getXValuePosition();
             final PieDataSet.ValuePosition yValuePosition = dataSet.getYValuePosition();
@@ -471,11 +465,13 @@ public class PieChartRenderer extends DataRenderer {
             float lineHeight = Utils.calcTextHeight(mValuePaint, "Q")
                     + Utils.convertDpToPixel(4f);
 
-            ValueFormatter formatter = dataSet.getValueFormatter();
+            IValueFormatter formatter = dataSet.getValueFormatter();
 
             int entryCount = dataSet.getEntryCount();
 
-            mValueLinePaint.setColor(dataSet.getValueLineColor());
+            boolean isUseValueColorForLineEnabled = dataSet.isUseValueColorForLineEnabled();
+            int valueLineColor = dataSet.getValueLineColor();
+
             mValueLinePaint.setStrokeWidth(Utils.convertDpToPixel(dataSet.getValueLineWidth()));
 
             final float sliceSpace = getSliceSpace(dataSet);
@@ -488,11 +484,10 @@ public class PieChartRenderer extends DataRenderer {
 
                 PieEntry entry = dataSet.getEntryForIndex(j);
 
-                if (xIndex == 0) {
+                if (xIndex == 0)
                     angle = 0.f;
-                } else {
+                else
                     angle = absoluteAngles[xIndex - 1] * phaseX;
-                }
 
                 final float sliceAngle = drawAngles[xIndex];
                 final float sliceSpaceMiddleAngle = sliceSpace / (Utils.FDEG2RAD * labelRadius);
@@ -506,7 +501,6 @@ public class PieChartRenderer extends DataRenderer {
 
                 float value = mChart.isUsePercentValuesEnabled() ? entry.getY()
                         / yValueSum * 100f : entry.getY();
-                String formattedValue = formatter.getPieLabel(value, entry);
                 String entryLabel = entry.getLabel();
 
                 final float sliceXBase = (float) Math.cos(transformedAngle * Utils.FDEG2RAD);
@@ -532,13 +526,12 @@ public class PieChartRenderer extends DataRenderer {
 
                     float line1Radius;
 
-                    if (mChart.isDrawHoleEnabled()) {
+                    if (mChart.isDrawHoleEnabled())
                         line1Radius = (radius - (radius * holeRadiusPercent))
                                 * valueLinePart1OffsetPercentage
                                 + (radius * holeRadiusPercent);
-                    } else {
+                    else
                         line1Radius = radius * valueLinePart1OffsetPercentage;
-                    }
 
                     final float polyline2Width = dataSet.isValueLineVariableLength()
                             ? labelRadius * valueLineLength2 * (float) Math.abs(Math.sin(
@@ -557,9 +550,8 @@ public class PieChartRenderer extends DataRenderer {
 
                         mValuePaint.setTextAlign(Align.RIGHT);
 
-                        if(drawXOutside) {
+                        if(drawXOutside)
                             mEntryLabelsPaint.setTextAlign(Align.RIGHT);
-                        }
 
                         labelPtx = pt2x - offset;
                         labelPty = pt2y;
@@ -568,20 +560,22 @@ public class PieChartRenderer extends DataRenderer {
                         pt2y = pt1y;
                         mValuePaint.setTextAlign(Align.LEFT);
 
-                        if(drawXOutside) {
+                        if(drawXOutside)
                             mEntryLabelsPaint.setTextAlign(Align.LEFT);
-                        }
 
                         labelPtx = pt2x + offset;
                         labelPty = pt2y;
                     }
 
-                    if (dataSet.getValueLineColor() != ColorTemplate.COLOR_NONE) {
+                    int lineColor = ColorTemplate.COLOR_NONE;
 
-                        if (dataSet.isUsingSliceColorAsValueLineColor()) {
-                            mValueLinePaint.setColor(dataSet.getColor(j));
-                        }
+                    if (isUseValueColorForLineEnabled)
+                        lineColor = dataSet.getColor(j);
+                    else if (valueLineColor != ColorTemplate.COLOR_NONE)
+                        lineColor = valueLineColor;
 
+                    if (lineColor != ColorTemplate.COLOR_NONE) {
+                        mValueLinePaint.setColor(lineColor);
                         c.drawLine(pt0x, pt0y, pt1x, pt1y, mValueLinePaint);
                         c.drawLine(pt1x, pt1y, pt2x, pt2y, mValueLinePaint);
                     }
@@ -589,7 +583,14 @@ public class PieChartRenderer extends DataRenderer {
                     // draw everything, depending on settings
                     if (drawXOutside && drawYOutside) {
 
-                        drawValue(c, formattedValue, labelPtx, labelPty, dataSet.getValueTextColor(j));
+                        drawValue(c,
+                                formatter,
+                                value,
+                                entry,
+                                0,
+                                labelPtx,
+                                labelPty,
+                                dataSet.getValueTextColor(j));
 
                         if (j < data.getEntryCount() && entryLabel != null) {
                             drawEntryLabel(c, entryLabel, labelPtx, labelPty + lineHeight);
@@ -601,7 +602,8 @@ public class PieChartRenderer extends DataRenderer {
                         }
                     } else if (drawYOutside) {
 
-                        drawValue(c, formattedValue, labelPtx, labelPty + lineHeight / 2.f, dataSet.getValueTextColor(j));
+                        drawValue(c, formatter, value, entry, 0, labelPtx, labelPty + lineHeight / 2.f, dataSet
+                                .getValueTextColor(j));
                     }
                 }
 
@@ -615,7 +617,7 @@ public class PieChartRenderer extends DataRenderer {
                     // draw everything, depending on settings
                     if (drawXInside && drawYInside) {
 
-                        drawValue(c, formattedValue, x, y, dataSet.getValueTextColor(j));
+                        drawValue(c, formatter, value, entry, 0, x, y, dataSet.getValueTextColor(j));
 
                         if (j < data.getEntryCount() && entryLabel != null) {
                             drawEntryLabel(c, entryLabel, x, y + lineHeight);
@@ -626,7 +628,8 @@ public class PieChartRenderer extends DataRenderer {
                             drawEntryLabel(c, entryLabel, x, y + lineHeight / 2f);
                         }
                     } else if (drawYInside) {
-                        drawValue(c, formattedValue, x, y + lineHeight / 2f, dataSet.getValueTextColor(j));
+
+                        drawValue(c, formatter, value, entry, 0, x, y + lineHeight / 2f, dataSet.getValueTextColor(j));
                     }
                 }
 
@@ -654,12 +657,6 @@ public class PieChartRenderer extends DataRenderer {
         }
         MPPointF.recycleInstance(center);
         c.restore();
-    }
-
-    @Override
-    public void drawValue(Canvas c, String valueText, float x, float y, int color) {
-        mValuePaint.setColor(color);
-        c.drawText(valueText, x, y, mValuePaint);
     }
 
     /**
@@ -807,9 +804,8 @@ public class PieChartRenderer extends DataRenderer {
          */
 
         final boolean drawInnerArc = mChart.isDrawHoleEnabled() && !mChart.isDrawSlicesUnderHoleEnabled();
-        if (drawInnerArc && mChart.isDrawRoundedSlicesEnabled()) {
+        if (drawInnerArc && mChart.isDrawRoundedSlicesEnabled())
             return;
-        }
 
         float phaseX = mAnimator.getPhaseX();
         float phaseY = mAnimator.getPhaseY();
@@ -833,17 +829,14 @@ public class PieChartRenderer extends DataRenderer {
             // get the index to highlight
             int index = (int) indices[i].getX();
 
-            if (index >= drawAngles.length) {
+            if (index >= drawAngles.length)
                 continue;
-            }
 
             IPieDataSet set = mChart.getData()
-                    .getDataSetByIndex(indices[i]
-                            .getDataSetIndex());
+                    .getDataSetByIndex(indices[i].getDataSetIndex());
 
-            if (set == null || !set.isHighlightEnabled()) {
+            if (set == null || !set.isHighlightEnabled())
                 continue;
-            }
 
             final int entryCount = set.getEntryCount();
             int visibleAngleCount = 0;
@@ -854,11 +847,10 @@ public class PieChartRenderer extends DataRenderer {
                 }
             }
 
-            if (index == 0) {
+            if (index == 0)
                 angle = 0.f;
-            } else {
+            else
                 angle = absoluteAngles[index - 1] * phaseX;
-            }
 
             final float sliceSpace = visibleAngleCount <= 1 ? 0.f : set.getSliceSpace();
 
@@ -872,7 +864,10 @@ public class PieChartRenderer extends DataRenderer {
 
             final boolean accountForSliceSpacing = sliceSpace > 0.f && sliceAngle <= 180.f;
 
-            mRenderPaint.setColor(set.getColor(index));
+            Integer highlightColor = set.getHighlightColor();
+            if (highlightColor == null)
+                highlightColor = set.getColor(index);
+            mRenderPaint.setColor(highlightColor);
 
             final float sliceSpaceAngleOuter = visibleAngleCount == 1 ?
                     0.f :
@@ -937,9 +932,8 @@ public class PieChartRenderer extends DataRenderer {
                 if (accountForSliceSpacing) {
                     float minSpacedRadius = sliceSpaceRadius;
 
-                    if (minSpacedRadius < 0.f) {
+                    if (minSpacedRadius < 0.f)
                         minSpacedRadius = -minSpacedRadius;
-                    }
 
                     innerRadius = Math.max(innerRadius, minSpacedRadius);
                 }
@@ -1011,15 +1005,13 @@ public class PieChartRenderer extends DataRenderer {
      */
     protected void drawRoundedSlices(Canvas c) {
 
-        if (!mChart.isDrawRoundedSlicesEnabled()) {
+        if (!mChart.isDrawRoundedSlicesEnabled())
             return;
-        }
 
         IPieDataSet dataSet = mChart.getData().getDataSet();
 
-        if (!dataSet.isVisible()) {
+        if (!dataSet.isVisible())
             return;
-        }
 
         float phaseX = mAnimator.getPhaseX();
         float phaseY = mAnimator.getPhaseY();

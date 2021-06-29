@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center">
-        <com.fox.stockhelper.ui.chart.custom.StockKLineChart
+        <com.fox.stockhelperchart.StockKLineChart
             android:id="@+id/stockKLineChart"
             android:layout_width="match_parent"
             android:layout_height="300dp"/>

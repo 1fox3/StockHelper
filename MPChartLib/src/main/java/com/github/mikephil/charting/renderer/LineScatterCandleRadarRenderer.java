@@ -15,7 +15,7 @@ public abstract class LineScatterCandleRadarRenderer extends BarLineScatterCandl
     /**
      * path that is used for drawing highlight-lines (drawLines(...) cannot be used because of dashes)
      */
-    protected Path mHighlightLinePath = new Path();
+    private Path mHighlightLinePath = new Path();
 
     public LineScatterCandleRadarRenderer(ChartAnimator animator, ViewPortHandler viewPortHandler) {
         super(animator, viewPortHandler);
@@ -25,8 +25,8 @@ public abstract class LineScatterCandleRadarRenderer extends BarLineScatterCandl
      * Draws vertical & horizontal highlight-lines if enabled.
      *
      * @param c
-     * @param x   x-position of the highlight line intersection
-     * @param y   y-position of the highlight line intersection
+     * @param x x-position of the highlight line intersection
+     * @param y y-position of the highlight line intersection
      * @param set the currently drawn dataset
      */
     protected void drawHighlightLines(Canvas c, float x, float y, ILineScatterCandleRadarDataSet set) {

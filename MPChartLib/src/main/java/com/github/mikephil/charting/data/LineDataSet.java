@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.util.Log;
-import android.util.SparseArray;
 
 import com.github.mikephil.charting.formatter.DefaultFillFormatter;
 import com.github.mikephil.charting.formatter.IFillFormatter;
@@ -65,9 +64,6 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
 
     private boolean mDrawCircleHole = true;
 
-    private boolean mDrawCircleDashMarker = true;
-
-    private SparseArray<String> xLabels;
 
     public LineDataSet(List<Entry> yVals, String label) {
         super(yVals, label);
@@ -88,25 +84,27 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
 
     @Override
     public DataSet<Entry> copy() {
-
-        List<Entry> yVals = new ArrayList<Entry>();
-
-        for (int i = 0; i < mValues.size(); i++) {
-            yVals.add(mValues.get(i).copy());
+        List<Entry> entries = new ArrayList<Entry>();
+        for (int i = 0; i < mEntries.size(); i++) {
+            entries.add(mEntries.get(i).copy());
         }
-
-        LineDataSet copied = new LineDataSet(yVals, getLabel());
-        copied.mMode = mMode;
-        copied.mColors = mColors;
-        copied.mCircleRadius = mCircleRadius;
-        copied.mCircleHoleRadius = mCircleHoleRadius;
-        copied.mCircleColors = mCircleColors;
-        copied.mDashPathEffect = mDashPathEffect;
-        copied.mDrawCircles = mDrawCircles;
-        copied.mDrawCircleHole = mDrawCircleHole;
-        copied.mHighLightColor = mHighLightColor;
-
+        LineDataSet copied = new LineDataSet(entries, getLabel());
+        copy(copied);
         return copied;
+    }
+
+    protected void copy(LineDataSet lineDataSet) {
+        super.copy(lineDataSet);
+        lineDataSet.mCircleColors = mCircleColors;
+        lineDataSet.mCircleHoleColor = mCircleHoleColor;
+        lineDataSet.mCircleHoleRadius = mCircleHoleRadius;
+        lineDataSet.mCircleRadius = mCircleRadius;
+        lineDataSet.mCubicIntensity = mCubicIntensity;
+        lineDataSet.mDashPathEffect = mDashPathEffect;
+        lineDataSet.mDrawCircleHole = mDrawCircleHole;
+        lineDataSet.mDrawCircles = mDrawCircleHole;
+        lineDataSet.mFillFormatter = mFillFormatter;
+        lineDataSet.mMode = mMode;
     }
 
     /**
@@ -136,12 +134,10 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
      */
     public void setCubicIntensity(float intensity) {
 
-        if (intensity > 1f) {
+        if (intensity > 1f)
             intensity = 1f;
-        }
-        if (intensity < 0.05f) {
+        if (intensity < 0.05f)
             intensity = 0.05f;
-        }
 
         mCubicIntensity = intensity;
     }
@@ -393,23 +389,6 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
         return mDrawCircleHole;
     }
 
-    public void setDrawCircleDashMarker(boolean enabled) {
-        mDrawCircleDashMarker = enabled;
-    }
-
-    @Override
-    public SparseArray<String> getXLabels(){
-        return xLabels;
-    }
-
-    public void setXLabels(SparseArray<String> xLabels){
-        this.xLabels = xLabels;
-    }
-    @Override
-    public boolean isDrawCircleDashMarkerEnabled() {
-        return mDrawCircleDashMarker;
-    }
-
     /**
      * Sets a custom IFillFormatter to the chart that handles the position of the
      * filled-line for each DataSet. Set this to null to use the default logic.
@@ -418,11 +397,10 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
      */
     public void setFillFormatter(IFillFormatter formatter) {
 
-        if (formatter == null) {
+        if (formatter == null)
             mFillFormatter = new DefaultFillFormatter();
-        } else {
+        else
             mFillFormatter = formatter;
-        }
     }
 
     @Override

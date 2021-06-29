@@ -197,6 +197,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode) {
             case 1:
                 Log.e("loginSuccess", this.getLoginSession());

@@ -17,7 +17,6 @@ import com.fox.stockhelper.config.MsgWhatConfig;
 import com.fox.stockhelper.entity.dto.api.stock.realtime.DealInfoApiDto;
 import com.fox.stockhelper.entity.po.stock.StockRealtimeDealInfoPo;
 import com.fox.stockhelper.entity.po.stock.StockRealtimeMinuteKLinePo;
-import com.fox.stockhelper.entity.po.stock.StockRealtimeMinuteNodeDataPo;
 import com.fox.stockhelper.spider.out.StockSpiderRealtimeDealInfoApi;
 import com.fox.stockhelper.spider.out.StockSpiderRealtimeMinuteKLineApi;
 import com.fox.stockhelper.ui.activity.StockAllKlineLandActivity;
@@ -26,17 +25,8 @@ import com.fox.stockhelper.ui.handler.CommonHandler;
 import com.fox.stockhelper.ui.listener.CommonHandleListener;
 import com.fox.stockhelper.ui.view.StockDealInfoView;
 import com.fox.stockhelper.ui.view.StockTopPriceView;
-import com.fox.stockhelper.util.DateUtil;
 import com.fox.stockhelper.util.SelfBeanUtil;
-import com.github.mikephil.charting.stockChart.OneDayChart;
-import com.github.mikephil.charting.stockChart.dataManage.TimeDataManage;
-
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fox.stockhelperchart.StockSingleDayMinuteChart;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,7 +74,7 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
      * 单天分钟线图
      */
     @BindView(R.id.stockOneDayChart)
-    OneDayChart stockOneDayChart;
+    StockSingleDayMinuteChart stockOneDayChart;
     /**
      * Top售价
      */
@@ -103,11 +93,6 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
      * 是否为横屏
      */
     private boolean land = false;//是否横屏
-    /**
-     * 成交分时数据
-     */
-    private TimeDataManage kTimeData = new TimeDataManage();
-    private JSONObject object;
     /**
      * 消息处理
      */
@@ -142,7 +127,7 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
         ButterKnife.bind(this, view);
         needStockMarketDealStatusService = true;
         //初始化
-        stockOneDayChart.initChart(land);
+        stockOneDayChart.initChart(stockVo);
         allKlineIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -211,45 +196,7 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
                     e.printStackTrace();
                 }
                 break;
-            case MsgWhatConfig.STOCK_DEAL_PRICE_LINE:
-                try {
-                    object = new JSONObject(com.alibaba.fastjson.JSONObject.toJSONString(convertToRealTimeChartData()));
-                    //上证指数代码000001.IDX.SH
-                    kTimeData.parseTimeData(object, "000001.IDX.SH", 0);
-                    stockOneDayChart.setDataToChart(kTimeData);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
         }
-    }
-
-    /**
-     * 将数据转换成表格需要的格式
-     *
-     * @return
-     */
-    public Map<String, Object> convertToRealTimeChartData() {
-        List<StockRealtimeMinuteNodeDataPo> stockRealtimeMinuteNodeDataPoList = stockRealtimeMinuteKLinePo.getKlineData();
-        Map<String, Object> realTimeChartData = new HashMap<>(2);
-        List<List<Object>> minuteDataList = new ArrayList<>(stockRealtimeMinuteNodeDataPoList.size());
-        for (StockRealtimeMinuteNodeDataPo stockRealtimeMinuteNodeDataPo : stockRealtimeMinuteNodeDataPoList) {
-            List<Object> minuteData = new ArrayList<>(5);
-            minuteData.add(
-                    DateUtil.getDateFromStr(
-                            stockRealtimeMinuteNodeDataPo.getDealNum() + " " + stockRealtimeMinuteNodeDataPo.getTime(),
-                            DateUtil.TIME_FORMAT_2
-                    ).getTime()
-            );
-            minuteData.add(stockRealtimeMinuteNodeDataPo.getPrice());
-            minuteData.add(stockRealtimeMinuteNodeDataPo.getPrice());
-            minuteData.add(stockRealtimeMinuteNodeDataPo.getDealNum());
-            minuteData.add(stockRealtimeMinuteNodeDataPo.getPrice());
-            minuteDataList.add(minuteData);
-        }
-        realTimeChartData.put("data", minuteDataList);
-        realTimeChartData.put("preClose", stockRealtimeMinuteKLinePo.getPreClosePrice());
-        return realTimeChartData;
     }
 
     /**
@@ -291,17 +238,9 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
             @Override
             public void run() {
                 while (true) {
-                    stockRealtimeMinuteKLinePo =
-                            stockSpiderRealtimeMinuteKLineApi.realtimeMinuteKLine(stockVo);
-                    if (null != stockRealtimeMinuteKLinePo) {
-                        Message msg = new Message();
-                        msg.what = MsgWhatConfig.STOCK_DEAL_PRICE_LINE;
-                        handler.sendMessage(msg);
-                        if (dataRefresh) {
-                            Thread.sleep(2000);
-                        } else {
-                            break;
-                        }
+                    if (dataRefresh) {
+                        stockOneDayChart.freshData();
+                        Thread.sleep(2000);
                     } else {
                         break;
                     }

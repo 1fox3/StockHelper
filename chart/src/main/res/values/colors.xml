@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <!--股票不同状态颜色-->
+    <color name="stockUp">#E9403C</color>
+    <color name="stockDown">#30A52F</color>
+    <color name="stockFlat">#939090</color>
+    <!--图表默认边框颜色-->
+    <color name="chartBorder">#BFBDBD</color>
+    <!--0线颜色-->
+    <color name="zeroLine">#BFBDBD</color>
+    <!--价格线颜色-->
+    <color name="priceLine">#454141</color>
+    <color name="avgPriceLine">#D69F9F</color>
+    <!--MarkerView颜色-->
+    <color name="markerViewStrBg">#406ebc</color>
+    <color name="markerViewStrText">#FFFFFF</color>
+    <!--ma颜色-->
+    <color name="ma5">#5198FA</color>
+    <color name="ma10">#E9967A</color>
+    <color name="ma20">#8d4bbb</color>
+    <color name="ma30">#804000</color>
+    <!--高亮线颜色-->
+    <color name="highlight">#E9403C</color>
+    <color name="textColor">#010101</color>
+</resources>

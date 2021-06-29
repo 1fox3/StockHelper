@@ -291,7 +291,6 @@ public class StockMarketFragment extends StockBaseFragment implements CommonHand
      */
     @Override
     protected void handleStockMarketDealStatusBroadcast(Integer oldStatus, Integer newStatus) {
-        super.handleStockMarketDealStatusBroadcast(oldStatus, newStatus);
         if (null != newStatus && !newStatus.equals(oldStatus)) {
             if (SHStockConst.STATUS_IMAGE_MAP.containsKey(newStatus)) {
                 smStatusIV.setImageResource(SHStockConst.STATUS_IMAGE_MAP.get(newStatus));

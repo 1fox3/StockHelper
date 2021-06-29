@@ -140,7 +140,6 @@ public class BarEntry extends Entry {
     /**
      * Returns an exact copy of the BarEntry.
      */
-    @Override
     public BarEntry copy() {
 
         BarEntry copied = new BarEntry(getX(), getY(), getData());
@@ -208,9 +207,8 @@ public class BarEntry extends Entry {
 
     public float getSumBelow(int stackIndex) {
 
-        if (mYVals == null) {
+        if (mYVals == null)
             return 0;
-        }
 
         float remainder = 0f;
         int index = mYVals.length - 1;
@@ -253,11 +251,10 @@ public class BarEntry extends Entry {
         float sumPos = 0f;
 
         for (float f : mYVals) {
-            if (f <= 0f) {
+            if (f <= 0f)
                 sumNeg += Math.abs(f);
-            } else {
+            else
                 sumPos += f;
-            }
         }
 
         mNegativeSum = sumNeg;
@@ -272,15 +269,13 @@ public class BarEntry extends Entry {
      */
     private static float calcSum(float[] vals) {
 
-        if (vals == null) {
+        if (vals == null)
             return 0f;
-        }
 
         float sum = 0f;
 
-        for (float f : vals) {
+        for (float f : vals)
             sum += f;
-        }
 
         return sum;
     }
@@ -289,9 +284,8 @@ public class BarEntry extends Entry {
 
         float[] values = getYVals();
 
-        if (values == null || values.length == 0) {
+        if (values == null || values.length == 0)
             return;
-        }
 
         mRanges = new Range[values.length];
 

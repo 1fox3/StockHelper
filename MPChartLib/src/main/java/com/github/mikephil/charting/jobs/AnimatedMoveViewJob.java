@@ -17,11 +17,11 @@ public class AnimatedMoveViewJob extends AnimatedViewPortJob {
     private static ObjectPool<AnimatedMoveViewJob> pool;
 
     static {
-        pool = ObjectPool.create(4, new AnimatedMoveViewJob(null, 0, 0, null, null, 0, 0, 0));
+        pool = ObjectPool.create(4, new AnimatedMoveViewJob(null,0,0,null,null,0,0,0));
         pool.setReplenishPercentage(0.5f);
     }
 
-    public static AnimatedMoveViewJob getInstance(ViewPortHandler viewPortHandler, float xValue, float yValue, Transformer trans, View v, float xOrigin, float yOrigin, long duration) {
+    public static AnimatedMoveViewJob getInstance(ViewPortHandler viewPortHandler, float xValue, float yValue, Transformer trans, View v, float xOrigin, float yOrigin, long duration){
         AnimatedMoveViewJob result = pool.get();
         result.mViewPortHandler = viewPortHandler;
         result.xValue = xValue;
@@ -35,7 +35,7 @@ public class AnimatedMoveViewJob extends AnimatedViewPortJob {
         return result;
     }
 
-    public static void recycleInstance(AnimatedMoveViewJob instance) {
+    public static void recycleInstance(AnimatedMoveViewJob instance){
         pool.recycle(instance);
     }
 
@@ -54,13 +54,12 @@ public class AnimatedMoveViewJob extends AnimatedViewPortJob {
         mViewPortHandler.centerViewPort(pts, view);
     }
 
-    @Override
-    public void recycleSelf() {
+    public void recycleSelf(){
         recycleInstance(this);
     }
 
     @Override
     protected ObjectPool.Poolable instantiate() {
-        return new AnimatedMoveViewJob(null, 0, 0, null, null, 0, 0, 0);
+        return new AnimatedMoveViewJob(null,0,0,null,null,0,0,0);
     }
 }

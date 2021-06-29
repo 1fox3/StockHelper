@@ -25,7 +25,6 @@ public class RadarEntry extends Entry {
         return getY();
     }
 
-    @Override
     public RadarEntry copy() {
         RadarEntry e = new RadarEntry(getY(), getData());
         return e;

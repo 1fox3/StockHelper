@@ -1,3 +1,4 @@
+
 package com.github.mikephil.charting.charts;
 
 import android.animation.ValueAnimator;
@@ -34,7 +35,7 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.DefaultValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.highlight.ChartHighlighter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.highlight.IHighlighter;
@@ -54,7 +55,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Baseclass of all Chart-Views.
@@ -169,10 +169,6 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      */
     protected ChartAnimator mAnimator;
 
-    private boolean mIsDescriptionCustom = false;
-    private int[] mDescriptionColors;
-    private String[] mDescriptionLabels;
-
     /**
      * Extra offsets to be appended to the viewport
      */
@@ -213,18 +209,14 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
         setWillNotDraw(false);
         // setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        if (android.os.Build.VERSION.SDK_INT < 11) {
-            mAnimator = new ChartAnimator();
-        } else {
-            mAnimator = new ChartAnimator(new AnimatorUpdateListener() {
+        mAnimator = new ChartAnimator(new AnimatorUpdateListener() {
 
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    // ViewCompat.postInvalidateOnAnimation(Chart.this);
-                    postInvalidate();
-                }
-            });
-        }
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                // ViewCompat.postInvalidateOnAnimation(Chart.this);
+                postInvalidate();
+            }
+        });
 
         // initialize the utils
         Utils.init(getContext());
@@ -235,22 +227,17 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
 
         mLegendRenderer = new LegendRenderer(mViewPortHandler, mLegend);
 
-        initXAxis();
+        mXAxis = new XAxis();
 
         mDescPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         mInfoPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mInfoPaint.setColor(Color.GRAY); // orange
+        mInfoPaint.setColor(Color.rgb(247, 189, 51)); // orange
         mInfoPaint.setTextAlign(Align.CENTER);
         mInfoPaint.setTextSize(Utils.convertDpToPixel(12f));
 
-        if (mLogEnabled) {
+        if (mLogEnabled)
             Log.i("", "Chart.init()");
-        }
-    }
-
-    public void initXAxis() {
-        mXAxis = new XAxis();
     }
 
     // public void initWithDummyData() {
@@ -306,17 +293,15 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
         setupDefaultFormatter(data.getYMin(), data.getYMax());
 
         for (IDataSet set : mData.getDataSets()) {
-            if (set.needsFormatter() || set.getValueFormatter() == mDefaultValueFormatter) {
+            if (set.needsFormatter() || set.getValueFormatter() == mDefaultValueFormatter)
                 set.setValueFormatter(mDefaultValueFormatter);
-            }
         }
 
         // let the chart know there is new data
         notifyDataSetChanged();
 
-        if (mLogEnabled) {
+        if (mLogEnabled)
             Log.i(LOG_TAG, "Data is set.");
-        }
     }
 
     /**
@@ -348,11 +333,14 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      */
     public boolean isEmpty() {
 
-        if (mData == null) {
+        if (mData == null)
             return true;
-        } else {
+        else {
 
-            return mData.getEntryCount() <= 0;
+            if (mData.getEntryCount() <= 0)
+                return true;
+            else
+                return false;
         }
     }
 
@@ -411,8 +399,23 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
             boolean hasText = !TextUtils.isEmpty(mNoDataText);
 
             if (hasText) {
-                MPPointF c = getCenter();
-                canvas.drawText(mNoDataText, c.x, c.y, mInfoPaint);
+                MPPointF pt = getCenter();
+
+                switch (mInfoPaint.getTextAlign()) {
+                    case LEFT:
+                        pt.x = 0;
+                        canvas.drawText(mNoDataText, pt.x, pt.y, mInfoPaint);
+                        break;
+
+                    case RIGHT:
+                        pt.x *= 2.0;
+                        canvas.drawText(mNoDataText, pt.x, pt.y, mInfoPaint);
+                        break;
+
+                    default:
+                        canvas.drawText(mNoDataText, pt.x, pt.y, mInfoPaint);
+                        break;
+                }
             }
 
             return;
@@ -432,52 +435,26 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
 
         // check if description should be drawn
         if (mDescription != null && mDescription.isEnabled()) {
+
             MPPointF position = mDescription.getPosition();
+
             mDescPaint.setTypeface(mDescription.getTypeface());
             mDescPaint.setTextSize(mDescription.getTextSize());
             mDescPaint.setColor(mDescription.getTextColor());
             mDescPaint.setTextAlign(mDescription.getTextAlign());
 
-            if (mIsDescriptionCustom) {
-                float xpos = mViewPortHandler.contentLeft();
-                if (position == null) {
-                    for (int i = 0; i < mDescriptionLabels.length; i++) {
-                        xpos = xpos + Utils.calcTextWidth(mDescPaint, mDescriptionLabels[i]) + 20;
-                        mDescPaint.setColor(mDescriptionColors[i]);
-                        c.drawText(mDescriptionLabels[i], xpos,
-                                mViewPortHandler.contentTop() + 5 - Utils.calcTextHeight(mDescPaint, mDescription.toString()) / 2, mDescPaint);
-                    }
+            float x, y;
 
-                } else {
-                    for (int i = 0; i < mDescriptionLabels.length; i++) {
-                        mDescPaint.setColor(mDescriptionColors[i]);
-                        xpos = xpos + Utils.calcTextWidth(mDescPaint, mDescriptionLabels[i]) + 20;
-                        c.drawText(mDescriptionLabels[i], xpos + position.x, position.y, mDescPaint);
-                    }
-                }
-            } else if (!"".equals(mDescription.getText())) {
-
-                if (position == null) {
-                    c.drawText(mDescription.getText(), mViewPortHandler.contentLeft() + Utils.calcTextWidth(mDescPaint, mDescription.getText()) + 10,
-                            mViewPortHandler.contentTop() + 5 - Utils.calcTextHeight(mDescPaint, mDescription.getText()) / 2, mDescPaint);
-                } else {
-                    c.drawText(mDescription.getText(), position.x, position.y, mDescPaint);
-                }
+            // if no position specified, draw on default position
+            if (position == null) {
+                x = getWidth() - mViewPortHandler.offsetRight() - mDescription.getXOffset();
+                y = getHeight() - mViewPortHandler.offsetBottom() - mDescription.getYOffset();
+            } else {
+                x = position.x;
+                y = position.y;
             }
 
-
-//            float x, y;
-//
-//            // if no position specified, draw on default position
-//            if (position == null) {
-//                x = getWidth() - mViewPortHandler.offsetRight() - mDescription.getXOffset()*2;
-//                y = mViewPortHandler.contentTop() + mViewPortHandler.offsetTop() + mDescription.getYOffset()*2;
-//            } else {
-//                x = position.x;
-//                y = position.y;
-//            }
-//
-//            c.drawText(mDescription.getText(), x, y, mDescPaint);
+            c.drawText(mDescription.getText(), x, y, mDescPaint);
         }
     }
 
@@ -593,9 +570,34 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * This method will call the listener.
      * @param x The x-value to highlight
      * @param dataSetIndex The dataset index to search in
+     * @param dataIndex The data index to search in (only used in CombinedChartView currently)
+     */
+    public void highlightValue(float x, int dataSetIndex, int dataIndex) {
+        highlightValue(x, dataSetIndex, dataIndex, true);
+    }
+
+    /**
+     * Highlights any y-value at the given x-value in the given DataSet.
+     * Provide -1 as the dataSetIndex to undo all highlighting.
+     * This method will call the listener.
+     * @param x The x-value to highlight
+     * @param dataSetIndex The dataset index to search in
      */
     public void highlightValue(float x, int dataSetIndex) {
-        highlightValue(x, dataSetIndex, true);
+        highlightValue(x, dataSetIndex, -1, true);
+    }
+
+    /**
+     * Highlights the value at the given x-value and y-value in the given DataSet.
+     * Provide -1 as the dataSetIndex to undo all highlighting.
+     * This method will call the listener.
+     * @param x The x-value to highlight
+     * @param y The y-value to highlight. Supply `NaN` for "any"
+     * @param dataSetIndex The dataset index to search in
+     * @param dataIndex The data index to search in (only used in CombinedChartView currently)
+     */
+    public void highlightValue(float x, float y, int dataSetIndex, int dataIndex) {
+        highlightValue(x, y, dataSetIndex, dataIndex, true);
     }
 
     /**
@@ -607,7 +609,19 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param dataSetIndex The dataset index to search in
      */
     public void highlightValue(float x, float y, int dataSetIndex) {
-        highlightValue(x, y, dataSetIndex, true);
+        highlightValue(x, y, dataSetIndex, -1, true);
+    }
+
+    /**
+     * Highlights any y-value at the given x-value in the given DataSet.
+     * Provide -1 as the dataSetIndex to undo all highlighting.
+     * @param x The x-value to highlight
+     * @param dataSetIndex The dataset index to search in
+     * @param dataIndex The data index to search in (only used in CombinedChartView currently)
+     * @param callListener Should the listener be called for this change
+     */
+    public void highlightValue(float x, int dataSetIndex, int dataIndex, boolean callListener) {
+        highlightValue(x, Float.NaN, dataSetIndex, dataIndex, callListener);
     }
 
     /**
@@ -618,7 +632,25 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param callListener Should the listener be called for this change
      */
     public void highlightValue(float x, int dataSetIndex, boolean callListener) {
-        highlightValue(x, Float.NaN, dataSetIndex, callListener);
+        highlightValue(x, Float.NaN, dataSetIndex, -1, callListener);
+    }
+
+    /**
+     * Highlights any y-value at the given x-value in the given DataSet.
+     * Provide -1 as the dataSetIndex to undo all highlighting.
+     * @param x The x-value to highlight
+     * @param y The y-value to highlight. Supply `NaN` for "any"
+     * @param dataSetIndex The dataset index to search in
+     * @param dataIndex The data index to search in (only used in CombinedChartView currently)
+     * @param callListener Should the listener be called for this change
+     */
+    public void highlightValue(float x, float y, int dataSetIndex, int dataIndex, boolean callListener) {
+
+        if (dataSetIndex < 0 || dataSetIndex >= mData.getDataSetCount()) {
+            highlightValue(null, callListener);
+        } else {
+            highlightValue(new Highlight(x, y, dataSetIndex, dataIndex), callListener);
+        }
     }
 
     /**
@@ -630,12 +662,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param callListener Should the listener be called for this change
      */
     public void highlightValue(float x, float y, int dataSetIndex, boolean callListener) {
-
-        if (dataSetIndex < 0 || dataSetIndex >= mData.getDataSetCount()) {
-            highlightValue(null, callListener);
-        } else {
-            highlightValue(new Highlight(x, y, dataSetIndex), callListener);
-        }
+        highlightValue(x, y, dataSetIndex, -1, callListener);
     }
 
     /**
@@ -660,13 +687,12 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
 
         Entry e = null;
 
-        if (high == null) {
+        if (high == null)
             mIndicesToHighlight = null;
-        } else {
+        else {
 
-            if (mLogEnabled) {
-                Log.i(LOG_TAG, this + "Highlighted: " + high.toString());
-            }
+            if (mLogEnabled)
+                Log.i(LOG_TAG, "Highlighted: " + high.toString());
 
             e = mData.getEntryForHighlight(high);
             if (e == null) {
@@ -685,9 +711,9 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
 
         if (callListener && mSelectionListener != null) {
 
-            if (!valuesToHighlight()) {
+            if (!valuesToHighlight())
                 mSelectionListener.onNothingSelected();
-            } else {
+            else {
                 // notify the listener
                 mSelectionListener.onValueSelected(e, high);
             }
@@ -711,9 +737,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
         if (mData == null) {
             Log.e(LOG_TAG, "Can't select by touch. No data set.");
             return null;
-        } else {
+        } else
             return getHighlighter().getHighlight(x, y);
-        }
     }
 
     /**
@@ -756,9 +781,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     protected void drawMarkers(Canvas canvas) {
 
         // if there is no marker view or drawing marker is disabled
-        if (mMarker == null || !isDrawMarkersEnabled() || !valuesToHighlight()) {
+        if (mMarker == null || !isDrawMarkersEnabled() || !valuesToHighlight())
             return;
-        }
 
         for (int i = 0; i < mIndicesToHighlight.length; i++) {
 
@@ -770,16 +794,14 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
             int entryIndex = set.getEntryIndex(e);
 
             // make sure entry not null
-            if (e == null || entryIndex > set.getEntryCount() * mAnimator.getPhaseX()) {
+            if (e == null || entryIndex > set.getEntryCount() * mAnimator.getPhaseX())
                 continue;
-            }
 
             float[] pos = getMarkerPosition(highlight);
 
             // check bounds
-            if (!mViewPortHandler.isInBounds(pos[0], pos[1])) {
+            if (!mViewPortHandler.isInBounds(pos[0], pos[1]))
                 continue;
-            }
 
             // callbacks to update the content
             mMarker.refreshContent(e, highlight);
@@ -850,13 +872,11 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      */
     public void setDragDecelerationFrictionCoef(float newValue) {
 
-        if (newValue < 0.f) {
+        if (newValue < 0.f)
             newValue = 0.f;
-        }
 
-        if (newValue >= 1f) {
+        if (newValue >= 1f)
             newValue = 0.999f;
-        }
 
         mDragDecelerationFrictionCoef = newValue;
     }
@@ -1002,8 +1022,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
-    @Override
-    public ValueFormatter getDefaultValueFormatter() {
+    public IValueFormatter getDefaultValueFormatter() {
         return mDefaultValueFormatter;
     }
 
@@ -1210,6 +1229,15 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     }
 
     /**
+     * alignment of the no data text
+     *
+     * @param align
+     */
+    public void setNoDataTextAlignment(Align align) {
+        mInfoPaint.setTextAlign(align);
+    }
+
+    /**
      * Set this to false to disable all gestures and touches on the chart,
      * default: true
      *
@@ -1266,47 +1294,6 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
         return mDescription;
     }
 
-    public void setDescriptionCustom(int color, String label) {
-        mDescriptionColors = new int[1];
-        mDescriptionColors[0] = color;
-        mDescriptionLabels = new String[1];
-        mDescriptionLabels[0] = label;
-        mIsDescriptionCustom = true;
-    }
-
-    public void setDescriptionCustom(int[] colors, String[] labels) {
-
-        if (colors.length != labels.length) {
-            throw new IllegalArgumentException(
-                    "colors array and labels array need to be of same size");
-        }
-
-        mDescriptionLabels = labels;
-        mDescriptionColors = colors;
-        mIsDescriptionCustom = true;
-    }
-
-
-    public void setDescriptionCustom(List<Integer> colors, List<String> labels) {
-
-        if (colors.size() != labels.size()) {
-            throw new IllegalArgumentException(
-                    "colors array and labels array need to be of same size");
-        }
-
-        mDescriptionColors = Utils.convertIntegers(colors);
-        mDescriptionLabels = Utils.convertStrings(labels);
-        mIsDescriptionCustom = true;
-    }
-
-    public void resetDescriptionCustom() {
-        mIsDescriptionCustom = false;
-    }
-
-    public boolean isDescriptionCustom() {
-        return mIsDescriptionCustom;
-    }
-
     /**
      * Returns the Legend object of the chart. This method can be used to get an
      * instance of the legend in order to customize the automatically generated
@@ -1344,9 +1331,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      */
     public void disableScroll() {
         ViewParent parent = getParent();
-        if (parent != null) {
+        if (parent != null)
             parent.requestDisallowInterceptTouchEvent(true);
-        }
     }
 
     /**
@@ -1354,9 +1340,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      */
     public void enableScroll() {
         ViewParent parent = getParent();
-        if (parent != null) {
+        if (parent != null)
             parent.requestDisallowInterceptTouchEvent(false);
-        }
     }
 
     /**
@@ -1463,7 +1448,6 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      *
      * @return
      */
-    @Override
     public T getData() {
         return mData;
     }
@@ -1494,9 +1478,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      */
     public void setRenderer(DataRenderer renderer) {
 
-        if (renderer != null) {
+        if (renderer != null)
             mRenderer = renderer;
-        }
     }
 
     public IHighlighter getHighlighter() {
@@ -1536,15 +1519,12 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
         // Get the view's background
         Drawable bgDrawable = getBackground();
         if (bgDrawable != null)
-        // has background drawable, then draw it on the canvas
-        {
+            // has background drawable, then draw it on the canvas
             bgDrawable.draw(canvas);
-        } else
-        // does not have background drawable, then draw white background on
-        // the canvas
-        {
+        else
+            // does not have background drawable, then draw white background on
+            // the canvas
             canvas.drawColor(Color.WHITE);
-        }
         // draw the view on the canvas
         draw(canvas);
         // return the bitmap
@@ -1562,6 +1542,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @return returns true on success, false on error
      */
     public boolean saveToPath(String title, String pathOnSD) {
+
+
 
         Bitmap b = getChartBitmap();
 
@@ -1601,9 +1583,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     public boolean saveToGallery(String fileName, String subFolderPath, String fileDescription, Bitmap.CompressFormat
             format, int quality) {
         // restrain quality
-        if (quality < 0 || quality > 100) {
+        if (quality < 0 || quality > 100)
             quality = 50;
-        }
 
         long currentTime = System.currentTimeMillis();
 
@@ -1619,22 +1600,19 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
         switch (format) {
             case PNG:
                 mimeType = "image/png";
-                if (!fileName.endsWith(".png")) {
+                if (!fileName.endsWith(".png"))
                     fileName += ".png";
-                }
                 break;
             case WEBP:
                 mimeType = "image/webp";
-                if (!fileName.endsWith(".webp")) {
+                if (!fileName.endsWith(".webp"))
                     fileName += ".webp";
-                }
                 break;
             case JPEG:
             default:
                 mimeType = "image/jpeg";
-                if (!(fileName.endsWith(".jpg") || fileName.endsWith(".jpeg"))) {
+                if (!(fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")))
                     fileName += ".jpg";
-                }
                 break;
         }
 
@@ -1757,26 +1735,27 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        if (mLogEnabled) {
+        if (mLogEnabled)
             Log.i(LOG_TAG, "OnSizeChanged()");
-        }
 
         if (w > 0 && h > 0 && w < 10000 && h < 10000) {
-
-            mViewPortHandler.setChartDimens(w, h);
-
-            if (mLogEnabled) {
+            if (mLogEnabled)
                 Log.i(LOG_TAG, "Setting chart dimens, width: " + w + ", height: " + h);
-            }
-
-            for (Runnable r : mJobs) {
-                post(r);
-            }
-
-            mJobs.clear();
+            mViewPortHandler.setChartDimens(w, h);
+        } else {
+            if (mLogEnabled)
+                Log.w(LOG_TAG, "*Avoiding* setting chart dimens! width: " + w + ", height: " + h);
         }
 
+        // This may cause the chart view to mutate properties affecting the view port --
+        //   lets do this before we try to run any pending jobs on the view port itself
         notifyDataSetChanged();
+
+        for (Runnable r : mJobs) {
+            post(r);
+        }
+
+        mJobs.clear();
 
         super.onSizeChanged(w, h, oldw, oldh);
     }
@@ -1789,17 +1768,10 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      */
     public void setHardwareAccelerationEnabled(boolean enabled) {
 
-        if (android.os.Build.VERSION.SDK_INT >= 11) {
-
-            if (enabled) {
-                setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            } else {
-                setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            }
-        } else {
-            Log.e(LOG_TAG,
-                    "Cannot enable/disable hardware acceleration for devices below API level 11.");
-        }
+        if (enabled)
+            setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        else
+            setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
     @Override
@@ -1808,9 +1780,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
 
         //Log.i(LOG_TAG, "Detaching...");
 
-        if (mUnbind) {
+        if (mUnbind)
             unbindDrawables(this);
-        }
     }
 
     /**

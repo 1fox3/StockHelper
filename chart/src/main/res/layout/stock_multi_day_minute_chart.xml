@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.fox.stockhelperchart.chart.StockMultiDayMinuteLineChart
+        android:id="@+id/stockMultiDayMinuteLineChart"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_margin"
+        android:layout_weight="2"/>
+
+    <com.fox.stockhelperchart.chart.StockMultiDayMinuteBarChart
+        android:id="@+id/stockMultiDayMinuteBarChart"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_margin"
+        android:layout_weight="1" />
+
+</LinearLayout>

@@ -1,2 +1,2 @@
 rootProject.name='StockHelper'
-include ':app', ':MPChartLib'
+include ':app', ':MPChartLib', ':chart', ':common'

@@ -7,9 +7,8 @@ import android.graphics.Typeface;
 
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IDataSet;
-import com.github.mikephil.charting.model.GradientColor;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.Utils;
@@ -28,10 +27,6 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
      * List representing all colors that are used for this DataSet
      */
     protected List<Integer> mColors = null;
-
-    protected GradientColor mGradientColor = null;
-
-    protected List<GradientColor> mGradientColors = null;
 
     /**
      * List representing all colors that are used for drawing the actual values for this DataSet
@@ -56,7 +51,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     /**
      * custom formatter that is used instead of the auto-formatter if set
      */
-    protected transient ValueFormatter mValueFormatter;
+    protected transient IValueFormatter mValueFormatter;
 
     /**
      * the typeface used for the value text
@@ -92,10 +87,6 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
      * flag that indicates if the DataSet is visible or not
      */
     protected boolean mVisible = true;
-    //数值的精确度位数
-    protected int precision = 2;
-    //分时图类型，区分当日分时和多日分时
-    protected int timeDayType = 1;
 
     /**
      * Default constructor.
@@ -105,7 +96,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
         mValueColors = new ArrayList<Integer>();
 
         // default color
-        mColors.add(Color.parseColor("#696969"));
+        mColors.add(Color.rgb(140, 234, 255));
         mValueColors.add(Color.BLACK);
     }
 
@@ -148,21 +139,6 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     @Override
     public int getColor(int index) {
         return mColors.get(index % mColors.size());
-    }
-
-    @Override
-    public GradientColor getGradientColor() {
-        return mGradientColor;
-    }
-
-    @Override
-    public List<GradientColor> getGradientColors() {
-        return mGradientColors;
-    }
-
-    @Override
-    public GradientColor getGradientColor(int index) {
-        return mGradientColors.get(index % mGradientColors.size());
     }
 
     /**
@@ -224,9 +200,8 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
      * @param color
      */
     public void addColor(int color) {
-        if (mColors == null) {
+        if (mColors == null)
             mColors = new ArrayList<Integer>();
-        }
         mColors.add(color);
     }
 
@@ -239,25 +214,6 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     public void setColor(int color) {
         resetColors();
         mColors.add(color);
-    }
-
-    /**
-     * Sets the start and end color for gradient color, ONLY color that should be used for this DataSet.
-     *
-     * @param startColor
-     * @param endColor
-     */
-    public void setGradientColor(int startColor, int endColor) {
-        mGradientColor = new GradientColor(startColor, endColor);
-    }
-
-    /**
-     * Sets the start and end color for gradient colors, ONLY color that should be used for this DataSet.
-     *
-     * @param gradientColors
-     */
-    public void setGradientColors(List<GradientColor> gradientColors) {
-        this.mGradientColors = gradientColors;
     }
 
     /**
@@ -318,20 +274,18 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     }
 
     @Override
-    public void setValueFormatter(ValueFormatter f) {
+    public void setValueFormatter(IValueFormatter f) {
 
-        if (f == null) {
+        if (f == null)
             return;
-        } else {
+        else
             mValueFormatter = f;
-        }
     }
 
     @Override
-    public ValueFormatter getValueFormatter() {
-        if (needsFormatter()) {
+    public IValueFormatter getValueFormatter() {
+        if (needsFormatter())
             return Utils.getDefaultValueFormatter();
-        }
         return mValueFormatter;
     }
 
@@ -469,24 +423,6 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
         mAxisDependency = dependency;
     }
 
-    //设置数据的精确度位数
-    public void setPrecision(int precision) {
-        this.precision = precision;
-    }
-
-    @Override
-    public int getPrecision() {
-        return precision;
-    }
-
-    public void setTimeDayType(int timeDayType) {
-        this.timeDayType = timeDayType;
-    }
-
-    @Override
-    public int getTimeDayType() {
-        return timeDayType;
-    }
 
     /**
      * ###### ###### DATA RELATED METHODS ###### ######
@@ -496,9 +432,8 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     public int getIndexInEntries(int xIndex) {
 
         for (int i = 0; i < getEntryCount(); i++) {
-            if (xIndex == getEntryForIndex(i).getX()) {
+            if (xIndex == getEntryForIndex(i).getX())
                 return i;
-            }
         }
 
         return -1;
@@ -511,9 +446,8 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
 
             T entry = getEntryForIndex(0);
             return removeEntry(entry);
-        } else {
+        } else
             return false;
-        }
     }
 
     @Override
@@ -523,9 +457,8 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
 
             T e = getEntryForIndex(getEntryCount() - 1);
             return removeEntry(e);
-        } else {
+        } else
             return false;
-        }
     }
 
     @Override
@@ -546,9 +479,8 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     public boolean contains(T e) {
 
         for (int i = 0; i < getEntryCount(); i++) {
-            if (getEntryForIndex(i).equals(e)) {
+            if (getEntryForIndex(i).equals(e))
                 return true;
-            }
         }
 
         return false;
@@ -563,8 +495,6 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
         baseDataSet.mFormLineDashEffect = mFormLineDashEffect;
         baseDataSet.mFormLineWidth = mFormLineWidth;
         baseDataSet.mFormSize = mFormSize;
-        baseDataSet.mGradientColor = mGradientColor;
-        baseDataSet.mGradientColors = mGradientColors;
         baseDataSet.mHighlightEnabled = mHighlightEnabled;
         baseDataSet.mIconsOffset = mIconsOffset;
         baseDataSet.mValueColors = mValueColors;

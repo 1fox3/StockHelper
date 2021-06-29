@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Data object that encapsulates all data associated with a LineChart.
- *
+ * 
  * @author Philipp Jahoda
  */
 public class LineData extends BarLineScatterCandleBubbleData<ILineDataSet> {

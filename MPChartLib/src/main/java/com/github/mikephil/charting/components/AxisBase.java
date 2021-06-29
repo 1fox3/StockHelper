@@ -6,7 +6,7 @@ import android.graphics.DashPathEffect;
 import android.util.Log;
 
 import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public abstract class AxisBase extends ComponentBase {
     /**
      * custom formatter that is used instead of the auto-formatter if set
      */
-    protected ValueFormatter mAxisValueFormatter;
+    protected IAxisValueFormatter mAxisValueFormatter;
 
     private int mGridColor = Color.GRAY;
 
@@ -151,6 +151,39 @@ public abstract class AxisBase extends ComponentBase {
      * the total range of values this axis covers
      */
     public float mAxisRange = 0f;
+
+    private int mAxisMinLabels = 2;
+    private int mAxisMaxLabels = 25;
+
+    /**
+     * The minumum number of labels on the axis
+     */
+    public int getAxisMinLabels() {
+        return mAxisMinLabels;
+    }
+
+    /**
+     * The minumum number of labels on the axis
+     */
+    public void setAxisMinLabels(int labels) {
+        if (labels > 0)
+            mAxisMinLabels = labels;
+    }
+
+    /**
+     * The maximum number of labels on the axis
+     */
+    public int getAxisMaxLabels() {
+        return mAxisMaxLabels;
+    }
+
+    /**
+     * The maximum number of labels on the axis
+     */
+    public void setAxisMaxLabels(int labels) {
+        if (labels > 0)
+            mAxisMaxLabels = labels;
+    }
 
     /**
      * default constructor
@@ -315,10 +348,10 @@ public abstract class AxisBase extends ComponentBase {
      */
     public void setLabelCount(int count) {
 
-        if (count > 25)
-            count = 25;
-        if (count < 2)
-            count = 2;
+        if (count > getAxisMaxLabels())
+            count = getAxisMaxLabels();
+        if (count < getAxisMinLabels())
+            count = getAxisMinLabels();
 
         mLabelCount = count;
         mForceLabels = false;
@@ -474,9 +507,8 @@ public abstract class AxisBase extends ComponentBase {
         for (int i = 0; i < mEntries.length; i++) {
             String text = getFormattedLabel(i);
 
-            if (text != null && longest.length() < text.length()) {
+            if (text != null && longest.length() < text.length())
                 longest = text;
-            }
         }
 
         return longest;
@@ -487,7 +519,7 @@ public abstract class AxisBase extends ComponentBase {
         if (index < 0 || index >= mEntries.length)
             return "";
         else
-            return getValueFormatter().getAxisLabel(mEntries[index], this);
+            return getValueFormatter().getFormattedValue(mEntries[index], this);
     }
 
     /**
@@ -499,13 +531,12 @@ public abstract class AxisBase extends ComponentBase {
      *
      * @param f
      */
-    public void setValueFormatter(ValueFormatter f) {
+    public void setValueFormatter(IAxisValueFormatter f) {
 
-        if (f == null) {
+        if (f == null)
             mAxisValueFormatter = new DefaultAxisValueFormatter(mDecimals);
-        } else {
+        else
             mAxisValueFormatter = f;
-        }
     }
 
     /**
@@ -513,13 +544,12 @@ public abstract class AxisBase extends ComponentBase {
      *
      * @return
      */
-    public ValueFormatter getValueFormatter() {
+    public IAxisValueFormatter getValueFormatter() {
 
         if (mAxisValueFormatter == null ||
                 (mAxisValueFormatter instanceof DefaultAxisValueFormatter &&
-                        ((DefaultAxisValueFormatter)mAxisValueFormatter).getDecimalDigits() != mDecimals)) {
+                        ((DefaultAxisValueFormatter)mAxisValueFormatter).getDecimalDigits() != mDecimals))
             mAxisValueFormatter = new DefaultAxisValueFormatter(mDecimals);
-        }
 
         return mAxisValueFormatter;
     }

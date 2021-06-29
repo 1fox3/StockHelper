@@ -126,15 +126,13 @@ public class PieChart extends PieRadarChartBase<PieData> {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (mData == null) {
+        if (mData == null)
             return;
-        }
 
         mRenderer.drawData(canvas);
 
-        if (valuesToHighlight()) {
+        if (valuesToHighlight())
             mRenderer.drawHighlighted(canvas, mIndicesToHighlight);
-        }
 
         mRenderer.drawExtras(canvas);
 
@@ -152,9 +150,8 @@ public class PieChart extends PieRadarChartBase<PieData> {
         super.calculateOffsets();
 
         // prevent nullpointer when no data set
-        if (mData == null) {
+        if (mData == null)
             return;
-        }
 
         float diameter = getDiameter();
         float radius = diameter / 2f;
@@ -300,15 +297,14 @@ public class PieChart extends PieRadarChartBase<PieData> {
     public boolean needsHighlight(int index) {
 
         // no highlight
-        if (!valuesToHighlight()) {
+        if (!valuesToHighlight())
             return false;
-        }
 
-        for (Highlight aMIndicesToHighlight : mIndicesToHighlight) {
-            if ((int) aMIndicesToHighlight.getX() == index) {
+        for (int i = 0; i < mIndicesToHighlight.length; i++)
+
+            // check if the xvalue for the given dataset needs highlight
+            if ((int) mIndicesToHighlight[i].getX() == index)
                 return true;
-            }
-        }
 
         return false;
     }
@@ -352,9 +348,8 @@ public class PieChart extends PieRadarChartBase<PieData> {
         float a = Utils.getNormalizedAngle(angle - getRotationAngle());
 
         for (int i = 0; i < mAbsoluteAngles.length; i++) {
-            if (mAbsoluteAngles[i] > a) {
+            if (mAbsoluteAngles[i] > a)
                 return i;
-            }
         }
 
         return -1; // return -1 if no index found
@@ -371,9 +366,8 @@ public class PieChart extends PieRadarChartBase<PieData> {
         List<IPieDataSet> dataSets = mData.getDataSets();
 
         for (int i = 0; i < dataSets.size(); i++) {
-            if (dataSets.get(i).getEntryForXValue(xIndex, Float.NaN) != null) {
+            if (dataSets.get(i).getEntryForXValue(xIndex, Float.NaN) != null)
                 return i;
-            }
         }
 
         return -1;
@@ -452,11 +446,10 @@ public class PieChart extends PieRadarChartBase<PieData> {
      * @param text
      */
     public void setCenterText(CharSequence text) {
-        if (text == null) {
+        if (text == null)
             mCenterText = "";
-        } else {
+        else
             mCenterText = text;
-        }
     }
 
     /**
@@ -499,11 +492,10 @@ public class PieChart extends PieRadarChartBase<PieData> {
 
     @Override
     public float getRadius() {
-        if (mCircleBox == null) {
+        if (mCircleBox == null)
             return 0;
-        } else {
+        else
             return Math.min(mCircleBox.width() / 2f, mCircleBox.height() / 2f);
-        }
     }
 
     /**
@@ -766,13 +758,11 @@ public class PieChart extends PieRadarChartBase<PieData> {
      */
     public void setMaxAngle(float maxangle) {
 
-        if (maxangle > 360) {
+        if (maxangle > 360)
             maxangle = 360f;
-        }
 
-        if (maxangle < 90) {
+        if (maxangle < 90)
             maxangle = 90f;
-        }
 
         this.mMaxAngle = maxangle;
     }
@@ -795,11 +785,10 @@ public class PieChart extends PieRadarChartBase<PieData> {
      */
     public void setMinAngleForSlices(float minAngle) {
 
-        if (minAngle > (mMaxAngle / 2f)) {
+        if (minAngle > (mMaxAngle / 2f))
             minAngle = mMaxAngle / 2f;
-        } else if (minAngle < 0) {
+        else if (minAngle < 0)
             minAngle = 0f;
-        }
 
         this.mMinAngleForSlices = minAngle;
     }

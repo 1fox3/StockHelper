@@ -16,7 +16,7 @@ public class MPPointF extends ObjectPool.Poolable {
     public float y;
 
     static {
-        pool = ObjectPool.create(32, new MPPointF(0, 0));
+        pool = ObjectPool.create(32, new MPPointF(0,0));
         pool.setReplenishPercentage(0.5f);
     }
 
@@ -46,11 +46,11 @@ public class MPPointF extends ObjectPool.Poolable {
         return result;
     }
 
-    public static void recycleInstance(MPPointF instance) {
+    public static void recycleInstance(MPPointF instance){
         pool.recycle(instance);
     }
 
-    public static void recycleInstances(List<MPPointF> instances) {
+    public static void recycleInstances(List<MPPointF> instances){
         pool.recycle(instances);
     }
 
@@ -58,9 +58,8 @@ public class MPPointF extends ObjectPool.Poolable {
         /**
          * Return a new point from the data in the specified parcel.
          */
-        @Override
         public MPPointF createFromParcel(Parcel in) {
-            MPPointF r = new MPPointF(0, 0);
+            MPPointF r = new MPPointF(0,0);
             r.my_readFromParcel(in);
             return r;
         }
@@ -68,7 +67,6 @@ public class MPPointF extends ObjectPool.Poolable {
         /**
          * Return an array of rectangles of the specified size.
          */
-        @Override
         public MPPointF[] newArray(int size) {
             return new MPPointF[size];
         }
@@ -86,16 +84,16 @@ public class MPPointF extends ObjectPool.Poolable {
         y = in.readFloat();
     }
 
-    public float getX() {
+    public float getX(){
         return this.x;
     }
 
-    public float getY() {
+    public float getY(){
         return this.y;
     }
 
     @Override
     protected ObjectPool.Poolable instantiate() {
-        return new MPPointF(0, 0);
+        return new MPPointF(0,0);
     }
 }

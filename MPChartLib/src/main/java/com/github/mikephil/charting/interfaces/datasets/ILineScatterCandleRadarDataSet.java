@@ -25,7 +25,6 @@ public interface ILineScatterCandleRadarDataSet<T extends Entry> extends IBarLin
      * Returns the line-width in which highlight lines are to be drawn.
      * @return
      */
-    @Override
     float getHighlightLineWidth();
 
     /**

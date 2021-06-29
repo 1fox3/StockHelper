@@ -74,6 +74,11 @@ public class YAxis extends AxisBase {
     private YAxisLabelPosition mPosition = YAxisLabelPosition.OUTSIDE_CHART;
 
     /**
+     * the horizontal offset of the y-label
+     */
+    private float mXLabelOffset = 0.0f;
+
+    /**
      * enum for the position of the y-labels relative to the chart
      */
     public enum YAxisLabelPosition {
@@ -104,33 +109,6 @@ public class YAxis extends AxisBase {
      *
      * @author Philipp Jahoda
      */
-
-    /**
-     * set the label value is in the border inside
-     */
-    protected boolean isValueLineInside = false;
-
-    /**
-     * set is draw the top and bottom grid line
-     */
-    protected boolean isDrawTopBottomGridLine = true;
-
-    public boolean isDrawTopBottomGridLine() {
-        return isDrawTopBottomGridLine;
-    }
-
-    public void setDrawTopBottomGridLine(boolean drawTopBottomGridLine) {
-        isDrawTopBottomGridLine = drawTopBottomGridLine;
-    }
-
-    public boolean isValueLineInside() {
-        return isValueLineInside;
-    }
-
-    public void setValueLineInside(boolean lineInside) {
-        isValueLineInside = lineInside;
-    }
-
     public enum AxisDependency {
         LEFT, RIGHT
     }
@@ -202,6 +180,22 @@ public class YAxis extends AxisBase {
     }
 
     /**
+     * returns the horizontal offset of the y-label
+     */
+    public float getLabelXOffset() {
+        return mXLabelOffset;
+    }
+
+    /**
+     * sets the horizontal offset of the y-label
+     *
+     * @param xOffset
+     */
+    public void setLabelXOffset(float xOffset) {
+        mXLabelOffset = xOffset;
+    }
+
+    /**
      * returns true if drawing the top y-axis label entry is enabled
      *
      * @return
@@ -258,11 +252,10 @@ public class YAxis extends AxisBase {
      */
     @Deprecated
     public void setStartAtZero(boolean startAtZero) {
-        if (startAtZero) {
+        if (startAtZero)
             setAxisMinimum(0f);
-        } else {
+        else
             resetAxisMinimum();
-        }
     }
 
     /**
@@ -357,13 +350,11 @@ public class YAxis extends AxisBase {
         float minWidth = getMinWidth();
         float maxWidth = getMaxWidth();
 
-        if (minWidth > 0.f) {
+        if (minWidth > 0.f)
             minWidth = Utils.convertDpToPixel(minWidth);
-        }
 
-        if (maxWidth > 0.f && maxWidth != Float.POSITIVE_INFINITY) {
+        if (maxWidth > 0.f && maxWidth != Float.POSITIVE_INFINITY)
             maxWidth = Utils.convertDpToPixel(maxWidth);
-        }
 
         width = Math.max(minWidth, Math.min(width, maxWidth > 0.0 ? maxWidth : width));
 
@@ -390,8 +381,11 @@ public class YAxis extends AxisBase {
      * @return
      */
     public boolean needsOffset() {
-        return isEnabled() && isDrawLabelsEnabled() && getLabelPosition() == YAxisLabelPosition
-                .OUTSIDE_CHART;
+        if (isEnabled() && isDrawLabelsEnabled() && getLabelPosition() == YAxisLabelPosition
+                .OUTSIDE_CHART)
+            return true;
+        else
+            return false;
     }
 
     /**
@@ -432,6 +426,26 @@ public class YAxis extends AxisBase {
 
         float min = dataMin;
         float max = dataMax;
+
+        // Make sure max is greater than min
+        // Discussion: https://github.com/danielgindi/Charts/pull/3650#discussion_r221409991
+        if (min > max)
+        {
+            if (mCustomAxisMax && mCustomAxisMin)
+            {
+                float t = min;
+                min = max;
+                max = t;
+            }
+            else if (mCustomAxisMax)
+            {
+                min = max < 0f ? max * 1.5f : max * 0.5f;
+            }
+            else if (mCustomAxisMin)
+            {
+                max = min < 0f ? min * 0.5f : min * 1.5f;
+            }
+        }
 
         float range = Math.abs(max - min);
 
