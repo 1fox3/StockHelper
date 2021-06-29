@@ -298,22 +298,19 @@ public class StockMarketFragment extends StockBaseFragment implements CommonHand
             if (StockMarketStatusConst.STATUS_DESC_MAP.containsKey(newStatus)) {
                 smStatusTV.setText(StockMarketStatusConst.STATUS_DESC_MAP.get(newStatus));
             }
-            if (StockMarketStatusConst.OPEN == newStatus
-                    || StockMarketStatusConst.COMPETE == newStatus) {
-                smStatusTV.setTextColor(Color.RED);
-            } else {
-                smStatusTV.setTextColor(Color.BLACK);
-            }
             if (StockMarketStatusConst.CAN_DEAL_STATUS_LIST.contains(newStatus)) {
+                smStatusTV.setTextColor(Color.RED);
                 if (!dataRefresh) {
                     dataRefresh = true;
                 }
             } else {
+                smStatusTV.setTextColor(Color.BLACK);
                 dataRefresh = false;
             }
             //状态发生变化时保证刷新一次
             startRefreshData();
         }
+        super.handleStockMarketDealStatusBroadcast(oldStatus, newStatus);
     }
 
     /**

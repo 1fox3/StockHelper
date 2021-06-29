@@ -4,6 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import androidx.annotation.Nullable;
+
 import com.fox.spider.stock.constant.StockConst;
 import com.fox.stockhelper.api.stock.stockmarket.AroundDealDateApi;
 import com.fox.stockhelper.database.dao.StockMarketAroundDealDateDao;
@@ -14,7 +16,6 @@ import com.fox.stockhelper.util.LogUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.Nullable;
 import lombok.SneakyThrows;
 
 /**
@@ -78,13 +79,10 @@ public class StockMarketAroundDealDateService extends Service {
                 while (true) {
                     try {
                         String currentDate = DateUtil.getCurrentDate();
-                        if (null == currentDate) {
-                            continue;
-                        }
                         for (Integer stockMarket : StockConst.SM_ALL) {
                             String lastDealDate =
                                     stockMarketAroundDealDateDao.last(stockMarket);
-                            if (null != lastDealDate && currentDate.equals(lastDealDate)) {
+                            if (currentDate.equals(lastDealDate)) {
                                 continue;
                             }
                             //如果今天未到下一个交易日则继续

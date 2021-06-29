@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import androidx.annotation.Nullable;
+
 import com.fox.spider.stock.constant.StockConst;
 import com.fox.spider.stock.constant.StockMarketStatusConst;
 import com.fox.stockhelper.constant.StockReceiverConst;
@@ -16,7 +18,6 @@ import com.fox.stockhelper.util.LogUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.Nullable;
 import lombok.SneakyThrows;
 
 /**
@@ -103,9 +104,6 @@ public class StockMarketDealStatusService extends Service {
                 while (true) {
                     try {
                         String currentDate = DateUtil.getCurrentDate();
-                        if (null == currentDate) {
-                            continue;
-                        }
                         for (Integer stockMarket : StockConst.SM_ALL) {
                             String lastDealDate =
                                     stockMarketAroundDealDateDao.last(stockMarket);
