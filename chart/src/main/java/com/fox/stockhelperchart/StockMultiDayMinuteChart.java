@@ -329,9 +329,11 @@ public class StockMultiDayMinuteChart extends BaseStockChart {
                                     new BigDecimal(currentDealNum)
                             )
                     );
-                    float avgPrice = totalDealMoney.divide(
-                            totalDealNum, 2, RoundingMode.HALF_UP
-                    ).floatValue();
+                    float avgPrice = BigDecimal.ZERO.compareTo(totalDealNum) == 0 ?
+                            currentPrice.floatValue()
+                            :
+                            totalDealMoney.divide(totalDealNum, 2, RoundingMode.HALF_UP)
+                                    .floatValue();
                     avgPriceLine.add(new Entry(pos, avgPrice));
                     int priceCompare = currentPrice.compareTo(upPrice);
                     if (priceCompare >= 1) {
