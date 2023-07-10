@@ -441,7 +441,11 @@ public class StockMarketFragment extends StockBaseFragment implements CommonHand
                     msg.what = MsgWhatConfig.TOP_INDEX;
                     handler.sendMessage(msg);
                     if (dataRefresh) {
-                        Thread.sleep(2000);
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     } else {
                         break;
                     }
@@ -472,7 +476,11 @@ public class StockMarketFragment extends StockBaseFragment implements CommonHand
                     msg.what = MsgWhatConfig.UPTICK_RATE_STATISTICS;
                     handler.sendMessage(msg);
                     if (dataRefresh) {
-                        Thread.sleep(5000);
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     } else {
                         break;
                     }

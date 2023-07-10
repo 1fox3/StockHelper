@@ -22,13 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import lombok.Data;
-
 /**
  * 接口请求基类
  * @author lusongsong
  */
-@Data
 public class BaseApi {
     public static final String METHOD_GET = "get";
     public static final String METHOD_POST = "post";
@@ -84,6 +81,106 @@ public class BaseApi {
      * 请求数据
      */
     protected Map<String, String> requestParams = new HashMap<>();
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
+
+    public Class getDataClass() {
+        return dataClass;
+    }
+
+    public void setDataClass(Class dataClass) {
+        this.dataClass = dataClass;
+    }
+
+    public boolean isListObject() {
+        return isListObject;
+    }
+
+    public void setListObject(boolean listObject) {
+        isListObject = listObject;
+    }
+
+    public boolean isListData() {
+        return isListData;
+    }
+
+    public void setListData(boolean listData) {
+        isListData = listData;
+    }
+
+    public String[] getRequestParamKeys() {
+        return requestParamKeys;
+    }
+
+    public void setRequestParamKeys(String[] requestParamKeys) {
+        this.requestParamKeys = requestParamKeys;
+    }
+
+    public Map<String, String> getRequestParams() {
+        return requestParams;
+    }
+
+    public void setRequestParams(Map<String, String> requestParams) {
+        this.requestParams = requestParams;
+    }
 
     /**
      * 设置请求参数

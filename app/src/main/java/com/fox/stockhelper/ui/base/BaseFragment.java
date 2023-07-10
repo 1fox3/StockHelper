@@ -6,8 +6,6 @@ import androidx.fragment.app.Fragment;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
-@Getter
 public class BaseFragment extends Fragment {
     /**
      * 上下文
@@ -30,5 +28,9 @@ public class BaseFragment extends Fragment {
      */
     public Context getContext() {
         return this.context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

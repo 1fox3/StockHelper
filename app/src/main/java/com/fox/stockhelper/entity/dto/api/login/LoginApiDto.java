@@ -1,13 +1,10 @@
 package com.fox.stockhelper.entity.dto.api.login;
 
-import lombok.Data;
-
 /**
  * 登录
  * @author lusongsong
  * @date 2020/7/21 17:58
  */
-@Data
 public class LoginApiDto {
     /**
      * 登录session
@@ -17,4 +14,20 @@ public class LoginApiDto {
      * 失效时间
      */
     Integer expireTime;
+
+    public String getSessionid() {
+        return sessionid;
+    }
+
+    public void setSessionid(String sessionid) {
+        this.sessionid = sessionid;
+    }
+
+    public Integer getExpireTime() {
+        return expireTime;
+    }
+
+    public void setExpireTime(Integer expireTime) {
+        this.expireTime = expireTime;
+    }
 }

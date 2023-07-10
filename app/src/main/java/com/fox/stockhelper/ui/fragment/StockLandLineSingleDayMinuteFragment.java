@@ -130,7 +130,11 @@ public class StockLandLineSingleDayMinuteFragment extends StockBaseFragment {
                 while (true) {
                     if (dataRefresh) {
                         stockSingleDayMinuteChart.freshData();
-                        Thread.sleep(2000);
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     } else {
                         break;
                     }

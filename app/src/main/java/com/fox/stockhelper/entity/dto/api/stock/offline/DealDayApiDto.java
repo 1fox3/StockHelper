@@ -10,14 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lombok.Data;
-
 /**
  * 股票按天交易数据
  * @author lusongsong
  * @date 2020/10/1 14:03
  */
-@Data
 public class DealDayApiDto {
     /**
      * 日期
@@ -59,6 +56,86 @@ public class DealDayApiDto {
      * 总股本数
      */
     Long totalEquity;
+
+    public String getDt() {
+        return dt;
+    }
+
+    public void setDt(String dt) {
+        this.dt = dt;
+    }
+
+    public BigDecimal getOpenPrice() {
+        return openPrice;
+    }
+
+    public void setOpenPrice(BigDecimal openPrice) {
+        this.openPrice = openPrice;
+    }
+
+    public BigDecimal getClosePrice() {
+        return closePrice;
+    }
+
+    public void setClosePrice(BigDecimal closePrice) {
+        this.closePrice = closePrice;
+    }
+
+    public BigDecimal getHighestPrice() {
+        return highestPrice;
+    }
+
+    public void setHighestPrice(BigDecimal highestPrice) {
+        this.highestPrice = highestPrice;
+    }
+
+    public BigDecimal getLowestPrice() {
+        return lowestPrice;
+    }
+
+    public void setLowestPrice(BigDecimal lowestPrice) {
+        this.lowestPrice = lowestPrice;
+    }
+
+    public BigDecimal getPreClosePrice() {
+        return preClosePrice;
+    }
+
+    public void setPreClosePrice(BigDecimal preClosePrice) {
+        this.preClosePrice = preClosePrice;
+    }
+
+    public Long getDealNum() {
+        return dealNum;
+    }
+
+    public void setDealNum(Long dealNum) {
+        this.dealNum = dealNum;
+    }
+
+    public BigDecimal getDealMoney() {
+        return dealMoney;
+    }
+
+    public void setDealMoney(BigDecimal dealMoney) {
+        this.dealMoney = dealMoney;
+    }
+
+    public Long getCircEquity() {
+        return circEquity;
+    }
+
+    public void setCircEquity(Long circEquity) {
+        this.circEquity = circEquity;
+    }
+
+    public Long getTotalEquity() {
+        return totalEquity;
+    }
+
+    public void setTotalEquity(Long totalEquity) {
+        this.totalEquity = totalEquity;
+    }
 
     public static List<String> fieldOrderList() {
         return Arrays.asList(

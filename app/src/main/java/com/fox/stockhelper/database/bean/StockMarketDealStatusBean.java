@@ -3,7 +3,6 @@ package com.fox.stockhelper.database.bean;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import lombok.Data;
 
 /**
  * 股市交易状态
@@ -12,7 +11,6 @@ import lombok.Data;
  * @date 2020/12/2 14:47
  */
 @DatabaseTable(tableName = "t_deal_status")
-@Data
 public class StockMarketDealStatusBean {
     /**
      * 记录id
@@ -29,4 +27,28 @@ public class StockMarketDealStatusBean {
      */
     @DatabaseField(columnName = "dealStatus")
     Integer dealStatus;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getStockMarket() {
+        return stockMarket;
+    }
+
+    public void setStockMarket(Integer stockMarket) {
+        this.stockMarket = stockMarket;
+    }
+
+    public Integer getDealStatus() {
+        return dealStatus;
+    }
+
+    public void setDealStatus(Integer dealStatus) {
+        this.dealStatus = dealStatus;
+    }
 }

@@ -21,7 +21,6 @@ import lombok.Setter;
  * @author lusongsong
  * @date 2020/10/22 20:56
  */
-@Setter
 public class StockDealMinuteInfoView extends LinearLayout {
     /**
      * 日期
@@ -147,5 +146,101 @@ public class StockDealMinuteInfoView extends LinearLayout {
      */
     public void reDraw() {
         initView();
+    }
+
+    public String getDt() {
+        return dt;
+    }
+
+    public void setDt(String dt) {
+        this.dt = dt;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public BigDecimal getAvgPrice() {
+        return avgPrice;
+    }
+
+    public void setAvgPrice(BigDecimal avgPrice) {
+        this.avgPrice = avgPrice;
+    }
+
+    public Long getDealNum() {
+        return dealNum;
+    }
+
+    public void setDealNum(Long dealNum) {
+        this.dealNum = dealNum;
+    }
+
+    public BigDecimal getDealMoney() {
+        return dealMoney;
+    }
+
+    public void setDealMoney(BigDecimal dealMoney) {
+        this.dealMoney = dealMoney;
+    }
+
+    public TextView getDtTV() {
+        return dtTV;
+    }
+
+    public void setDtTV(TextView dtTV) {
+        this.dtTV = dtTV;
+    }
+
+    public TextView getTimeTV() {
+        return timeTV;
+    }
+
+    public void setTimeTV(TextView timeTV) {
+        this.timeTV = timeTV;
+    }
+
+    public StockValueTextView getPriceSVTV() {
+        return priceSVTV;
+    }
+
+    public void setPriceSVTV(StockValueTextView priceSVTV) {
+        this.priceSVTV = priceSVTV;
+    }
+
+    public StockValueTextView getAvgPriceSVTV() {
+        return avgPriceSVTV;
+    }
+
+    public void setAvgPriceSVTV(StockValueTextView avgPriceSVTV) {
+        this.avgPriceSVTV = avgPriceSVTV;
+    }
+
+    public StockValueTextView getDealNumSVTV() {
+        return dealNumSVTV;
+    }
+
+    public void setDealNumSVTV(StockValueTextView dealNumSVTV) {
+        this.dealNumSVTV = dealNumSVTV;
+    }
+
+    public StockValueTextView getDealMoneySVTV() {
+        return dealMoneySVTV;
+    }
+
+    public void setDealMoneySVTV(StockValueTextView dealMoneySVTV) {
+        this.dealMoneySVTV = dealMoneySVTV;
     }
 }

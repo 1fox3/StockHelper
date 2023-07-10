@@ -215,7 +215,11 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
                         msg.what = MsgWhatConfig.STOCK_DEAL_INFO;
                         handler.sendMessage(msg);
                         if (dataRefresh) {
-                            Thread.sleep(2000);
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                         } else {
                             break;
                         }
@@ -240,7 +244,11 @@ public class StockDealLineRealtimeFragment extends StockBaseFragment implements 
                 while (true) {
                     if (dataRefresh) {
                         stockOneDayChart.freshData();
-                        Thread.sleep(2000);
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     } else {
                         break;
                     }

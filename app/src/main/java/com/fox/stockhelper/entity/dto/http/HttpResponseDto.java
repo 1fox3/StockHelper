@@ -6,19 +6,56 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import lombok.Data;
-
 /**
  * 请求响应结果
  * @author lusongsong
  */
-@Data
 public class HttpResponseDto {
     private int code;
     private String msg;
     private Map<String, List<String>> headers;
     private String requestUrl;
     private String content;
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public Map<String, List<String>> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, List<String>> headers) {
+        this.headers = headers;
+    }
+
+    public String getRequestUrl() {
+        return requestUrl;
+    }
+
+    public void setRequestUrl(String requestUrl) {
+        this.requestUrl = requestUrl;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public HttpResponseDto(int code, String msg, Map<String, List<String>> headers,
                            String requestUrl, String content) {
